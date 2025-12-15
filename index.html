@@ -16,7 +16,7 @@
               sans: ['"Heebo"', 'sans-serif'],
             },
             colors: {
-              // Deep Royal Blue Palette (Replacing Black/Slate)
+              // Deep Royal Blue Palette (Professional base) - Kept for structure
               primary: {
                 50: '#eff6ff',
                 100: '#dbeafe',
@@ -26,27 +26,27 @@
                 500: '#3b82f6',
                 600: '#2563eb',
                 700: '#1d4ed8',
-                800: '#1e40af', // Main Action Blue
-                900: '#1e3a8a', // Deep Text Blue
-                950: '#172554', // Darkest Blue (instead of black)
+                800: '#1e40af', 
+                900: '#1e3a8a', 
+                950: '#172554', 
               },
-              // Neutral (Cool Grey)
-              neutral: {
-                50: '#f8fafc',
-                100: '#f1f5f9',
-                200: '#e2e8f0',
-                300: '#cbd5e1',
-                400: '#94a3b8',
-                500: '#64748b',
-                600: '#475569',
-                700: '#334155',
-                800: '#1e293b',
-                900: '#0f172a',
+              // Warm Accent (Coral / Burnt Orange / Red-Orange)
+              accent: {
+                50: '#fff7ed',   // Warm background tint
+                100: '#ffedd5',
+                200: '#fed7aa',
+                300: '#fdba74',
+                400: '#fb923c',
+                500: '#f97316',
+                600: '#ea580c', // Main Accent
+                700: '#c2410c', // Darker Orange/Red
+                800: '#9a3412',
+                900: '#7c2d12',
               }
             },
             boxShadow: {
-              'soft': '0 4px 20px -2px rgba(30, 58, 138, 0.08)',
-              'glow': '0 0 15px rgba(59, 130, 246, 0.3)', 
+              'soft': '0 4px 20px -2px rgba(60, 20, 0, 0.05)', // Warmer shadow
+              'glow': '0 0 20px rgba(234, 88, 12, 0.25)', // Stronger warm glow
             }
           }
         }
@@ -54,54 +54,52 @@
     </script>
     <style>
       body {
-        background-color: #f0f7ff; /* Very light blue tint background */
-        color: #1e3a8a; /* Primary-900 (Deep Blue) instead of Black */
+        background-color: #fdfbf7; /* WARM CREAM / PAPER BACKGROUND */
+        color: #2d3748; /* Softer dark grey, less blue */
         font-family: 'Heebo', sans-serif;
         -webkit-font-smoothing: antialiased;
         overflow-x: hidden;
       }
       
       h1, h2, h3, h4, h5, h6 {
-        color: #172554; /* Primary-950 - Darkest Blue */
+        color: #1a202c;
       }
       
-      .text-body {
-        color: #1e40af; /* Primary-800 */
-      }
-
       /* Professional Card */
       .glass-panel {
-        background-color: #ffffff;
-        border: 1px solid #dbeafe; /* Primary-100 */
-        border-radius: 0.75rem; 
+        background-color: rgba(255, 255, 255, 0.95);
+        border: 1px solid #fed7aa; /* Warm subtle border */
+        border-radius: 1rem; 
         padding: 2rem;
-        box-shadow: 0 4px 12px -2px rgba(30, 64, 175, 0.05); /* Blue-ish shadow */
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
       }
       
       /* Inputs */
       .input-field {
         width: 100%;
-        background-color: #ffffff;
-        border: 1px solid #bfdbfe; /* Primary-200 */
+        background-color: #ffffff; 
+        border: 1px solid #e2e8f0;
         border-radius: 0.5rem;
         padding: 0.75rem 1rem;
-        color: #1e3a8a;
+        color: #1a202c;
         font-size: 1rem;
         transition: all 0.2s ease;
         outline: none;
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.01);
       }
       
       .input-field:focus {
-        border-color: #2563eb;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        border-color: #ea580c; /* Accent focus color */
+        background-color: #fffaf0; /* Very slight warm tint on focus */
+        box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
       }
       
       .input-field::placeholder {
-        color: #93c5fd; 
+        color: #a0aec0; 
       }
 
       select.input-field {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%231e40af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ea580c' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
         background-position: left 0.75rem center;
         background-repeat: no-repeat;
         background-size: 1.25em 1.25em;

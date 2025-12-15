@@ -77,27 +77,28 @@ export const Landing: React.FC = () => {
       <div className="flex flex-col items-center justify-center py-12 relative">
         
         {/* Hero Section */}
-        <div className="text-center mb-10 space-y-2">
-            <h1 className="text-5xl font-bold text-slate-900 tracking-tight">
-                Feedback<span className="font-light text-slate-500">360</span>
+        <div className="text-center mb-12 space-y-3">
+            <h1 className="text-6xl font-black tracking-tight text-slate-900">
+                Feedback
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-500 to-accent-700">360</span>
             </h1>
-            <p className="text-lg text-slate-500 max-w-xl mx-auto font-light">
+            <p className="text-xl text-slate-600 max-w-xl mx-auto font-normal">
                מערכת חכמה לזיהוי מנופי הצמיחה שלך
             </p>
-            <div className="flex justify-center gap-4 mt-4 text-xs font-medium text-slate-400 uppercase tracking-wider">
+            <div className="flex justify-center gap-4 mt-6 text-xs font-bold text-accent-700 uppercase tracking-widest bg-accent-50 inline-flex px-6 py-2 rounded-full border border-accent-100">
                 <span>AI Insights</span>
-                <span className="text-slate-300">•</span>
+                <span className="text-accent-300">•</span>
                 <span>Anonymous</span>
-                <span className="text-slate-300">•</span>
+                <span className="text-accent-300">•</span>
                 <span>Encrypted</span>
             </div>
         </div>
 
         {/* Login/Register Card */}
-        <div className="glass-panel w-full max-w-[380px] shadow-card border-t-2 border-t-primary-800 relative z-10">
+        <div className="glass-panel w-full max-w-[380px] shadow-glow border-t-4 border-t-accent-500 relative z-10">
             
             <div className="mb-6 text-center border-b border-slate-100 pb-4">
-                <h2 className="text-lg font-semibold text-slate-800">
+                <h2 className="text-lg font-bold text-slate-800">
                     {view === 'register' ? 'פתיחת חשבון' : view === 'reset' ? 'שחזור גישה' : 'כניסה למערכת'}
                 </h2>
             </div>
@@ -109,7 +110,7 @@ export const Landing: React.FC = () => {
                         type="button"
                         onClick={handleGuestLogin}
                         disabled={isLoading}
-                        className="w-full text-xs font-bold text-slate-500 hover:text-primary-800 border border-dashed border-slate-300 hover:border-primary-800 bg-slate-50 py-3 rounded transition-all"
+                        className="w-full text-xs font-bold text-slate-500 hover:text-accent-700 border border-dashed border-slate-300 hover:border-accent-400 bg-slate-50 py-3 rounded transition-all"
                     >
                         כניסה לאורחים (דמו)
                     </button>
@@ -118,7 +119,7 @@ export const Landing: React.FC = () => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {view === 'register' && (
                         <div>
-                            <label className="block text-xs font-medium text-slate-500 mb-1">שם מלא</label>
+                            <label className="block text-xs font-bold text-slate-500 mb-1">שם מלא</label>
                             <input
                             type="text"
                             value={name}
@@ -130,7 +131,7 @@ export const Landing: React.FC = () => {
                     )}
 
                     <div>
-                        <label className="block text-xs font-medium text-slate-500 mb-1">כתובת אימייל</label>
+                        <label className="block text-xs font-bold text-slate-500 mb-1">כתובת אימייל</label>
                         <input
                         type="email"
                         value={email}
@@ -143,7 +144,7 @@ export const Landing: React.FC = () => {
 
                     {(view === 'register' || view === 'reset') && (
                         <div>
-                            <label className="block text-xs font-medium text-slate-500 mb-1">קוד ארגוני</label>
+                            <label className="block text-xs font-bold text-slate-500 mb-1">קוד ארגוני</label>
                             <input
                             type="text"
                             value={registrationCode}
@@ -156,7 +157,7 @@ export const Landing: React.FC = () => {
                     )}
 
                     <div className={view === 'register' || view === 'reset' ? 'mt-4' : ''}>
-                            <label className="block text-xs font-medium text-slate-500 mb-1">
+                            <label className="block text-xs font-bold text-slate-500 mb-1">
                                 {view === 'reset' ? 'סיסמה חדשה' : 'סיסמה'}
                             </label>
                         <input
@@ -182,7 +183,7 @@ export const Landing: React.FC = () => {
                     {successMsg && <p className="text-green-600 text-xs bg-green-50 p-2 rounded text-center">{successMsg}</p>}
 
                     <div className="pt-2">
-                        <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>
+                        <Button type="submit" variant="primary" className="w-full bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800" isLoading={isLoading}>
                             {view === 'register' ? 'הרשמה' : view === 'reset' ? 'אפס סיסמה' : 'התחברות'}
                         </Button>
                     </div>
@@ -192,16 +193,16 @@ export const Landing: React.FC = () => {
             <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col items-center gap-2 text-xs">
                 {view === 'login' && (
                     <>
-                        <button onClick={() => setView('reset')} className="text-slate-400 hover:text-primary-800 transition-colors">
+                        <button onClick={() => setView('reset')} className="text-slate-400 hover:text-accent-600 transition-colors">
                             שכחתי סיסמה
                         </button>
                         <div className="text-slate-400">
-                            לא רשום? <button onClick={() => setView('register')} className="text-primary-800 font-semibold hover:underline">פתח חשבון</button>
+                            לא רשום? <button onClick={() => setView('register')} className="text-accent-600 font-bold hover:underline">פתח חשבון</button>
                         </div>
                     </>
                 )}
                 {(view === 'register' || view === 'reset') && (
-                    <button onClick={() => setView('login')} className="text-slate-500 hover:text-primary-800 font-medium">
+                    <button onClick={() => setView('login')} className="text-slate-500 hover:text-accent-600 font-bold">
                         חזרה למסך כניסה
                     </button>
                 )}
@@ -211,7 +212,7 @@ export const Landing: React.FC = () => {
         {/* Prominent Admin Link */}
         <div className="mt-8">
             <Link to="/admin">
-                <button className="text-xs font-bold text-slate-300 hover:text-primary-600 border border-transparent hover:border-primary-200 px-4 py-2 rounded-full transition-all">
+                <button className="text-xs font-bold text-slate-400 hover:text-accent-600 border border-transparent hover:border-accent-200 px-4 py-2 rounded-full transition-all">
                     🔒 כניסת מנהל מערכת (Admin)
                 </button>
             </Link>

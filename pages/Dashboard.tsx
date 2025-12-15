@@ -42,8 +42,7 @@ export const Dashboard: React.FC = () => {
     }
     setUser(currentUser);
     setGoal(currentUser.userGoal || '');
-    // Goal is now optional, so we don't force edit mode
-
+    
     const loadData = async () => {
         setLoadingData(true);
         try {
@@ -124,12 +123,12 @@ export const Dashboard: React.FC = () => {
       <div className="pb-12">
         
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 pb-6 border-b border-primary-200">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 pb-6 border-b border-accent-100">
           <div>
-            <h1 className="text-3xl font-black text-primary-950 mb-1">
-                שלום, {user.name}
+            <h1 className="text-3xl font-black text-slate-900 mb-1">
+                שלום, <span className="text-accent-600">{user.name}</span>
             </h1>
-            <p className="text-primary-600 font-medium">
+            <p className="text-slate-500 font-medium">
                 {responses.length} משובים התקבלו
             </p>
           </div>
@@ -140,14 +139,14 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* PROMINENT EXTERNAL LINK BUTTON */}
-        <div className="mb-10 bg-gradient-to-r from-primary-800 to-primary-600 rounded-xl p-6 shadow-lg text-white flex flex-col md:flex-row items-center justify-between gap-6">
+        {/* PROMINENT EXTERNAL LINK BUTTON - WARM ACCENT */}
+        <div className="mb-10 bg-gradient-to-r from-accent-600 to-accent-500 rounded-xl p-6 shadow-glow text-white flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
                 <h3 className="text-xl font-bold mb-1 flex items-center gap-2">
                     <span className="text-2xl">⚡</span> 
                     שלב מקדים (מומלץ): שאלון סגנון תקשורת
                 </h3>
-                <p className="text-primary-100 opacity-90 max-w-xl">
+                <p className="text-accent-50 opacity-90 max-w-xl">
                     כדי למקסם את התהליך, מלא תחילה את שאלון האיפיון האישי במערכת המשלימה.
                 </p>
             </div>
@@ -157,7 +156,7 @@ export const Dashboard: React.FC = () => {
                 rel="noopener noreferrer"
                 className="shrink-0"
             >
-                <button className="bg-white text-primary-700 hover:bg-primary-50 px-8 py-3 rounded-lg font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+                <button className="bg-white text-accent-700 hover:bg-orange-50 px-8 py-3 rounded-lg font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
                     מעבר לשאלון חיצוני
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </button>
@@ -170,15 +169,15 @@ export const Dashboard: React.FC = () => {
           <div className="lg:col-span-8 space-y-8">
             
             {/* GOAL SETTING (OPTIONAL) */}
-            <div className="glass-panel border-r-4 border-r-primary-600">
+            <div className="glass-panel border-r-4 border-r-accent-500">
                 <div className="flex justify-between items-start mb-4">
                     <div>
-                        <h3 className="text-sm font-bold text-primary-500 uppercase tracking-widest">
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest">
                              מטרת הצמיחה (אופציונלי)
                         </h3>
                     </div>
                     {!isEditingGoal && (
-                        <button onClick={() => setIsEditingGoal(true)} className="text-primary-700 text-xs font-bold hover:underline">
+                        <button onClick={() => setIsEditingGoal(true)} className="text-accent-600 text-xs font-bold hover:underline">
                             {goal ? 'עריכה' : 'הוסף מטרה'}
                         </button>
                     )}
@@ -194,13 +193,13 @@ export const Dashboard: React.FC = () => {
                         />
                         <div className="flex gap-2">
                             <Button onClick={handleSaveGoal} isLoading={isSavingGoal} className="py-2">שמור</Button>
-                            <button onClick={() => { setIsEditingGoal(false); setGoal(user.userGoal || ''); }} className="text-primary-400 text-sm font-medium px-4">ביטול</button>
+                            <button onClick={() => { setIsEditingGoal(false); setGoal(user.userGoal || ''); }} className="text-slate-400 text-sm font-medium px-4">ביטול</button>
                         </div>
                     </div>
                 ) : (
-                    <div className={`${goal ? 'bg-primary-50 border-primary-100' : 'bg-slate-50 border-slate-200 border-dashed'} p-6 rounded-lg border transition-colors`}>
+                    <div className={`${goal ? 'bg-accent-50 border-accent-100' : 'bg-slate-50 border-slate-200 border-dashed'} p-6 rounded-lg border transition-colors`}>
                         {goal ? (
-                            <p className="text-xl text-primary-900 font-medium leading-relaxed">"{goal}"</p>
+                            <p className="text-xl text-slate-900 font-medium leading-relaxed">"{goal}"</p>
                         ) : (
                             <p className="text-slate-400 text-sm">לא הוגדרה מטרה. ניתן להוסיף מטרה כדי למקד את נותני המשוב, אך לא חובה.</p>
                         )}
@@ -210,12 +209,12 @@ export const Dashboard: React.FC = () => {
 
             {/* RESPONSES */}
             {responses.length === 0 ? (
-              <div className="glass-panel text-center py-12 border-2 border-dashed border-primary-200 bg-white/50">
-                <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl text-primary-600">
+              <div className="glass-panel text-center py-12 border-2 border-dashed border-accent-100 bg-white/50">
+                <div className="w-14 h-14 bg-accent-50 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl text-accent-500">
                     ✉️
                 </div>
-                <h3 className="text-lg font-bold text-primary-900 mb-2">עדיין לא התקבלו משובים</h3>
-                <p className="text-primary-500 mb-6 max-w-sm mx-auto text-sm">
+                <h3 className="text-lg font-bold text-slate-900 mb-2">עדיין לא התקבלו משובים</h3>
+                <p className="text-slate-500 mb-6 max-w-sm mx-auto text-sm">
                     זה הזמן להעתיק את הקישור ולשלוח לקולגות, מנהלים וכפיפים.
                 </p>
                 <Button onClick={copyLink} variant="primary">
@@ -224,50 +223,50 @@ export const Dashboard: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-8 mt-8">
-                <div className="flex justify-between items-center border-b border-primary-200 pb-2">
-                    <h3 className="text-lg font-bold text-primary-900">משובים</h3>
-                    <Button onClick={copyLink} variant="outline" className="px-3 py-1.5 text-xs h-auto">
+                <div className="flex justify-between items-center border-b border-accent-100 pb-2">
+                    <h3 className="text-lg font-bold text-slate-900">משובים</h3>
+                    <Button onClick={copyLink} variant="outline" className="px-3 py-1.5 text-xs h-auto border-accent-200 text-accent-700 hover:bg-accent-50 hover:border-accent-400">
                         {copied ? 'הועתק' : 'העתק קישור'}
                     </Button>
                 </div>
 
                 {Object.entries(groupedResponses).map(([rel, items]) => (
                    <div key={rel}>
-                       <h4 className="text-xs font-bold text-primary-400 uppercase mb-4 flex items-center gap-2">
-                           <span className="w-2 h-2 bg-primary-300 rounded-full"></span>
+                       <h4 className="text-xs font-bold text-slate-400 uppercase mb-4 flex items-center gap-2">
+                           <span className="w-2 h-2 bg-accent-400 rounded-full"></span>
                            {relationshipLabels[rel] || rel}
-                           <span className="text-primary-300 ml-1">({items.length})</span>
+                           <span className="text-accent-400 ml-1">({items.length})</span>
                        </h4>
                        
                        <div className="grid gap-6">
                             {items.map((resp) => (
-                                <div key={resp.id} className="glass-panel p-6 hover:border-primary-300 transition-colors">
+                                <div key={resp.id} className="glass-panel p-6 hover:border-accent-300 transition-colors">
                                     {/* 4 Questions Display */}
                                     <div className="space-y-6">
                                         
                                         {/* Row 1 */}
                                         <div className="grid md:grid-cols-2 gap-6">
-                                            <div className="bg-green-50/50 p-3 rounded-lg border border-green-100/50">
-                                                <div className="text-[10px] font-bold text-green-700 mb-1 uppercase tracking-wide">🏆 השפעה ותוצאות</div>
-                                                <p className="text-primary-900 leading-relaxed">{resp.q1_impact}</p>
+                                            <div className="bg-green-50/50 p-4 rounded-lg border border-green-100/50">
+                                                <div className="text-[10px] font-bold text-green-700 mb-2 uppercase tracking-wide">🏆 השפעה ותוצאות</div>
+                                                <p className="text-slate-800 leading-relaxed font-medium">{resp.q1_impact}</p>
                                             </div>
                                             
-                                            <div className="bg-blue-50/50 p-3 rounded-lg border border-blue-100/50">
-                                                <div className="text-[10px] font-bold text-blue-600 mb-1 uppercase tracking-wide">💎 פוטנציאל לא מנוצל</div>
-                                                <p className="text-primary-900 leading-relaxed">{resp.q2_untapped}</p>
+                                            <div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100/50">
+                                                <div className="text-[10px] font-bold text-blue-600 mb-2 uppercase tracking-wide">💎 פוטנציאל לא מנוצל</div>
+                                                <p className="text-slate-800 leading-relaxed font-medium">{resp.q2_untapped}</p>
                                             </div>
                                         </div>
 
                                         {/* Row 2 */}
                                         <div className="grid md:grid-cols-2 gap-6">
-                                            <div className="bg-red-50/50 p-3 rounded-lg border border-red-100/50">
-                                                <div className="text-[10px] font-bold text-red-600 mb-1 uppercase tracking-wide">🚧 דפוס מעכב</div>
-                                                <p className="text-primary-900 leading-relaxed">{resp.q3_pattern}</p>
+                                            <div className="bg-red-50/50 p-4 rounded-lg border border-red-100/50">
+                                                <div className="text-[10px] font-bold text-red-600 mb-2 uppercase tracking-wide">🚧 דפוס מעכב</div>
+                                                <p className="text-slate-800 leading-relaxed font-medium">{resp.q3_pattern}</p>
                                             </div>
 
-                                            <div className="bg-purple-50/50 p-3 rounded-lg border border-purple-100/50">
-                                                <div className="text-[10px] font-bold text-purple-600 mb-1 uppercase tracking-wide">🚀 כיוון עתידי</div>
-                                                <p className="text-primary-900 leading-relaxed">{resp.q4_future}</p>
+                                            <div className="bg-purple-50/50 p-4 rounded-lg border border-purple-100/50">
+                                                <div className="text-[10px] font-bold text-purple-600 mb-2 uppercase tracking-wide">🚀 כיוון עתידי</div>
+                                                <p className="text-slate-800 leading-relaxed font-medium">{resp.q4_future}</p>
                                             </div>
                                         </div>
 
@@ -284,24 +283,24 @@ export const Dashboard: React.FC = () => {
           {/* Analysis Sidebar */}
           <div className="lg:col-span-4">
             <div className="sticky top-24 space-y-6">
-                 <div className="glass-panel bg-primary-900 text-white border-none shadow-xl">
-                    <div className="mb-6 border-b border-primary-800 pb-4">
+                 <div className="glass-panel bg-gradient-to-br from-slate-900 to-slate-800 text-white border-none shadow-xl">
+                    <div className="mb-6 border-b border-slate-700 pb-4">
                         <h2 className="text-lg font-bold mb-1 flex items-center gap-2 text-white">
-                            <span className="text-primary-300">✦</span> ניתוח מנועי צמיחה
+                            <span className="text-accent-400">✦</span> ניתוח מנועי צמיחה
                         </h2>
-                        <p className="text-primary-300 text-xs">AI Powered Analysis</p>
+                        <p className="text-slate-400 text-xs">AI Powered Analysis</p>
                     </div>
 
                     {!analysis ? (
                         <div className="text-center py-6">
-                            <p className="text-primary-200 text-sm mb-6 leading-relaxed">
+                            <p className="text-slate-300 text-sm mb-6 leading-relaxed">
                                 המערכת תבצע אינטגרציה של כלל המשובים ותזהה את ה-Superpower והחסם העיקרי שלך.
                             </p>
                             <Button 
                                 onClick={handleAnalyze} 
                                 disabled={responses.length === 0}
                                 isLoading={loadingAnalysis}
-                                className="w-full bg-white text-primary-900 hover:bg-primary-50 shadow-none border-none text-sm font-bold"
+                                className="w-full bg-white text-slate-900 hover:bg-slate-50 shadow-none border-none text-sm font-bold"
                             >
                                 הפק דוח תובנות
                             </Button>
@@ -309,32 +308,32 @@ export const Dashboard: React.FC = () => {
                     ) : (
                         <div className="space-y-6 animate-in fade-in duration-500">
                             <div>
-                                <h4 className="text-[10px] font-bold text-primary-300 uppercase tracking-widest mb-2">סיכום מנהלים</h4>
-                                <p className="text-primary-50 text-sm leading-relaxed font-light">{analysis.summary}</p>
+                                <h4 className="text-[10px] font-bold text-accent-300 uppercase tracking-widest mb-2">סיכום מנהלים</h4>
+                                <p className="text-slate-200 text-sm leading-relaxed font-light">{analysis.summary}</p>
                             </div>
                             
-                            <div className="bg-white/10 p-4 rounded-lg border border-white/10">
-                                <h4 className="text-[10px] font-bold text-primary-300 uppercase tracking-widest mb-2">תמות מרכזיות</h4>
+                            <div className="bg-white/5 p-4 rounded-lg border border-white/5">
+                                <h4 className="text-[10px] font-bold text-accent-300 uppercase tracking-widest mb-2">תמות מרכזיות</h4>
                                 <ul className="space-y-2">
                                     {analysis.keyThemes.map((theme, i) => (
-                                    <li key={i} className="text-xs text-primary-100 flex items-start gap-2">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-primary-400 mt-1.5 flex-shrink-0"></span>
+                                    <li key={i} className="text-xs text-slate-300 flex items-start gap-2">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-accent-500 mt-1.5 flex-shrink-0"></span>
                                         {theme}
                                     </li>
                                     ))}
                                 </ul>
                             </div>
 
-                            <div className="bg-primary-800 p-4 rounded-lg border border-primary-700">
-                                <h4 className="text-[10px] font-bold text-primary-200 uppercase tracking-widest mb-2">המלצה למיקוד</h4>
+                            <div className="bg-accent-600 p-4 rounded-lg shadow-lg">
+                                <h4 className="text-[10px] font-bold text-accent-100 uppercase tracking-widest mb-2">המלצה למיקוד</h4>
                                 <p className="text-base font-bold italic text-white leading-relaxed">"{analysis.actionableAdvice}"</p>
                             </div>
                             
-                            <div className="space-y-3 pt-4 border-t border-primary-800">
-                                <Button onClick={handleExport} className="w-full bg-transparent border border-primary-700 text-primary-300 hover:bg-white/5 hover:text-white hover:border-primary-500 text-xs">
+                            <div className="space-y-3 pt-4 border-t border-slate-700">
+                                <Button onClick={handleExport} className="w-full bg-transparent border border-slate-600 text-slate-300 hover:bg-white/5 hover:text-white hover:border-slate-400 text-xs">
                                     הורד דוח מלא (Word)
                                 </Button>
-                                <button onClick={handleAnalyze} className="text-[10px] text-primary-500 hover:text-white w-full uppercase tracking-widest transition-colors">
+                                <button onClick={handleAnalyze} className="text-[10px] text-slate-500 hover:text-white w-full uppercase tracking-widest transition-colors">
                                 רענן נתונים
                                 </button>
                             </div>

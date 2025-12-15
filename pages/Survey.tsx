@@ -62,7 +62,7 @@ export const Survey: React.FC = () => {
       return (
           <Layout>
               <div className="flex justify-center items-center h-[50vh]">
-                 <div className="w-8 h-8 border-4 border-slate-200 border-t-primary-600 rounded-full animate-spin"></div>
+                 <div className="w-8 h-8 border-4 border-slate-200 border-t-accent-500 rounded-full animate-spin"></div>
               </div>
           </Layout>
       );
@@ -106,25 +106,25 @@ export const Survey: React.FC = () => {
       <div className="max-w-3xl mx-auto w-full">
         
         <div className="text-center mb-10">
-            <span className="text-xs font-bold text-primary-600 uppercase tracking-widest bg-primary-50 px-3 py-1 rounded-full">
+            <span className="text-xs font-bold text-accent-600 uppercase tracking-widest bg-accent-50 px-3 py-1 rounded-full">
                 משוב 360 אנונימי
             </span>
             <h1 className="text-4xl font-black text-slate-900 mt-4 mb-2">
-               עבור {userName}
+               עבור <span className="text-accent-600">{userName}</span>
             </h1>
             <p className="text-slate-500 font-medium">
                 דעתך הכנה חשובה לצמיחה האישית.
             </p>
         </div>
 
-        <div className="glass-panel p-8 md:p-10 border-t-4 border-t-primary-600 shadow-xl shadow-primary-500/5">
+        <div className="glass-panel p-8 md:p-10 border-t-4 border-t-accent-600 shadow-xl shadow-primary-500/5">
             
             <form onSubmit={handleSubmit} className="space-y-10">
                 
                 {/* Introduction - Goal Display (Optional) */}
                 {userGoal && (
-                    <div className="bg-slate-50 p-6 rounded-2xl text-center border border-slate-200 relative mb-8">
-                         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 py-1 rounded-full text-[10px] font-bold text-slate-400 uppercase tracking-widest border border-slate-100 shadow-sm">
+                    <div className="bg-[#fffbf0] p-6 rounded-2xl text-center border border-accent-100 relative mb-8">
+                         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 py-1 rounded-full text-[10px] font-bold text-accent-400 uppercase tracking-widest border border-accent-100 shadow-sm">
                              המטרה ש-{userName} שם/ה למיקוד
                          </div>
                          <p className="text-xl font-medium text-slate-900 leading-relaxed mt-2">
@@ -155,7 +155,7 @@ export const Survey: React.FC = () => {
                 {/* Q1 - Impact */}
                 <div className="space-y-3">
                     <label className="block text-lg font-bold text-slate-800 leading-relaxed">
-                        1. מהם <span className="text-primary-600 bg-primary-50 px-1 rounded">הדברים שאני עושה הכי טוב</span> (מבחינת השפעה ותוצאות), וכיצד זה בא לידי ביטוי?
+                        1. מהם <span className="text-accent-700 bg-accent-50 px-1 rounded">הדברים שאני עושה הכי טוב</span> (מבחינת השפעה ותוצאות), וכיצד זה בא לידי ביטוי?
                     </label>
                     <textarea
                         required
@@ -170,7 +170,7 @@ export const Survey: React.FC = () => {
                 {/* Q2 - Untapped Potential */}
                 <div className="space-y-3">
                     <label className="block text-lg font-bold text-slate-800 leading-relaxed">
-                        2. איזו <span className="text-primary-600 bg-primary-50 px-1 rounded">מיומנות, יכולת או תכונה שלי לא מנוצלת מספיק</span> ויש לה פוטנציאל להשפיע לטובה?
+                        2. איזו <span className="text-accent-700 bg-accent-50 px-1 rounded">מיומנות, יכולת או תכונה שלי לא מנוצלת מספיק</span> ויש לה פוטנציאל להשפיע לטובה?
                     </label>
                     <textarea
                         required
@@ -185,7 +185,7 @@ export const Survey: React.FC = () => {
                 {/* Q3 - Pattern/Blindspot */}
                 <div className="space-y-3">
                     <label className="block text-lg font-bold text-slate-800 leading-relaxed">
-                        3. מהו <span className="text-primary-600 bg-primary-50 px-1 rounded">הדפוס ההתנהגותי המרכזי שמעכב אותי</span> ושינוי שלו ישפר משמעותית את האפקטיביות שלי?
+                        3. מהו <span className="text-accent-700 bg-accent-50 px-1 rounded">הדפוס ההתנהגותי המרכזי שמעכב אותי</span> ושינוי שלו ישפר משמעותית את האפקטיביות שלי?
                     </label>
                     <p className="text-sm text-slate-400 -mt-2 mb-2 italic">(אנא ספק/י דוגמה ממוקדת)</p>
                     <textarea
@@ -201,7 +201,7 @@ export const Survey: React.FC = () => {
                 {/* Q4 - Future/Career */}
                 <div className="space-y-3">
                     <label className="block text-lg font-bold text-slate-800 leading-relaxed">
-                        4. באיזה <span className="text-primary-600 bg-primary-50 px-1 rounded">תפקיד או פרויקט עתידי</span> היית רואה אותי מממש/ת את הפוטנציאל שלי בצורה הטובה ביותר?
+                        4. באיזה <span className="text-accent-700 bg-accent-50 px-1 rounded">תפקיד או פרויקט עתידי</span> היית רואה אותי מממש/ת את הפוטנציאל שלי בצורה הטובה ביותר?
                     </label>
                     <textarea
                         required
@@ -214,7 +214,7 @@ export const Survey: React.FC = () => {
                 </div>
 
                 <div className="pt-6">
-                    <Button type="submit" variant="primary" isLoading={isSending} className="w-full text-lg py-4 shadow-xl shadow-primary-500/20">
+                    <Button type="submit" variant="primary" isLoading={isSending} className="w-full text-lg py-4 shadow-xl shadow-primary-500/20 bg-gradient-to-r from-slate-800 to-slate-900">
                         שלח משוב
                     </Button>
                     <div className="mt-4 text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest flex items-center justify-center gap-2">
