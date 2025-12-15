@@ -18,21 +18,22 @@ export const Landing: React.FC = () => {
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   
-  const [offlineMode, setOfflineMode] = useState(false);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     storageService.init();
-    const isConnected = storageService.isCloudEnabled();
-    if (!isConnected) setOfflineMode(true);
   }, []);
 
   const handleGuestLogin = async () => {
       setIsLoading(true);
-      await storageService.loginAsGuest();
-      setIsLoading(false);
-      navigate('/dashboard');
+      try {
+        await storageService.loginAsGuest();
+        navigate('/dashboard');
+      } catch (e) {
+        setError("שגיאה בכניסת אורח. ודא חיבור לרשת.");
+      } finally {
+        setIsLoading(false);
+      }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,11 +43,9 @@ export const Landing: React.FC = () => {
     setIsLoading(true);
 
     try {
-      if (offlineMode && !ALLOW_GUEST_MODE) throw new Error("המערכת באופליין וגישת אורחים חסומה.");
-      if (offlineMode) throw new Error("המערכת במצב אופליין. ניתן להיכנס כאורח בלבד.");
-
       if (view === 'register') {
         if (!name || !email || !password || !registrationCode) throw new Error("נא למלא את כל השדות");
+        
         await storageService.registerUser(name, email, password, registrationCode);
         navigate('/dashboard');
       } 
@@ -63,8 +62,11 @@ export const Landing: React.FC = () => {
       }
     } catch (err: any) {
       console.error("Submit Error:", err);
-      if (err.message.includes("auth")) setError("פרטים שגויים.");
-      else setError(err.message || 'אירעה שגיאה.');
+      if (err.message.includes("permission-denied")) {
+          setError("שגיאת הרשאות שרת (Firestore Rules).");
+      } else {
+          setError(err.message || 'אירעה שגיאה.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -74,15 +76,7 @@ export const Landing: React.FC = () => {
     <Layout>
       <div className="flex flex-col items-center justify-center py-12 relative">
         
-        {offlineMode && (
-             <div className="mb-6">
-                 <div className="bg-slate-800 text-white px-3 py-1 rounded text-xs font-medium">
-                     OFFLINE DEMO MODE
-                 </div>
-             </div>
-        )}
-
-        {/* Updated Hero Section - Less "Toy", More "Tech" */}
+        {/* Hero Section */}
         <div className="text-center mb-10 space-y-2">
             <h1 className="text-5xl font-bold text-slate-900 tracking-tight">
                 Feedback<span className="font-light text-slate-500">360</span>
@@ -100,7 +94,7 @@ export const Landing: React.FC = () => {
         </div>
 
         {/* Login/Register Card */}
-        <div className="glass-panel w-full max-w-[380px] shadow-card border-t-2 border-t-primary-800">
+        <div className="glass-panel w-full max-w-[380px] shadow-card border-t-2 border-t-primary-800 relative z-10">
             
             <div className="mb-6 text-center border-b border-slate-100 pb-4">
                 <h2 className="text-lg font-semibold text-slate-800">
@@ -117,101 +111,112 @@ export const Landing: React.FC = () => {
                         disabled={isLoading}
                         className="w-full text-xs font-bold text-slate-500 hover:text-primary-800 border border-dashed border-slate-300 hover:border-primary-800 bg-slate-50 py-3 rounded transition-all"
                     >
-                        {offlineMode ? 'כניסה למצב דמו' : 'כניסה לאורחים'}
+                        כניסה לאורחים (דמו)
                     </button>
                 )}
 
-                {!offlineMode && (
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {view === 'register' && (
-                            <div>
-                                <label className="block text-xs font-medium text-slate-500 mb-1">שם מלא</label>
-                                <input
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                className="input-field"
-                                placeholder="ישראל ישראלי"
-                                />
-                            </div>
-                        )}
-
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    {view === 'register' && (
                         <div>
-                            <label className="block text-xs font-medium text-slate-500 mb-1">כתובת אימייל</label>
+                            <label className="block text-xs font-medium text-slate-500 mb-1">שם מלא</label>
                             <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="input-field text-left"
-                            dir="ltr"
-                            placeholder="name@company.com"
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="input-field"
+                            placeholder="ישראל ישראלי"
                             />
                         </div>
+                    )}
 
-                        {(view === 'register' || view === 'reset') && (
-                            <div>
-                                <label className="block text-xs font-medium text-slate-500 mb-1">קוד ארגוני</label>
-                                <input
-                                type="text"
-                                value={registrationCode}
-                                onChange={(e) => setRegistrationCode(e.target.value)}
-                                className="input-field font-mono text-center tracking-widest bg-slate-50"
-                                placeholder="CODE"
-                                dir="ltr"
-                                />
-                            </div>
-                        )}
+                    <div>
+                        <label className="block text-xs font-medium text-slate-500 mb-1">כתובת אימייל</label>
+                        <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="input-field text-left"
+                        dir="ltr"
+                        placeholder="name@company.com"
+                        />
+                    </div>
 
-                        <div className={view === 'register' || view === 'reset' ? 'mt-4' : ''}>
-                             <label className="block text-xs font-medium text-slate-500 mb-1">
-                                 {view === 'reset' ? 'סיסמה חדשה' : 'סיסמה'}
-                             </label>
+                    {(view === 'register' || view === 'reset') && (
+                        <div>
+                            <label className="block text-xs font-medium text-slate-500 mb-1">קוד ארגוני</label>
                             <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="input-field text-left"
+                            type="text"
+                            value={registrationCode}
+                            onChange={(e) => setRegistrationCode(e.target.value)}
+                            className="input-field font-mono text-center tracking-widest bg-slate-50"
+                            placeholder="CODE"
                             dir="ltr"
-                            placeholder="••••••••"
                             />
                         </div>
+                    )}
 
-                        {error && <p className="text-red-600 text-xs bg-red-50 p-2 rounded text-center">{error}</p>}
-                        {successMsg && <p className="text-green-600 text-xs bg-green-50 p-2 rounded text-center">{successMsg}</p>}
+                    <div className={view === 'register' || view === 'reset' ? 'mt-4' : ''}>
+                            <label className="block text-xs font-medium text-slate-500 mb-1">
+                                {view === 'reset' ? 'סיסמה חדשה' : 'סיסמה'}
+                            </label>
+                        <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="input-field text-left"
+                        dir="ltr"
+                        placeholder="••••••••"
+                        />
+                    </div>
 
-                        <div className="pt-2">
-                            <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>
-                                {view === 'register' ? 'הרשמה' : view === 'reset' ? 'אפס סיסמה' : 'התחברות'}
-                            </Button>
+                    {error && (
+                        <div className="bg-red-50 p-2 rounded border border-red-100 animate-pulse">
+                             <p className="text-red-600 text-xs text-center font-bold">{error}</p>
+                             {error.includes("הרשאה") && (
+                                 <p className="text-[10px] text-red-500 text-center mt-1">
+                                     חשוב: יש לשנות את חוקי Firestore ל-allow read, write: if true
+                                 </p>
+                             )}
                         </div>
-                    </form>
-                )}
+                    )}
+                    {successMsg && <p className="text-green-600 text-xs bg-green-50 p-2 rounded text-center">{successMsg}</p>}
+
+                    <div className="pt-2">
+                        <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>
+                            {view === 'register' ? 'הרשמה' : view === 'reset' ? 'אפס סיסמה' : 'התחברות'}
+                        </Button>
+                    </div>
+                </form>
             </div>
 
-            {!offlineMode && (
-                <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col items-center gap-2 text-xs">
-                    {view === 'login' && (
-                        <>
-                            <button onClick={() => setView('reset')} className="text-slate-400 hover:text-primary-800 transition-colors">
-                                שכחתי סיסמה
-                            </button>
-                            <div className="text-slate-400">
-                                לא רשום? <button onClick={() => setView('register')} className="text-primary-800 font-semibold hover:underline">פתח חשבון</button>
-                            </div>
-                        </>
-                    )}
-                    {(view === 'register' || view === 'reset') && (
-                        <button onClick={() => setView('login')} className="text-slate-500 hover:text-primary-800 font-medium">
-                            חזרה למסך כניסה
+            <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col items-center gap-2 text-xs">
+                {view === 'login' && (
+                    <>
+                        <button onClick={() => setView('reset')} className="text-slate-400 hover:text-primary-800 transition-colors">
+                            שכחתי סיסמה
                         </button>
-                    )}
-                </div>
-            )}
+                        <div className="text-slate-400">
+                            לא רשום? <button onClick={() => setView('register')} className="text-primary-800 font-semibold hover:underline">פתח חשבון</button>
+                        </div>
+                    </>
+                )}
+                {(view === 'register' || view === 'reset') && (
+                    <button onClick={() => setView('login')} className="text-slate-500 hover:text-primary-800 font-medium">
+                        חזרה למסך כניסה
+                    </button>
+                )}
+            </div>
         </div>
         
-        <div className="mt-12 opacity-40 hover:opacity-100 transition-opacity">
-            <Link to="/admin" className="text-[10px] text-slate-400 font-medium uppercase tracking-widest hover:text-slate-800">Admin</Link>
+        {/* Prominent Admin Link */}
+        <div className="mt-8">
+            <Link to="/admin">
+                <button className="text-xs font-bold text-slate-300 hover:text-primary-600 border border-transparent hover:border-primary-200 px-4 py-2 rounded-full transition-all">
+                    🔒 כניסת מנהל מערכת (Admin)
+                </button>
+            </Link>
         </div>
+
       </div>
     </Layout>
   );

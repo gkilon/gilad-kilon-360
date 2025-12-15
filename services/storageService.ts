@@ -2,7 +2,7 @@ import { User, FeedbackResponse, FirebaseConfig, RelationshipType } from '../typ
 import { firebaseService } from './firebaseService';
 
 // =================================================================
-// הגדרות FIREBASE (ממשתני סביבה בלבד)
+// הגדרות FIREBASE (ממשתני סביבה)
 // =================================================================
 
 const FIREBASE_CONFIG: FirebaseConfig = {
@@ -26,18 +26,16 @@ export const storageService = {
   init: () => {
     if (firebaseService.isInitialized()) return;
     
-    // Debug Log - helps diagnose connection issues
     if (FIREBASE_CONFIG.apiKey) {
-        console.log("Initializing Storage Service with Key: " + FIREBASE_CONFIG.apiKey.substring(0, 4) + "...");
+        console.log("Initializing Cloud Storage...");
         const success = firebaseService.init(FIREBASE_CONFIG);
-        if (!success) console.error("Failed to connect to Firebase Cloud.");
+        if (!success) console.error("Critical: Failed to connect to Firebase.");
     } else {
-        console.warn("Storage Init: No API Key found. App will run in Offline/Demo mode.");
+        console.warn("Missing Firebase Configuration Keys.");
     }
   },
 
   isCloudEnabled: () => firebaseService.isInitialized(),
-  testConnection: async () => firebaseService.testConnection(),
 
   getCurrentUser: (): User | null => {
     try {
@@ -50,65 +48,50 @@ export const storageService = {
 
   // ADMIN
   updateRegistrationCode: async (newCode: string): Promise<void> => {
-      if (storageService.isCloudEnabled()) {
-          await firebaseService.updateRegistrationCode(newCode);
-      } else {
-          throw new Error("אין חיבור לענן. לא ניתן לעדכן קוד.");
-      }
+      await firebaseService.updateRegistrationCode(newCode);
   },
 
-  // LOGIN (EMAIL)
+  // LOGIN
   login: async (email: string, password?: string): Promise<User> => {
-    // Must be cloud based
-    if (!storageService.isCloudEnabled()) throw new Error("מצב אופליין: לא ניתן להתחבר עם חשבון קיים.");
+    if (!storageService.isCloudEnabled()) throw new Error("שגיאת חיבור לשרת.");
 
     const user = await firebaseService.findUserByEmail(email);
+    
     if (user && user.password === password) {
-            localStorage.setItem(USER_KEY, JSON.stringify(user));
-            return user;
+        localStorage.setItem(USER_KEY, JSON.stringify(user));
+        return user;
     }
-
     throw new Error("משתמש לא נמצא או סיסמה שגויה.");
   },
 
-  // CLOUD GUEST LOGIN (Anonymous Session that SAVES to DB)
+  // GUEST LOGIN (REAL DB ENTRY)
   loginAsGuest: async (): Promise<User> => {
-     // 1. Generate a UNIQUE real ID
      const guestId = generateId();
-     
-     // 2. Create User Object
      const guestUser: User = {
           id: guestId,
           name: 'אורח מערכת', 
-          email: `guest_${guestId}@obt.system`, // Fake email identifier
+          email: `guest_${guestId}@obt.system`,
           createdAt: Date.now()
       };
 
-      // 3. Save to Cloud DB so links work for others
-      if (storageService.isCloudEnabled()) {
-           try {
-            await firebaseService.createUser(guestUser);
-           } catch (e) {
-             console.error("Cloud creation failed", e);
-             throw new Error("שגיאה ביצירת משתמש ענן. אנא בדוק חיבור אינטרנט.");
-           }
-      } else {
-           console.warn("Running in Offline Mode: Guest user created locally only.");
-      }
+      // Must save to cloud to allow linking later
+      await firebaseService.createUser(guestUser);
       
       localStorage.setItem(USER_KEY, JSON.stringify(guestUser));
       return guestUser;
   },
 
-  // REGISTER (With Access Code)
+  // REGISTER (REAL DB ENTRY)
   registerUser: async (name: string, email: string, password?: string, registrationCode?: string): Promise<User> => {
-    if (!storageService.isCloudEnabled()) throw new Error("מצב אופליין: לא ניתן להירשם.");
+    if (!storageService.isCloudEnabled()) throw new Error("שגיאת התחברות לשרת הנתונים.");
     
     if (!registrationCode) throw new Error("נדרש קוד רישום.");
     
+    // Validate Code against Cloud
     const cloudValid = await firebaseService.validateRegistrationCode(registrationCode);
     if (!cloudValid) throw new Error("קוד רישום שגוי.");
     
+    // Check if exists
     const existing = await firebaseService.findUserByEmail(email);
     if (existing) throw new Error("המייל כבר קיים במערכת.");
 
@@ -120,31 +103,33 @@ export const storageService = {
       createdAt: Date.now(),
     };
 
-    await firebaseService.createUser(newUser);
+    // SAVE TO CLOUD (Strict)
+    try {
+        await firebaseService.createUser(newUser);
+    } catch (e: any) {
+        console.error("Cloud Save Error:", e);
+        if (e.message.includes("permission-denied") || e.message.includes("הרשאה")) {
+            throw new Error("שגיאת הרשאות בשרת (Firestore Rules). נא לעדכן את חוקי האבטחה בקונסולת Firebase.");
+        }
+        throw new Error("שגיאה בשמירת הנתונים בענן.");
+    }
     
     localStorage.setItem(USER_KEY, JSON.stringify(newUser));
     return newUser;
   },
 
-  // UPDATE USER GOAL
   updateUserGoal: async (userId: string, goal: string): Promise<void> => {
-      // 1. Update Local Storage
+      // Optimistic update
       const currentUser = storageService.getCurrentUser();
       if (currentUser && currentUser.id === userId) {
           const updatedUser = { ...currentUser, userGoal: goal };
           localStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
       }
-
-      // 2. Update Cloud
-      if (storageService.isCloudEnabled()) {
-          await firebaseService.updateUserGoal(userId, goal);
-      }
+      // Real update
+      await firebaseService.updateUserGoal(userId, goal);
   },
 
-  // RESET PASSWORD
   resetPassword: async (email: string, registrationCode: string, newPassword: string): Promise<void> => {
-    if (!storageService.isCloudEnabled()) throw new Error("אין חיבור לענן.");
-    
     const isValid = await firebaseService.validateRegistrationCode(registrationCode);
     if (!isValid) throw new Error("קוד שגוי.");
     const user = await firebaseService.findUserByEmail(email);
@@ -159,8 +144,7 @@ export const storageService = {
     localStorage.removeItem(USER_KEY);
   },
 
-  // DATA OPERATIONS
-
+  // RESPONSE (REAL DB ENTRY)
   addResponse: async (surveyId: string, relationship: RelationshipType, strengths: string, improvements: string, examples: string) => {
     const newResponse: FeedbackResponse = {
       id: generateId(),
@@ -172,31 +156,25 @@ export const storageService = {
       timestamp: Date.now(),
     };
 
-    if (storageService.isCloudEnabled()) {
-      await firebaseService.addResponse(newResponse);
-    } else {
-        throw new Error("שגיאה: במצב אופליין לא ניתן לשמור תשובות.");
+    try {
+        await firebaseService.addResponse(newResponse);
+    } catch (e: any) {
+        if (e.message.includes("permission-denied")) {
+             throw new Error("שגיאת הרשאות בשרת: לא ניתן לשמור את המשוב. בדוק את ה-Firestore Rules.");
+        }
+        throw e;
     }
   },
 
   getResponsesForUser: async (userId: string): Promise<FeedbackResponse[]> => {
-    if (storageService.isCloudEnabled()) {
-       try {
-        return await firebaseService.getResponsesForUser(userId);
-       } catch (e) { 
-           console.error("Cloud fetch failed", e);
-           return [];
-       }
-    }
-    return [];
+     return await firebaseService.getResponsesForUser(userId);
   },
 
   getUserDataById: async (userId: string): Promise<{name: string, userGoal?: string}> => {
-    if (storageService.isCloudEnabled()) {
-        const user = await firebaseService.getUser(userId);
-        if (user) return { name: user.name, userGoal: user.userGoal };
-    }
-    // Only fallback to session if it matches
+    const user = await firebaseService.getUser(userId);
+    if (user) return { name: user.name, userGoal: user.userGoal };
+    
+    // Fallback only for current session if cloud fail/delay
     const currentUser = storageService.getCurrentUser();
     if (currentUser && currentUser.id === userId) return { name: currentUser.name, userGoal: currentUser.userGoal };
     
