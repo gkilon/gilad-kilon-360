@@ -139,14 +139,14 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* PROMINENT EXTERNAL LINK BUTTON - WARM ACCENT */}
-        <div className="mb-10 bg-gradient-to-r from-accent-600 to-accent-500 rounded-xl p-6 shadow-glow text-white flex flex-col md:flex-row items-center justify-between gap-6">
+        {/* EXTERNAL LINK BUTTON - CLEAN OUTLINE STYLE */}
+        <div className="mb-10 bg-white border-2 border-accent-200 rounded-xl p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-                <h3 className="text-xl font-bold mb-1 flex items-center gap-2">
+                <h3 className="text-xl font-bold mb-1 flex items-center gap-2 text-accent-700">
                     <span className="text-2xl">⚡</span> 
                     שלב מקדים (מומלץ): שאלון סגנון תקשורת
                 </h3>
-                <p className="text-accent-50 opacity-90 max-w-xl">
+                <p className="text-slate-500 max-w-xl">
                     כדי למקסם את התהליך, מלא תחילה את שאלון האיפיון האישי במערכת המשלימה.
                 </p>
             </div>
@@ -156,7 +156,7 @@ export const Dashboard: React.FC = () => {
                 rel="noopener noreferrer"
                 className="shrink-0"
             >
-                <button className="bg-white text-accent-700 hover:bg-orange-50 px-8 py-3 rounded-lg font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+                <button className="bg-accent-600 text-white hover:bg-accent-700 px-8 py-3 rounded-lg font-bold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
                     מעבר לשאלון חיצוני
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                 </button>
