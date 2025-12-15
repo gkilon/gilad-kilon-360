@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Feedback 360 | Professional Growth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Heebo"', 'sans-serif'],
+            },
+            colors: {
+              // Deep Royal Blue Palette (Replacing Black/Slate)
+              primary: {
+                50: '#eff6ff',
+                100: '#dbeafe',
+                200: '#bfdbfe',
+                300: '#93c5fd',
+                400: '#60a5fa',
+                500: '#3b82f6',
+                600: '#2563eb',
+                700: '#1d4ed8',
+                800: '#1e40af', // Main Action Blue
+                900: '#1e3a8a', // Deep Text Blue
+                950: '#172554', // Darkest Blue (instead of black)
+              },
+              // Neutral (Cool Grey)
+              neutral: {
+                50: '#f8fafc',
+                100: '#f1f5f9',
+                200: '#e2e8f0',
+                300: '#cbd5e1',
+                400: '#94a3b8',
+                500: '#64748b',
+                600: '#475569',
+                700: '#334155',
+                800: '#1e293b',
+                900: '#0f172a',
+              }
+            },
+            boxShadow: {
+              'soft': '0 4px 20px -2px rgba(30, 58, 138, 0.08)',
+              'glow': '0 0 15px rgba(59, 130, 246, 0.3)', 
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #f0f7ff; /* Very light blue tint background */
+        color: #1e3a8a; /* Primary-900 (Deep Blue) instead of Black */
+        font-family: 'Heebo', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        color: #172554; /* Primary-950 - Darkest Blue */
+      }
+      
+      .text-body {
+        color: #1e40af; /* Primary-800 */
+      }
+
+      /* Professional Card */
+      .glass-panel {
+        background-color: #ffffff;
+        border: 1px solid #dbeafe; /* Primary-100 */
+        border-radius: 0.75rem; 
+        padding: 2rem;
+        box-shadow: 0 4px 12px -2px rgba(30, 64, 175, 0.05); /* Blue-ish shadow */
+      }
+      
+      /* Inputs */
+      .input-field {
+        width: 100%;
+        background-color: #ffffff;
+        border: 1px solid #bfdbfe; /* Primary-200 */
+        border-radius: 0.5rem;
+        padding: 0.75rem 1rem;
+        color: #1e3a8a;
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        outline: none;
+      }
+      
+      .input-field:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+      
+      .input-field::placeholder {
+        color: #93c5fd; 
+      }
+
+      select.input-field {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%231e40af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: left 0.75rem center;
+        background-repeat: no-repeat;
+        background-size: 1.25em 1.25em;
+        padding-left: 2.5rem;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.6",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.0",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1",
+    "vite": "https://aistudiocdn.com/vite@^7.2.4",
+    "docx": "https://jspm.dev/docx",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
