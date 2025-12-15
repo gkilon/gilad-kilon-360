@@ -42,7 +42,7 @@ export const Dashboard: React.FC = () => {
     }
     setUser(currentUser);
     setGoal(currentUser.userGoal || '');
-    if (!currentUser.userGoal) setIsEditingGoal(true);
+    // Goal is now optional, so we don't force edit mode
 
     const loadData = async () => {
         setLoadingData(true);
@@ -90,12 +90,8 @@ export const Dashboard: React.FC = () => {
 
   const copyLink = () => {
     if (!user) return;
-    if (!user.userGoal) {
-        alert("יש להגדיר מטרה לפני שיתוף.");
-        setIsEditingGoal(true);
-        return;
-    }
-
+    
+    // Logic Changed: Goal is optional for copying link
     const baseUrl = window.location.href.split('#')[0];
     const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
     const url = `${cleanBase}/#/survey/${user.id}`;
@@ -149,10 +145,10 @@ export const Dashboard: React.FC = () => {
             <div>
                 <h3 className="text-xl font-bold mb-1 flex items-center gap-2">
                     <span className="text-2xl">⚡</span> 
-                    שלב מקדים: שאלון סגנון תקשורת
+                    שלב מקדים (מומלץ): שאלון סגנון תקשורת
                 </h3>
                 <p className="text-primary-100 opacity-90 max-w-xl">
-                    כדי למקסם את התהליך, מלא תחילה את שאלון האיפיון האישי במערכת המשלימה. התובנות משם יעזרו לך לדייק את מטרת הצמיחה שלך כאן.
+                    כדי למקסם את התהליך, מלא תחילה את שאלון האיפיון האישי במערכת המשלימה.
                 </p>
             </div>
             <a 
@@ -173,17 +169,17 @@ export const Dashboard: React.FC = () => {
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-8">
             
-            {/* GOAL SETTING */}
+            {/* GOAL SETTING (OPTIONAL) */}
             <div className="glass-panel border-r-4 border-r-primary-600">
                 <div className="flex justify-between items-start mb-4">
                     <div>
                         <h3 className="text-sm font-bold text-primary-500 uppercase tracking-widest">
-                             מטרת הצמיחה
+                             מטרת הצמיחה (אופציונלי)
                         </h3>
                     </div>
                     {!isEditingGoal && (
                         <button onClick={() => setIsEditingGoal(true)} className="text-primary-700 text-xs font-bold hover:underline">
-                            עריכה
+                            {goal ? 'עריכה' : 'הוסף מטרה'}
                         </button>
                     )}
                 </div>
@@ -202,10 +198,12 @@ export const Dashboard: React.FC = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="bg-primary-50 p-6 rounded-lg border border-primary-100">
-                        <p className="text-xl text-primary-900 font-medium leading-relaxed">
-                            "{goal}"
-                        </p>
+                    <div className={`${goal ? 'bg-primary-50 border-primary-100' : 'bg-slate-50 border-slate-200 border-dashed'} p-6 rounded-lg border transition-colors`}>
+                        {goal ? (
+                            <p className="text-xl text-primary-900 font-medium leading-relaxed">"{goal}"</p>
+                        ) : (
+                            <p className="text-slate-400 text-sm">לא הוגדרה מטרה. ניתן להוסיף מטרה כדי למקד את נותני המשוב, אך לא חובה.</p>
+                        )}
                     </div>
                 )}
             </div>
@@ -218,9 +216,9 @@ export const Dashboard: React.FC = () => {
                 </div>
                 <h3 className="text-lg font-bold text-primary-900 mb-2">עדיין לא התקבלו משובים</h3>
                 <p className="text-primary-500 mb-6 max-w-sm mx-auto text-sm">
-                    הגדרת מטרה? מעולה. כעת העתק את הקישור ושלח אותו לקולגות.
+                    זה הזמן להעתיק את הקישור ולשלוח לקולגות, מנהלים וכפיפים.
                 </p>
-                <Button onClick={copyLink} variant="primary" disabled={!user.userGoal} className={!user.userGoal ? 'opacity-50 grayscale' : ''}>
+                <Button onClick={copyLink} variant="primary">
                     {copied ? 'הקישור הועתק' : 'העתק קישור למשוב'}
                 </Button>
               </div>
@@ -241,24 +239,38 @@ export const Dashboard: React.FC = () => {
                            <span className="text-primary-300 ml-1">({items.length})</span>
                        </h4>
                        
-                       <div className="grid gap-4">
+                       <div className="grid gap-6">
                             {items.map((resp) => (
                                 <div key={resp.id} className="glass-panel p-6 hover:border-primary-300 transition-colors">
-                                    <div className="grid md:grid-cols-2 gap-8">
-                                        <div>
-                                            <div className="text-[10px] font-bold text-primary-600 mb-2 uppercase tracking-wide">חוזקות</div>
-                                            <p className="text-primary-900 text-lg leading-relaxed">{resp.q1_strengths}</p>
-                                        </div>
-                                        <div className="md:border-r md:border-primary-100 md:pr-8">
-                                            <div className="text-[10px] font-bold text-primary-400 mb-2 uppercase tracking-wide">מה לעשות אחרת</div>
-                                            <p className="text-primary-700 text-base leading-relaxed">"{resp.q2_improvement}"</p>
-                                        </div>
-                                        {resp.q3_examples && (
-                                            <div className="col-span-2 pt-4 border-t border-slate-100 mt-2">
-                                                 <div className="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-wide">דוגמאות</div>
-                                                 <p className="text-slate-500 text-sm italic">{resp.q3_examples}</p>
+                                    {/* 4 Questions Display */}
+                                    <div className="space-y-6">
+                                        
+                                        {/* Row 1 */}
+                                        <div className="grid md:grid-cols-2 gap-6">
+                                            <div className="bg-green-50/50 p-3 rounded-lg border border-green-100/50">
+                                                <div className="text-[10px] font-bold text-green-700 mb-1 uppercase tracking-wide">🏆 השפעה ותוצאות</div>
+                                                <p className="text-primary-900 leading-relaxed">{resp.q1_impact}</p>
                                             </div>
-                                        )}
+                                            
+                                            <div className="bg-blue-50/50 p-3 rounded-lg border border-blue-100/50">
+                                                <div className="text-[10px] font-bold text-blue-600 mb-1 uppercase tracking-wide">💎 פוטנציאל לא מנוצל</div>
+                                                <p className="text-primary-900 leading-relaxed">{resp.q2_untapped}</p>
+                                            </div>
+                                        </div>
+
+                                        {/* Row 2 */}
+                                        <div className="grid md:grid-cols-2 gap-6">
+                                            <div className="bg-red-50/50 p-3 rounded-lg border border-red-100/50">
+                                                <div className="text-[10px] font-bold text-red-600 mb-1 uppercase tracking-wide">🚧 דפוס מעכב</div>
+                                                <p className="text-primary-900 leading-relaxed">{resp.q3_pattern}</p>
+                                            </div>
+
+                                            <div className="bg-purple-50/50 p-3 rounded-lg border border-purple-100/50">
+                                                <div className="text-[10px] font-bold text-purple-600 mb-1 uppercase tracking-wide">🚀 כיוון עתידי</div>
+                                                <p className="text-primary-900 leading-relaxed">{resp.q4_future}</p>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             ))}
@@ -283,7 +295,7 @@ export const Dashboard: React.FC = () => {
                     {!analysis ? (
                         <div className="text-center py-6">
                             <p className="text-primary-200 text-sm mb-6 leading-relaxed">
-                                המערכת תבצע אינטגרציה של כלל המשובים ותזהה את "הדבר האחד" למיקוד.
+                                המערכת תבצע אינטגרציה של כלל המשובים ותזהה את ה-Superpower והחסם העיקרי שלך.
                             </p>
                             <Button 
                                 onClick={handleAnalyze} 

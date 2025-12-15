@@ -43,7 +43,7 @@ export const exportToWord = async (
             }),
             new Paragraph({
                 children: [
-                    new TextRun({ text: "הדבר האחד לפריצת דרך:", bold: true, size: 28, rightToLeft: true }),
+                    new TextRun({ text: "המלצה למיקוד:", bold: true, size: 28, rightToLeft: true }),
                 ],
                 bidirectional: true,
                 spacing: { after: 100 }
@@ -102,22 +102,29 @@ export const exportToWord = async (
             }),
             new Paragraph({
                 children: [
-                    new TextRun({ text: "1. חוזקות: ", bold: true }),
-                    new TextRun({ text: res.q1_strengths })
+                    new TextRun({ text: "1. השפעה ותוצאות: ", bold: true }),
+                    new TextRun({ text: res.q1_impact })
                 ],
                 bidirectional: true,
             }),
             new Paragraph({
                 children: [
-                    new TextRun({ text: "2. מה לעשות אחרת: ", bold: true }),
-                    new TextRun({ text: res.q2_improvement })
+                    new TextRun({ text: "2. פוטנציאל לא מנוצל: ", bold: true }),
+                    new TextRun({ text: res.q2_untapped })
                 ],
                 bidirectional: true,
             }),
              new Paragraph({
                 children: [
-                    new TextRun({ text: "3. דוגמאות: ", bold: true }),
-                    new TextRun({ text: res.q3_examples })
+                    new TextRun({ text: "3. דפוס מעכב: ", bold: true }),
+                    new TextRun({ text: res.q3_pattern })
+                ],
+                bidirectional: true,
+            }),
+            new Paragraph({
+                children: [
+                    new TextRun({ text: "4. כיוון עתידי: ", bold: true }),
+                    new TextRun({ text: res.q4_future })
                 ],
                 bidirectional: true,
                 spacing: { after: 300 },

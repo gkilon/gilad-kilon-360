@@ -15,10 +15,11 @@ export interface FeedbackResponse {
   surveyId: string; // Linked to User.id
   relationship: RelationshipType;
   
-  // New Question Structure
-  q1_strengths: string;   // מה החוזקות המרכזיות
-  q2_improvement: string; // מה אם אני אעשה אחרת...
-  q3_examples: string;    // דוגמאות
+  // New 4-Question Structure
+  q1_impact: string;        // דברים שאני עושה הכי טוב (השפעה ותוצאות)
+  q2_untapped: string;      // מיומנות/תכונה לא מנוצלת
+  q3_pattern: string;       // דפוס התנהגותי לשינוי (כולל דוגמה)
+  q4_future: string;        // תפקיד/פרויקט עתידי
 
   timestamp: number;
 }

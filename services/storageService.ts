@@ -145,14 +145,15 @@ export const storageService = {
   },
 
   // RESPONSE (REAL DB ENTRY)
-  addResponse: async (surveyId: string, relationship: RelationshipType, strengths: string, improvements: string, examples: string) => {
+  addResponse: async (surveyId: string, relationship: RelationshipType, impact: string, untapped: string, pattern: string, future: string) => {
     const newResponse: FeedbackResponse = {
       id: generateId(),
       surveyId,
       relationship,
-      q1_strengths: strengths,
-      q2_improvement: improvements,
-      q3_examples: examples,
+      q1_impact: impact,
+      q2_untapped: untapped,
+      q3_pattern: pattern,
+      q4_future: future,
       timestamp: Date.now(),
     };
 

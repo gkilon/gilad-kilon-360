@@ -12,10 +12,11 @@ export const Survey: React.FC = () => {
   
   const [relationship, setRelationship] = useState<RelationshipType>('peer');
   
-  // New State for 3 Questions
-  const [strengths, setStrengths] = useState('');
-  const [improvement, setImprovement] = useState('');
-  const [examples, setExamples] = useState('');
+  // New 4 Questions State
+  const [impact, setImpact] = useState('');
+  const [untapped, setUntapped] = useState('');
+  const [pattern, setPattern] = useState('');
+  const [future, setFuture] = useState('');
   
   const [submitted, setSubmitted] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -48,8 +49,7 @@ export const Survey: React.FC = () => {
     if (!userId) return;
     setIsSending(true);
     try {
-        // Updated to send 3 arguments
-        await storageService.addResponse(userId, relationship, strengths, improvement, examples);
+        await storageService.addResponse(userId, relationship, impact, untapped, pattern, future);
         setSubmitted(true);
     } catch (err) {
         setError('שגיאה בשמירה');
@@ -72,7 +72,7 @@ export const Survey: React.FC = () => {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-          <div className="w-20 h-20 bg-accent-50 text-accent-600 rounded-full flex items-center justify-center mb-6 text-4xl shadow-glow">
+          <div className="w-20 h-20 bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-6 text-4xl shadow-glow">
              ✓
           </div>
           <h2 className="text-3xl font-black text-slate-900 mb-4">תודה רבה!</h2>
@@ -121,11 +121,11 @@ export const Survey: React.FC = () => {
             
             <form onSubmit={handleSubmit} className="space-y-10">
                 
-                {/* Introduction - Goal Display */}
+                {/* Introduction - Goal Display (Optional) */}
                 {userGoal && (
                     <div className="bg-slate-50 p-6 rounded-2xl text-center border border-slate-200 relative mb-8">
                          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 py-1 rounded-full text-[10px] font-bold text-slate-400 uppercase tracking-widest border border-slate-100 shadow-sm">
-                             המטרה המוצהרת
+                             המטרה ש-{userName} שם/ה למיקוד
                          </div>
                          <p className="text-xl font-medium text-slate-900 leading-relaxed mt-2">
                              "{userGoal}"
@@ -152,48 +152,64 @@ export const Survey: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Q1 - Strengths */}
+                {/* Q1 - Impact */}
                 <div className="space-y-3">
                     <label className="block text-lg font-bold text-slate-800 leading-relaxed">
-                        1. מהן <span className="text-primary-600 bg-primary-50 px-1 rounded">החוזקות המרכזיות</span> שאתה מזהה אצלי?
+                        1. מהם <span className="text-primary-600 bg-primary-50 px-1 rounded">הדברים שאני עושה הכי טוב</span> (מבחינת השפעה ותוצאות), וכיצד זה בא לידי ביטוי?
                     </label>
                     <textarea
                         required
-                        value={strengths}
-                        onChange={(e) => setStrengths(e.target.value)}
+                        value={impact}
+                        onChange={(e) => setImpact(e.target.value)}
                         rows={3}
                         className="input-field min-h-[100px] text-base"
-                        placeholder="לדעתי..."
+                        placeholder="למשל: היכולת לרתום אנשים..."
                     />
                 </div>
 
-                {/* Q2 - Improvement */}
+                {/* Q2 - Untapped Potential */}
                 <div className="space-y-3">
                     <label className="block text-lg font-bold text-slate-800 leading-relaxed">
-                        2. מה אם אני אעשה <span className="text-primary-600 bg-primary-50 px-1 rounded">אחרת</span> יסייע לי להתקדם ולהשתפר?
+                        2. איזו <span className="text-primary-600 bg-primary-50 px-1 rounded">מיומנות, יכולת או תכונה שלי לא מנוצלת מספיק</span> ויש לה פוטנציאל להשפיע לטובה?
                     </label>
                     <textarea
                         required
-                        value={improvement}
-                        onChange={(e) => setImprovement(e.target.value)}
+                        value={untapped}
+                        onChange={(e) => setUntapped(e.target.value)}
                         rows={3}
                         className="input-field min-h-[100px] text-base"
-                        placeholder="כדאי לנסות..."
+                        placeholder="יש לך יכולת גבוהה ב... שכדאי להביא יותר לידי ביטוי"
                     />
                 </div>
 
-                {/* Q3 - Examples */}
+                {/* Q3 - Pattern/Blindspot */}
                 <div className="space-y-3">
                     <label className="block text-lg font-bold text-slate-800 leading-relaxed">
-                        3. תן לי <span className="text-primary-600 bg-primary-50 px-1 rounded">דוגמאות</span> איך זה בא לידי ביטוי
+                        3. מהו <span className="text-primary-600 bg-primary-50 px-1 rounded">הדפוס ההתנהגותי המרכזי שמעכב אותי</span> ושינוי שלו ישפר משמעותית את האפקטיביות שלי?
+                    </label>
+                    <p className="text-sm text-slate-400 -mt-2 mb-2 italic">(אנא ספק/י דוגמה ממוקדת)</p>
+                    <textarea
+                        required
+                        value={pattern}
+                        onChange={(e) => setPattern(e.target.value)}
+                        rows={3}
+                        className="input-field min-h-[100px] text-base"
+                        placeholder="לפעמים כשאת/ה..."
+                    />
+                </div>
+
+                {/* Q4 - Future/Career */}
+                <div className="space-y-3">
+                    <label className="block text-lg font-bold text-slate-800 leading-relaxed">
+                        4. באיזה <span className="text-primary-600 bg-primary-50 px-1 rounded">תפקיד או פרויקט עתידי</span> היית רואה אותי מממש/ת את הפוטנציאל שלי בצורה הטובה ביותר?
                     </label>
                     <textarea
                         required
-                        value={examples}
-                        onChange={(e) => setExamples(e.target.value)}
+                        value={future}
+                        onChange={(e) => setFuture(e.target.value)}
                         rows={3}
                         className="input-field min-h-[100px] text-base"
-                        placeholder="למשל במקרים ש..."
+                        placeholder="נמק/י בקצרה"
                     />
                 </div>
 
