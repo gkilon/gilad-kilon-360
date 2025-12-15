@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   name: string;
@@ -12,9 +13,13 @@ export type RelationshipType = 'manager' | 'peer' | 'subordinate' | 'friend' | '
 export interface FeedbackResponse {
   id: string;
   surveyId: string; // Linked to User.id
-  relationship: RelationshipType; // New field
-  q1_change: string; // "Refinement of the goal..."
-  q2_actions: string; // "What actions contradict..."
+  relationship: RelationshipType;
+  
+  // New Question Structure
+  q1_strengths: string;   // מה החוזקות המרכזיות
+  q2_improvement: string; // מה אם אני אעשה אחרת...
+  q3_examples: string;    // דוגמאות
+
   timestamp: number;
 }
 
@@ -22,7 +27,7 @@ export interface AnalysisResult {
   summary: string;
   keyThemes: string[];
   actionableAdvice: string;
-  groupAnalysis: Record<string, string>; // New field for segment analysis
+  groupAnalysis: Record<string, string>;
 }
 
 export interface FirebaseConfig {

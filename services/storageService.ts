@@ -161,13 +161,14 @@ export const storageService = {
 
   // DATA OPERATIONS
 
-  addResponse: async (surveyId: string, relationship: RelationshipType, q1: string, q2: string) => {
+  addResponse: async (surveyId: string, relationship: RelationshipType, strengths: string, improvements: string, examples: string) => {
     const newResponse: FeedbackResponse = {
       id: generateId(),
       surveyId,
       relationship,
-      q1_change: q1,
-      q2_actions: q2,
+      q1_strengths: strengths,
+      q2_improvement: improvements,
+      q3_examples: examples,
       timestamp: Date.now(),
     };
 

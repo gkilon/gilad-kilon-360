@@ -149,7 +149,7 @@ export const Dashboard: React.FC = () => {
             <div>
                 <h3 className="text-xl font-bold mb-1 flex items-center gap-2">
                     <span className="text-2xl">⚡</span> 
-                    שלב מקדים: שאלון איפיון אישי
+                    שלב מקדים: שאלון סגנון תקשורת
                 </h3>
                 <p className="text-primary-100 opacity-90 max-w-xl">
                     כדי למקסם את התהליך, מלא תחילה את שאלון האיפיון האישי במערכת המשלימה. התובנות משם יעזרו לך לדייק את מטרת הצמיחה שלך כאן.
@@ -246,13 +246,19 @@ export const Dashboard: React.FC = () => {
                                 <div key={resp.id} className="glass-panel p-6 hover:border-primary-300 transition-colors">
                                     <div className="grid md:grid-cols-2 gap-8">
                                         <div>
-                                            <div className="text-[10px] font-bold text-primary-600 mb-2 uppercase tracking-wide">דיוק המטרה</div>
-                                            <p className="text-primary-900 text-lg leading-relaxed">{resp.q1_change}</p>
+                                            <div className="text-[10px] font-bold text-primary-600 mb-2 uppercase tracking-wide">חוזקות</div>
+                                            <p className="text-primary-900 text-lg leading-relaxed">{resp.q1_strengths}</p>
                                         </div>
                                         <div className="md:border-r md:border-primary-100 md:pr-8">
-                                            <div className="text-[10px] font-bold text-primary-400 mb-2 uppercase tracking-wide">חסמים מזוהים</div>
-                                            <p className="text-primary-700 text-base leading-relaxed">"{resp.q2_actions}"</p>
+                                            <div className="text-[10px] font-bold text-primary-400 mb-2 uppercase tracking-wide">מה לעשות אחרת</div>
+                                            <p className="text-primary-700 text-base leading-relaxed">"{resp.q2_improvement}"</p>
                                         </div>
+                                        {resp.q3_examples && (
+                                            <div className="col-span-2 pt-4 border-t border-slate-100 mt-2">
+                                                 <div className="text-[10px] font-bold text-slate-400 mb-1 uppercase tracking-wide">דוגמאות</div>
+                                                 <p className="text-slate-500 text-sm italic">{resp.q3_examples}</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ))}

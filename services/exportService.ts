@@ -102,15 +102,22 @@ export const exportToWord = async (
             }),
             new Paragraph({
                 children: [
-                    new TextRun({ text: "1. הדבר לשינוי: ", bold: true }),
-                    new TextRun({ text: res.q1_change })
+                    new TextRun({ text: "1. חוזקות: ", bold: true }),
+                    new TextRun({ text: res.q1_strengths })
                 ],
                 bidirectional: true,
             }),
             new Paragraph({
                 children: [
-                    new TextRun({ text: "2. פעולות סותרות: ", bold: true }),
-                    new TextRun({ text: res.q2_actions })
+                    new TextRun({ text: "2. מה לעשות אחרת: ", bold: true }),
+                    new TextRun({ text: res.q2_improvement })
+                ],
+                bidirectional: true,
+            }),
+             new Paragraph({
+                children: [
+                    new TextRun({ text: "3. דוגמאות: ", bold: true }),
+                    new TextRun({ text: res.q3_examples })
                 ],
                 bidirectional: true,
                 spacing: { after: 300 },

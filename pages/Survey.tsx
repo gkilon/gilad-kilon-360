@@ -11,8 +11,11 @@ export const Survey: React.FC = () => {
   const [userGoal, setUserGoal] = useState<string>('');
   
   const [relationship, setRelationship] = useState<RelationshipType>('peer');
-  const [q1, setQ1] = useState('');
-  const [q2, setQ2] = useState('');
+  
+  // New State for 3 Questions
+  const [strengths, setStrengths] = useState('');
+  const [improvement, setImprovement] = useState('');
+  const [examples, setExamples] = useState('');
   
   const [submitted, setSubmitted] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -45,7 +48,8 @@ export const Survey: React.FC = () => {
     if (!userId) return;
     setIsSending(true);
     try {
-        await storageService.addResponse(userId, relationship, q1, q2);
+        // Updated to send 3 arguments
+        await storageService.addResponse(userId, relationship, strengths, improvement, examples);
         setSubmitted(true);
     } catch (err) {
         setError('שגיאה בשמירה');
@@ -99,7 +103,7 @@ export const Survey: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-2xl mx-auto w-full">
+      <div className="max-w-3xl mx-auto w-full">
         
         <div className="text-center mb-10">
             <span className="text-xs font-bold text-primary-600 uppercase tracking-widest bg-primary-50 px-3 py-1 rounded-full">
@@ -117,13 +121,13 @@ export const Survey: React.FC = () => {
             
             <form onSubmit={handleSubmit} className="space-y-10">
                 
-                {/* Introduction */}
+                {/* Introduction - Goal Display */}
                 {userGoal && (
-                    <div className="bg-slate-50 p-8 rounded-2xl text-center border border-slate-200 relative">
+                    <div className="bg-slate-50 p-6 rounded-2xl text-center border border-slate-200 relative mb-8">
                          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 py-1 rounded-full text-[10px] font-bold text-slate-400 uppercase tracking-widest border border-slate-100 shadow-sm">
                              המטרה המוצהרת
                          </div>
-                         <p className="text-2xl font-medium text-slate-900 leading-relaxed">
+                         <p className="text-xl font-medium text-slate-900 leading-relaxed mt-2">
                              "{userGoal}"
                          </p>
                     </div>
@@ -148,36 +152,48 @@ export const Survey: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Q1 */}
+                {/* Q1 - Strengths */}
                 <div className="space-y-3">
-                    <label className="block text-xl font-bold text-slate-800 leading-relaxed">
-                        1. האם לדעתך <span className="text-primary-600 bg-primary-50 px-1 rounded">המטרה הזו</span> תוביל לפריצת דרך?
+                    <label className="block text-lg font-bold text-slate-800 leading-relaxed">
+                        1. מהן <span className="text-primary-600 bg-primary-50 px-1 rounded">החוזקות המרכזיות</span> שאתה מזהה אצלי?
                     </label>
-                    <p className="text-slate-400 text-xs">
-                        (האם כדאי לדייק את המטרה? האם יש משהו חשוב יותר?)
-                    </p>
                     <textarea
                         required
-                        value={q1}
-                        onChange={(e) => setQ1(e.target.value)}
-                        rows={4}
-                        className="input-field min-h-[120px] text-lg"
+                        value={strengths}
+                        onChange={(e) => setStrengths(e.target.value)}
+                        rows={3}
+                        className="input-field min-h-[100px] text-base"
                         placeholder="לדעתי..."
                     />
                 </div>
 
-                {/* Q2 */}
+                {/* Q2 - Improvement */}
                 <div className="space-y-3">
-                    <label className="block text-xl font-bold text-slate-800 leading-relaxed">
-                        2. אילו התנהגויות בפועל סותרות את השינוי הזה?
+                    <label className="block text-lg font-bold text-slate-800 leading-relaxed">
+                        2. מה אם אני אעשה <span className="text-primary-600 bg-primary-50 px-1 rounded">אחרת</span> יסייע לי להתקדם ולהשתפר?
                     </label>
                     <textarea
                         required
-                        value={q2}
-                        onChange={(e) => setQ2(e.target.value)}
-                        rows={4}
-                        className="input-field min-h-[120px] text-lg"
-                        placeholder="לדוגמה: כשהוא/היא..."
+                        value={improvement}
+                        onChange={(e) => setImprovement(e.target.value)}
+                        rows={3}
+                        className="input-field min-h-[100px] text-base"
+                        placeholder="כדאי לנסות..."
+                    />
+                </div>
+
+                {/* Q3 - Examples */}
+                <div className="space-y-3">
+                    <label className="block text-lg font-bold text-slate-800 leading-relaxed">
+                        3. תן לי <span className="text-primary-600 bg-primary-50 px-1 rounded">דוגמאות</span> איך זה בא לידי ביטוי
+                    </label>
+                    <textarea
+                        required
+                        value={examples}
+                        onChange={(e) => setExamples(e.target.value)}
+                        rows={3}
+                        className="input-field min-h-[100px] text-base"
+                        placeholder="למשל במקרים ש..."
                     />
                 </div>
 

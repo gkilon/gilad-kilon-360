@@ -16,11 +16,12 @@ export const analyzeFeedback = async (responses: FeedbackResponse[], userGoal?: 
 
   const ai = getClient();
   
-  // Format data for AI
+  // Format data for AI with new fields
   const formattedData = responses.map(r => ({
       relationship: r.relationship,
-      feedbackOnGoal: r.q1_change,
-      contradictions: r.q2_actions
+      strengths: r.q1_strengths,
+      improvement_suggestion: r.q2_improvement,
+      examples: r.q3_examples
   }));
 
   const goalContext = userGoal 
@@ -34,13 +35,16 @@ export const analyzeFeedback = async (responses: FeedbackResponse[], userGoal?: 
     ${goalContext}
     
     המשימה:
-    יש לנתח את המשובים שהתקבלו. השאלה הראשונה שנשאלה הייתה "האם המטרה הזו תקפיץ את האדם מדרגה? דייק או נסח מחדש".
-    
-    1. בדוק האם הסביבה מסכימה עם המטרה שהאדם הציב לעצמו? האם הם מציעים לדייק אותה? אם כן, איך?
-    2. זהה את "הדבר האחד" האמיתי (בין אם הוא תואם את מה שהמשתמש חשב ובין אם לא).
-    3. נתח נושאים חוזרים בהתנהגויות המעכבות.
-    4. נתח הבדלים בין הקבוצות השונות (מנהל, כפיף, וכו').
-    5. תן עצה מעשית לביצוע.
+    נתח את נתוני המשוב שהתקבלו עבור העובד/המנהל. השאלות שנשאלו היו:
+    1. מהן החוזקות המרכזיות?
+    2. מה כדאי לעשות אחרת כדי להתקדם?
+    3. דוגמאות.
+
+    עליך להפיק דוח תובנות:
+    1. זהה את החוזקות הבולטות ביותר שחוזרות על עצמן.
+    2. זהה את ה"התנהגות המעכבת" או השינוי המרכזי הנדרש (The One Thing) שעולה מתוך הצעות השיפור והדוגמאות.
+    3. בדוק אם יש הבדלים בפרספקטיבה בין מנהלים, קולגות וכפיפים.
+    4. תן "המלצת זהב" (Actionable Advice) ברורה ומעשית לביצוע מחר בבוקר.
 
     הנתונים:
     ${JSON.stringify(formattedData)}
@@ -51,23 +55,23 @@ export const analyzeFeedback = async (responses: FeedbackResponse[], userGoal?: 
       model: 'gemini-2.5-flash',
       contents: prompt,
       config: {
-        systemInstruction: "You are an expert organizational psychologist speaking Hebrew. Focus on alignment between self-perception and external feedback.",
+        systemInstruction: "You are an expert organizational psychologist speaking Hebrew. Focus on identifying the gap between strengths and required improvements.",
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
             summary: {
               type: Type.STRING,
-              description: "A summary of whether the feedback validates the user's goal or suggests a different focus.",
+              description: "A summary of the user's reputation (strengths) vs. the main area for growth.",
             },
             keyThemes: {
               type: Type.ARRAY,
               items: { type: Type.STRING },
-              description: "List of 3-5 recurring themes (refinements to the goal or blocking behaviors).",
+              description: "List of 3-5 recurring themes (specific strengths or specific improvement areas).",
             },
             actionableAdvice: {
               type: Type.STRING,
-              description: "A specific, encouraging piece of advice based on the gap (or alignment) between the user's goal and the feedback.",
+              description: "A specific, encouraging piece of advice based on the 'What to do differently' feedback.",
             },
             groupAnalysis: {
                 type: Type.OBJECT,
