@@ -30,7 +30,7 @@ export const Landing: React.FC = () => {
         await storageService.loginAsGuest();
         navigate('/dashboard');
       } catch (e) {
-        setError("שגיאה בכניסת אורח. ודא חיבור לרשת.");
+        setError("שגיאת רשת בהתחברות כאורח.");
       } finally {
         setIsLoading(false);
       }
@@ -44,26 +44,26 @@ export const Landing: React.FC = () => {
 
     try {
       if (view === 'register') {
-        if (!name || !email || !password || !registrationCode) throw new Error("נא למלא את כל השדות");
+        if (!name || !email || !password || !registrationCode) throw new Error("כל השדות הינם חובה");
         
         await storageService.registerUser(name, email, password, registrationCode);
         navigate('/dashboard');
       } 
       else if (view === 'login') {
-        if (!email || !password) throw new Error("נא למלא אימייל וסיסמה");
+        if (!email || !password) throw new Error("נא להזין מייל וסיסמה");
         await storageService.login(email, password);
         navigate('/dashboard');
       }
       else if (view === 'reset') {
-         if (!email || !registrationCode || !password) throw new Error("חסרים פרטים לשיחזור");
+         if (!email || !registrationCode || !password) throw new Error("חסרים פרטי שחזור");
          await storageService.resetPassword(email, registrationCode, password);
-         setSuccessMsg("הסיסמה עודכנה. אפשר להתחבר.");
+         setSuccessMsg("הסיסמה עודכנה בהצלחה. נא להתחבר.");
          setTimeout(() => setView('login'), 2000);
       }
     } catch (err: any) {
       console.error("Submit Error:", err);
       if (err.message.includes("permission-denied")) {
-          setError("שגיאת הרשאות שרת (Firestore Rules).");
+          setError("אין הרשאה לשרת.");
       } else {
           setError(err.message || 'אירעה שגיאה.');
       }
@@ -74,147 +74,137 @@ export const Landing: React.FC = () => {
 
   return (
     <Layout>
-      <div className="flex flex-col items-center justify-center py-12 relative">
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] relative">
         
         {/* Hero Section */}
-        <div className="text-center mb-12 space-y-3">
-            <h1 className="text-6xl font-black tracking-tight text-slate-900">
-                Feedback
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-500 to-accent-700">360</span>
+        <div className="text-center mb-16 space-y-6 max-w-2xl mx-auto">
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-tight">
+                לממש את <br />
+                <span className="text-accent-500">פוטנציאל הצמיחה</span>
             </h1>
-            <p className="text-xl text-slate-600 max-w-xl mx-auto font-normal">
-               מערכת חכמה לזיהוי מנופי הצמיחה שלך
+            <p className="text-xl text-slate-400 font-light max-w-lg mx-auto leading-relaxed">
+               פלטפורמת משוב 360° מבוססת AI למקצוענים.
+               זיהוי חסמים, מינוף חוזקות ובניית נתיב קריירה מדויק.
             </p>
-            <div className="flex justify-center gap-4 mt-6 text-xs font-bold text-accent-700 uppercase tracking-widest bg-accent-50 inline-flex px-6 py-2 rounded-full border border-accent-100">
-                <span>AI Insights</span>
-                <span className="text-accent-300">•</span>
-                <span>Anonymous</span>
-                <span className="text-accent-300">•</span>
-                <span>Encrypted</span>
-            </div>
         </div>
 
-        {/* Login/Register Card */}
-        <div className="glass-panel w-full max-w-[380px] shadow-glow border-t-4 border-t-accent-500 relative z-10">
+        {/* Login/Register Card - Dark Minimalist */}
+        <div className="w-full max-w-[400px] bg-slate-900/50 backdrop-blur-xl border border-slate-700 rounded-2xl p-8 shadow-2xl relative z-10">
             
-            <div className="mb-6 text-center border-b border-slate-100 pb-4">
-                <h2 className="text-lg font-bold text-slate-800">
-                    {view === 'register' ? 'פתיחת חשבון' : view === 'reset' ? 'שחזור גישה' : 'כניסה למערכת'}
+            <div className="flex items-center justify-between mb-8 border-b border-slate-800 pb-4">
+                <h2 className="text-sm font-bold text-slate-200 uppercase tracking-widest">
+                    {view === 'register' ? 'יצירת חשבון' : view === 'reset' ? 'שחזור סיסמה' : 'כניסה למערכת'}
                 </h2>
+                <div className="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-5">
                 
                 {view === 'login' && ALLOW_GUEST_MODE && (
                     <button 
                         type="button"
                         onClick={handleGuestLogin}
                         disabled={isLoading}
-                        className="w-full text-xs font-bold text-slate-500 hover:text-accent-700 border border-dashed border-slate-300 hover:border-accent-400 bg-slate-50 py-3 rounded transition-all"
+                        className="w-full text-xs font-bold text-slate-400 hover:text-white border border-dashed border-slate-700 hover:border-slate-500 bg-transparent py-3 rounded transition-all"
                     >
-                        כניסה לאורחים (דמו)
+                        כניסת הדגמה (אורח)
                     </button>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-5">
                     {view === 'register' && (
                         <div>
-                            <label className="block text-xs font-bold text-slate-500 mb-1">שם מלא</label>
+                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">שם מלא</label>
                             <input
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             className="input-field"
-                            placeholder="ישראל ישראלי"
+                            placeholder="דוגמה: ישראל ישראלי"
                             />
                         </div>
                     )}
 
                     <div>
-                        <label className="block text-xs font-bold text-slate-500 mb-1">כתובת אימייל</label>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">כתובת אימייל</label>
                         <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="input-field text-left"
+                        className="input-field text-left font-mono"
                         dir="ltr"
-                        placeholder="name@company.com"
+                        placeholder="user@corp.com"
                         />
                     </div>
 
                     {(view === 'register' || view === 'reset') && (
                         <div>
-                            <label className="block text-xs font-bold text-slate-500 mb-1">קוד ארגוני</label>
+                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">קוד ארגון</label>
                             <input
                             type="text"
                             value={registrationCode}
                             onChange={(e) => setRegistrationCode(e.target.value)}
-                            className="input-field font-mono text-center tracking-widest bg-slate-50"
-                            placeholder="CODE"
+                            className="input-field font-mono text-center tracking-[0.2em] uppercase text-accent-400"
+                            placeholder="••••••"
                             dir="ltr"
                             />
                         </div>
                     )}
 
                     <div className={view === 'register' || view === 'reset' ? 'mt-4' : ''}>
-                            <label className="block text-xs font-bold text-slate-500 mb-1">
+                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">
                                 {view === 'reset' ? 'סיסמה חדשה' : 'סיסמה'}
                             </label>
                         <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="input-field text-left"
+                        className="input-field text-left font-mono"
                         dir="ltr"
                         placeholder="••••••••"
                         />
                     </div>
 
                     {error && (
-                        <div className="bg-red-50 p-2 rounded border border-red-100 animate-pulse">
-                             <p className="text-red-600 text-xs text-center font-bold">{error}</p>
-                             {error.includes("הרשאה") && (
-                                 <p className="text-[10px] text-red-500 text-center mt-1">
-                                     חשוב: יש לשנות את חוקי Firestore ל-allow read, write: if true
-                                 </p>
-                             )}
+                        <div className="bg-red-900/20 border border-red-900/50 p-3 rounded">
+                             <p className="text-red-400 text-xs text-center font-medium">{error}</p>
                         </div>
                     )}
-                    {successMsg && <p className="text-green-600 text-xs bg-green-50 p-2 rounded text-center">{successMsg}</p>}
+                    {successMsg && <p className="text-accent-400 text-xs bg-accent-900/20 border border-accent-900/50 p-3 rounded text-center">{successMsg}</p>}
 
                     <div className="pt-2">
-                        <Button type="submit" variant="primary" className="w-full bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-700 hover:to-slate-800" isLoading={isLoading}>
-                            {view === 'register' ? 'הרשמה' : view === 'reset' ? 'אפס סיסמה' : 'התחברות'}
+                        <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>
+                            {view === 'register' ? 'הרשמה' : view === 'reset' ? 'עדכן סיסמה' : 'התחבר'}
                         </Button>
                     </div>
                 </form>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col items-center gap-2 text-xs">
+            <div className="mt-8 pt-4 border-t border-slate-800 flex justify-between items-center text-xs">
                 {view === 'login' && (
                     <>
-                        <button onClick={() => setView('reset')} className="text-slate-400 hover:text-accent-600 transition-colors">
+                         <button onClick={() => setView('register')} className="text-slate-400 hover:text-white transition-colors">
+                            אין לך חשבון? הירשם
+                        </button>
+                        <button onClick={() => setView('reset')} className="text-slate-500 hover:text-slate-300 transition-colors">
                             שכחתי סיסמה
                         </button>
-                        <div className="text-slate-400">
-                            לא רשום? <button onClick={() => setView('register')} className="text-accent-600 font-bold hover:underline">פתח חשבון</button>
-                        </div>
                     </>
                 )}
                 {(view === 'register' || view === 'reset') && (
-                    <button onClick={() => setView('login')} className="text-slate-500 hover:text-accent-600 font-bold">
-                        חזרה למסך כניסה
+                    <button onClick={() => setView('login')} className="w-full text-center text-slate-400 hover:text-white transition-colors">
+                        חזרה להתחברות
                     </button>
                 )}
             </div>
         </div>
         
-        {/* Prominent Admin Link */}
-        <div className="mt-8">
+        {/* Subtle Admin Link */}
+        <div className="mt-12 opacity-30 hover:opacity-100 transition-opacity">
             <Link to="/admin">
-                <button className="text-xs font-bold text-slate-400 hover:text-accent-600 border border-transparent hover:border-accent-200 px-4 py-2 rounded-full transition-all">
-                    🔒 כניסת מנהל מערכת (Admin)
-                </button>
+                <span className="text-[10px] font-mono text-slate-500">
+                    ADMIN_ACCESS_GATEWAY
+                </span>
             </Link>
         </div>
 

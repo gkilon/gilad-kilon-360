@@ -15,13 +15,25 @@ export interface FeedbackResponse {
   surveyId: string; // Linked to User.id
   relationship: RelationshipType;
   
-  // New 4-Question Structure
-  q1_impact: string;        // דברים שאני עושה הכי טוב (השפעה ותוצאות)
-  q2_untapped: string;      // מיומנות/תכונה לא מנוצלת
-  q3_pattern: string;       // דפוס התנהגותי לשינוי (כולל דוגמה)
-  q4_future: string;        // תפקיד/פרויקט עתידי
+  // The keys remain generic to allow question text changes without breaking DB
+  q1_impact: string;        
+  q2_untapped: string;      
+  q3_pattern: string;       
+  q4_future: string;        
 
   timestamp: number;
+}
+
+export interface QuestionsConfig {
+  q1: string;
+  q2: string;
+  q3: string;
+  q4: string;
+}
+
+export interface AppSettings {
+  registrationCode: string;
+  questions: QuestionsConfig;
 }
 
 export interface AnalysisResult {

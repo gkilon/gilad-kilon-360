@@ -1,4 +1,4 @@
-import { User, FeedbackResponse, FirebaseConfig, RelationshipType } from '../types';
+import { User, FeedbackResponse, FirebaseConfig, RelationshipType, AppSettings, QuestionsConfig } from '../types';
 import { firebaseService } from './firebaseService';
 
 // =================================================================
@@ -18,6 +18,12 @@ const FIREBASE_CONFIG: FirebaseConfig = {
 // =================================================================
 
 const USER_KEY = '360_user_session';
+const DEFAULT_QUESTIONS: QuestionsConfig = {
+    q1: "מהם הדברים שהעובד/ת עושה הכי טוב (השפעה ותוצאות)?",
+    q2: "איזו מיומנות או תכונה אינה מנוצלת מספיק (פוטנציאל לא מנומש)?",
+    q3: "מהו הדפוס ההתנהגותי שמעכב את ההתקדמות וכדאי לשנות?",
+    q4: "באיזה תפקיד או כיוון עתידי הפוטנציאל יבוא לידי ביטוי מקסימלי?"
+};
 
 const generateId = () => Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
 
@@ -46,9 +52,17 @@ export const storageService = {
     }
   },
 
-  // ADMIN
-  updateRegistrationCode: async (newCode: string): Promise<void> => {
-      await firebaseService.updateRegistrationCode(newCode);
+  // CONFIG & QUESTIONS
+  getAppSettings: async (): Promise<AppSettings> => {
+      const settings = await firebaseService.getSettings();
+      return {
+          registrationCode: settings?.registrationCode || 'OBT-VIP',
+          questions: settings?.questions || DEFAULT_QUESTIONS
+      };
+  },
+
+  updateAppSettings: async (code: string, questions: QuestionsConfig): Promise<void> => {
+      await firebaseService.updateSettings(code, questions);
   },
 
   // LOGIN
@@ -88,8 +102,12 @@ export const storageService = {
     if (!registrationCode) throw new Error("נדרש קוד רישום.");
     
     // Validate Code against Cloud
-    const cloudValid = await firebaseService.validateRegistrationCode(registrationCode);
-    if (!cloudValid) throw new Error("קוד רישום שגוי.");
+    const appSettings = await storageService.getAppSettings();
+    const validCode = appSettings.registrationCode;
+    
+    if (registrationCode.toUpperCase() !== validCode.toUpperCase()) {
+         throw new Error("קוד רישום שגוי.");
+    }
     
     // Check if exists
     const existing = await firebaseService.findUserByEmail(email);
@@ -130,8 +148,10 @@ export const storageService = {
   },
 
   resetPassword: async (email: string, registrationCode: string, newPassword: string): Promise<void> => {
-    const isValid = await firebaseService.validateRegistrationCode(registrationCode);
-    if (!isValid) throw new Error("קוד שגוי.");
+    const appSettings = await storageService.getAppSettings();
+    if (registrationCode.toUpperCase() !== appSettings.registrationCode.toUpperCase()) {
+        throw new Error("קוד שגוי.");
+    }
     const user = await firebaseService.findUserByEmail(email);
     if (!user) throw new Error("משתמש לא נמצא.");
     await firebaseService.updatePassword(user.id, newPassword);
