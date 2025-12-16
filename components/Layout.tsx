@@ -55,15 +55,17 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
             <div className="flex flex-col gap-1 text-center md:text-right">
                 <p className="font-semibold text-slate-400">פלטפורמת Feedback 360</p>
-                <p>מערכת לניהול צמיחה ופיתוח ארגוני</p>
+                <p className="hover:text-slate-300 transition-colors cursor-default">
+                    From <span className="font-medium text-slate-400">Gilad Kilon</span> | Organizational Consulting
+                </p>
             </div>
             <div className="flex items-center gap-6 mt-4 md:mt-0 font-medium opacity-60">
                 <span className="flex items-center gap-1.5">
                     <span className="w-1 h-1 rounded-full bg-accent-500"></span> 
-                    מאובטח ומוצפן
+                    Secure & Encrypted
                 </span>
                 <span>•</span>
-                <span>2024 © כל הזכויות שמורות</span>
+                <span dir="ltr">© 2025 Gilad Kilon. All rights reserved.</span>
             </div>
         </div>
       </footer>

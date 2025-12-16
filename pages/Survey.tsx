@@ -117,7 +117,7 @@ export const Survey: React.FC = () => {
                 Anonymous 360° Feedback
             </span>
             <h1 className="text-4xl font-bold text-white mt-6 mb-2">
-               משוב עבור <span className="text-accent-500">{userName}</span>
+               <span className="text-accent-500">{userName}</span> מבקש/ת ממך משוב
             </h1>
             <p className="text-slate-400 font-light text-lg">
                 הפרספקטיבה הכנה שלך קריטית להתפתחות המקצועית שלהם.
