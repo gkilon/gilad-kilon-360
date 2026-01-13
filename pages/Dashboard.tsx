@@ -246,8 +246,8 @@ export const Dashboard: React.FC = () => {
                             <div className="bg-slate-950/50 p-4 rounded-xl border border-slate-800">
                                 <h4 className="text-[10px] font-bold text-accent-400 uppercase mb-3 tracking-widest">נושאים מרכזיים</h4>
                                 <ul className="space-y-2">
-                                    {/* Added explicit cast to string[] to ensure .map works correctly on analysis.keyThemes */}
-                                    {(analysis.keyThemes as string[]).map((theme: string, i: number) => (
+                                    {/* FIX: Ensure keyThemes is treated as string array for mapping */}
+                                    {Array.isArray(analysis.keyThemes) && (analysis.keyThemes as string[]).map((theme: string, i: number) => (
                                         <li key={i} className="text-xs text-slate-400 flex items-start gap-2 italic">
                                             <span className="text-accent-500 mt-1">•</span>
                                             {theme}
