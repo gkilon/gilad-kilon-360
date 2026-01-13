@@ -148,7 +148,7 @@ export const Dashboard: React.FC = () => {
 
             {/* ANALYSIS RESULTS SECTION */}
             {analysis && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
                     <div className="glass-panel border-l-4 border-l-rose-500">
                         <h4 className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-3">נקודות עיוורות (Blind Spots)</h4>
                         <p className="text-sm text-slate-300 leading-relaxed">{analysis.blindSpots}</p>
@@ -186,7 +186,7 @@ export const Dashboard: React.FC = () => {
                     {Object.entries(groupedResponses).map(([rel, items]) => (
                         <div key={rel} className="space-y-4">
                             <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 bg-accent-500 rounded-full shadow-[0_0_8px_#14b8a6]"></span>
+                                <span className="w-1.5 h-1.5 bg-accent-500 rounded-full shadow-[0_0_8px_rgba(20,184,166,0.6)]"></span>
                                 {relationshipLabels[rel] || rel}
                             </h4>
                             <div className="grid gap-4">
@@ -232,12 +232,12 @@ export const Dashboard: React.FC = () => {
                             <p className="text-slate-400 text-sm mb-8 leading-relaxed">
                                 המערכת תבצע ניתוח מעמיק של הטון, הדפוסים והמיקוד המקצועי שלך.
                             </p>
-                            <Button onClick={handleAnalyze} isLoading={loadingAnalysis} disabled={responses.length === 0} className="w-full shadow-neon">
+                            <Button onClick={handleAnalyze} isLoading={loadingAnalysis} disabled={responses.length === 0} className="w-full">
                                 בצע ניתוח עומק (AI)
                             </Button>
                         </div>
                     ) : (
-                        <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-700">
+                        <div className="space-y-6 animate-fade-in">
                             <div>
                                 <h4 className="text-[10px] font-bold text-accent-500 uppercase mb-2 tracking-widest">סיכום הניתוח</h4>
                                 <p className="text-sm text-slate-300 leading-relaxed font-light">{analysis.summary}</p>
@@ -246,8 +246,8 @@ export const Dashboard: React.FC = () => {
                             <div className="bg-slate-950/50 p-4 rounded-xl border border-slate-800">
                                 <h4 className="text-[10px] font-bold text-accent-400 uppercase mb-3 tracking-widest">נושאים מרכזיים</h4>
                                 <ul className="space-y-2">
-                                    {/* FIX: Ensure keyThemes is treated as string array for mapping */}
-                                    {Array.isArray(analysis.keyThemes) && (analysis.keyThemes as string[]).map((theme: string, i: number) => (
+                                    {/* FIX: Properly checking that keyThemes is an array before mapping */}
+                                    {analysis && Array.isArray(analysis.keyThemes) && (analysis.keyThemes as string[]).map((theme: string, i: number) => (
                                         <li key={i} className="text-xs text-slate-400 flex items-start gap-2 italic">
                                             <span className="text-accent-500 mt-1">•</span>
                                             {theme}
