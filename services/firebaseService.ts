@@ -19,10 +19,10 @@ import { FirebaseConfig, User, FeedbackResponse, QuestionsConfig } from "../type
 let app: FirebaseApp | null = null;
 let db: Firestore | null = null;
 let auth: Auth | null = null;
+const googleProvider = new GoogleAuthProvider();
 
 export const firebaseService = {
   init: (config: FirebaseConfig) => {
-    // ... init logic (same as before) ...
     if (!config.apiKey || config.apiKey.length === 0) return false;
 
     try {
@@ -43,6 +43,40 @@ export const firebaseService = {
   },
 
   isInitialized: () => !!db && !!auth,
+
+  // --- Auth Operations ---
+
+  signInWithGoogle: async (): Promise<User> => {
+    if (!auth || !db) throw new Error("Database not connected");
+    
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const fbUser = result.user;
+      
+      if (!fbUser.email) throw new Error("No email returned from Google");
+
+      // Check if user exists in our Firestore
+      const userRef = doc(db, "users", fbUser.uid);
+      const docSnap = await getDoc(userRef);
+      
+      if (docSnap.exists()) {
+        return docSnap.data() as User;
+      } else {
+        // Create new user record for first-time Google login
+        const newUser: User = {
+          id: fbUser.uid,
+          name: fbUser.displayName || "משתמש חדש",
+          email: fbUser.email,
+          createdAt: Date.now(),
+        };
+        await setDoc(userRef, newUser);
+        return newUser;
+      }
+    } catch (error: any) {
+      console.error("Google Auth Error:", error);
+      throw new Error(error.message || "נכשלה ההתחברות עם גוגל");
+    }
+  },
 
   // --- Settings (Config & Questions) ---
   

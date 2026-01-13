@@ -79,10 +79,10 @@ export const Dashboard: React.FC = () => {
   };
 
   const handleAnalyze = async () => {
-    if (responses.length === 0 || !questions) return;
+    if (responses.length === 0 || !questions || !user) return;
     setLoadingAnalysis(true);
     try {
-      const result = await analyzeFeedback(responses, questions, user?.userGoal);
+      const result = await analyzeFeedback(responses, questions, user.name, user.userGoal);
       setAnalysis(result);
     } catch (error) {
       console.error(error);

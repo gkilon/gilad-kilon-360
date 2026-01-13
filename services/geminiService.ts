@@ -9,9 +9,27 @@ const getClient = () => {
   return new GoogleGenAI({ apiKey });
 };
 
+/**
+ * Sanitizes feedback data by replacing potential PII (emails/names) 
+ * to ensure privacy before sending to AI.
+ */
+const sanitizeData = (responses: FeedbackResponse[], userName: string) => {
+  const nameRegex = new RegExp(userName, 'gi');
+  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+
+  return responses.map(r => ({
+    relationship: r.relationship,
+    q1_response: r.q1_impact.replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
+    q2_response: r.q2_untapped.replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
+    q3_response: r.q3_pattern.replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
+    q4_response: r.q4_future.replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]")
+  }));
+};
+
 export const analyzeFeedback = async (
     responses: FeedbackResponse[], 
     questions: QuestionsConfig,
+    userName: string = "User",
     userGoal?: string
 ): Promise<AnalysisResult> => {
   
@@ -21,14 +39,8 @@ export const analyzeFeedback = async (
 
   const ai = getClient();
   
-  // Format data for AI with new fields
-  const formattedData = responses.map(r => ({
-      relationship: r.relationship,
-      q1_response: r.q1_impact,
-      q2_response: r.q2_untapped,
-      q3_response: r.q3_pattern,
-      q4_response: r.q4_future
-  }));
+  // Clean data before sending to External API
+  const formattedData = sanitizeData(responses, userName);
 
   const goalContext = userGoal 
     ? `The user defined their growth goal as: "${userGoal}".`
@@ -56,16 +68,16 @@ export const analyzeFeedback = async (
     4. תן כיוון קריירה מומלץ (שאלה 4).
     5. תן "המלצת זהב" (Actionable Advice) לביצוע מיידי.
 
-    הנתונים הגולמיים:
+    הנתונים הגולמיים (מנוקים מפרטים מזהים):
     ${JSON.stringify(formattedData)}
   `;
 
   try {
-    const result = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
       contents: prompt,
       config: {
-        systemInstruction: "You are an expert organizational psychologist speaking Hebrew. Focus on identifying the gap between strengths, untapped potential, and behavioral barriers based on the specific questions asked.",
+        systemInstruction: "You are an expert organizational psychologist speaking Hebrew. Focus on identifying the gap between strengths, untapped potential, and behavioral barriers based on the specific questions asked. Ensure the response is in valid JSON format.",
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
@@ -100,7 +112,7 @@ export const analyzeFeedback = async (
       },
     });
 
-    const text = result.text;
+    const text = response.text;
     if (!text) throw new Error("No response from AI");
     
     return JSON.parse(text) as AnalysisResult;
