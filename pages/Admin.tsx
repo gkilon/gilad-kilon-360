@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { storageService } from '../services/storageService';
@@ -37,10 +38,12 @@ export const Admin: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    // THE ADMIN PASSWORD IS: admin123
     if (password === 'admin123') {
       setIsAuthenticated(true);
+      setMsg('');
     } else {
-      setMsg('סיסמה שגויה');
+      setMsg('סיסמה שגויה. נסה admin123');
     }
   };
 
@@ -50,9 +53,9 @@ export const Admin: React.FC = () => {
     setMsg('');
     try {
         await storageService.updateAppSettings(code, questions);
-        setMsg('ההגדרות עודכנו בהצלחה');
+        setMsg('ההגדרות עודכנו בהצלחה. הקוד החדש פעיל.');
     } catch (e) {
-        setMsg('שגיאה בעדכון');
+        setMsg('שגיאה בעדכון ההגדרות.');
     } finally {
         setLoading(false);
     }
@@ -62,107 +65,75 @@ export const Admin: React.FC = () => {
     <Layout>
       <div className="flex flex-col items-center justify-center py-12">
          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-white">
-                ניהול מערכת
-            </h1>
+            <h1 className="text-2xl font-bold text-white tracking-widest uppercase">ניהול מערכת 360</h1>
+            <p className="text-slate-500 text-xs mt-2 font-mono">AUTHORIZED PERSONNEL ONLY</p>
         </div>
 
-        <div className="glass-panel w-full max-w-2xl p-8">
-            
+        <div className="glass-panel w-full max-w-2xl p-8 border-t-4 border-accent-500">
             {!isAuthenticated ? (
                 <form onSubmit={handleLogin} className="space-y-6 max-w-sm mx-auto">
                     <div>
-                        <div className="flex justify-between">
-                            <label className="block text-xs font-bold text-slate-500 mb-2">סיסמת מנהל</label>
-                            <span className="text-[10px] text-accent-400 bg-accent-900/20 px-2 rounded-full h-fit">Default: admin123</span>
-                        </div>
+                        <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-tighter">ADMIN_ACCESS_KEY</label>
                         <input 
                             type="password" 
                             value={password}
                             onChange={e => setPassword(e.target.value)}
-                            className="input-field"
-                            placeholder="הזן סיסמה"
+                            className="input-field text-center font-mono"
+                            placeholder="••••••••"
                         />
                     </div>
-                    
-                    <Button type="submit" variant="primary" className="w-full">כניסה</Button>
-                    
-                    {msg && <p className="text-red-500 text-center text-xs mt-2 font-bold">{msg}</p>}
-                    
-                    <button onClick={() => navigate('/')} type="button" className="w-full text-center text-xs text-slate-400 mt-4 hover:text-white">
-                        חזרה למסך הראשי
-                    </button>
+                    <Button type="submit" variant="primary" className="w-full">כניסה ללוח בקרה</Button>
+                    {msg && <p className="text-red-500 text-center text-xs mt-4 font-bold bg-red-900/20 p-2 rounded border border-red-500/20">{msg}</p>}
+                    <button onClick={() => navigate('/')} type="button" className="w-full text-center text-xs text-slate-400 mt-6 hover:text-white transition-colors">חזרה לדף הבית</button>
                 </form>
             ) : (
                 <form onSubmit={handleUpdate} className="space-y-8">
-                    <div className="bg-accent-900/20 p-3 rounded text-center text-xs text-accent-400 font-bold border border-accent-900/50">
-                        מחובר כמנהל ✓
+                    <div className="bg-accent-900/20 p-3 rounded text-center text-xs text-accent-400 font-bold border border-accent-500/30 flex items-center justify-center gap-2">
+                        <span className="w-2 h-2 bg-accent-500 rounded-full animate-pulse"></span>
+                        SESSION_ACTIVE: מחובר כמנהל
                     </div>
-
-                    <div className="grid md:grid-cols-2 gap-8">
-                        {/* Column 1: Config */}
-                        <div>
-                            <h3 className="text-lg font-bold text-white mb-4 border-b border-slate-700 pb-2">הגדרות כלליות</h3>
-                            <label className="block text-xs font-bold text-slate-500 mb-2">קוד רישום למערכת (קוד ארגון)</label>
+                    
+                    <div className="grid grid-cols-1 gap-10">
+                        <div className="bg-slate-950/40 p-6 rounded-xl border border-slate-800">
+                            <h3 className="text-sm font-bold text-accent-500 mb-4 border-b border-slate-800 pb-2 uppercase tracking-widest">בקרת כניסה (קוד הזמנה)</h3>
+                            <p className="text-xs text-slate-500 mb-4 italic leading-relaxed">
+                                קוד זה נדרש מכל משתמש חדש שמנסה להירשם. שנה אותו כדי לחסום הרשמות חדשות או כדי לתת קוד ייחודי לקבוצה מסוימת.
+                            </p>
+                            <label className="block text-[10px] font-bold text-slate-400 mb-2 uppercase">קוד נוכחי</label>
                             <input 
                                 type="text" 
                                 value={code}
                                 onChange={e => setCode(e.target.value)}
-                                className="input-field text-center font-mono text-lg tracking-widest text-accent-400"
+                                className="input-field text-center font-mono text-xl tracking-[0.3em] uppercase text-accent-400 border-accent-500/30 bg-accent-500/5"
                                 dir="ltr"
                             />
                         </div>
 
-                        {/* Column 2: Questions */}
-                        <div className="md:col-span-2">
-                             <h3 className="text-lg font-bold text-white mb-4 border-b border-slate-700 pb-2">עריכת שאלון 360</h3>
+                        <div>
+                             <h3 className="text-sm font-bold text-white mb-4 border-b border-slate-700 pb-2 uppercase tracking-widest">תוכן השאלון</h3>
                              <div className="space-y-4">
-                                <div>
-                                    <label className="block text-xs font-bold text-emerald-500 mb-1">שאלה 1 (חוזקות/השפעה)</label>
-                                    <input 
-                                        type="text" 
-                                        value={questions.q1}
-                                        onChange={e => setQuestions({...questions, q1: e.target.value})}
-                                        className="input-field"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-blue-400 mb-1">שאלה 2 (פוטנציאל)</label>
-                                    <input 
-                                        type="text" 
-                                        value={questions.q2}
-                                        onChange={e => setQuestions({...questions, q2: e.target.value})}
-                                        className="input-field"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-rose-400 mb-1">שאלה 3 (חסמים/דפוסים)</label>
-                                    <input 
-                                        type="text" 
-                                        value={questions.q3}
-                                        onChange={e => setQuestions({...questions, q3: e.target.value})}
-                                        className="input-field"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-purple-400 mb-1">שאלה 4 (עתיד/כיוון)</label>
-                                    <input 
-                                        type="text" 
-                                        value={questions.q4}
-                                        onChange={e => setQuestions({...questions, q4: e.target.value})}
-                                        className="input-field"
-                                    />
-                                </div>
+                                {['q1', 'q2', 'q3', 'q4'].map((qKey, i) => (
+                                    <div key={qKey}>
+                                        <label className="block text-[10px] font-bold text-slate-500 mb-1 uppercase">שאלה {i+1}</label>
+                                        <input 
+                                            type="text" 
+                                            value={(questions as any)[qKey]}
+                                            onChange={e => setQuestions({...questions, [qKey]: e.target.value})}
+                                            className="input-field"
+                                        />
+                                    </div>
+                                ))}
                              </div>
                         </div>
                     </div>
 
-                    <Button variant="primary" type="submit" isLoading={loading} className="w-full">שמור שינויים</Button>
-                    
-                    {msg && <p className="text-accent-400 text-center font-bold text-xs">{msg}</p>}
-                    
-                    <div className="border-t border-slate-700 pt-6 mt-2">
-                        <button onClick={() => { setIsAuthenticated(false); navigate('/'); }} type="button" className="w-full text-center text-slate-500 font-bold text-xs hover:text-white">יציאה</button>
+                    <div className="pt-6 border-t border-slate-800">
+                        <Button variant="primary" type="submit" isLoading={loading} className="w-full py-4 text-lg">שמור ועדכן הגדרות ענן</Button>
+                        {msg && <p className={`text-center font-bold text-xs mt-4 ${msg.includes('שגיאה') ? 'text-red-400' : 'text-accent-400'}`}>{msg}</p>}
+                    </div>
+
+                    <div className="flex justify-center">
+                        <button onClick={() => setIsAuthenticated(false)} type="button" className="text-center text-slate-600 font-bold text-[10px] uppercase hover:text-slate-400 transition-colors">התנתק ממצב ניהול</button>
                     </div>
                 </form>
             )}

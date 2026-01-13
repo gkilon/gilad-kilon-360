@@ -1,18 +1,12 @@
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, FeedbackResponse, QuestionsConfig } from "../types";
 
+// Initialize with the correct named parameter and access the environment variable directly.
 const getClient = () => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error("API Key not found");
-  }
-  return new GoogleGenAI({ apiKey });
+  return new GoogleGenAI({ apiKey: process.env.API_KEY });
 };
 
-/**
- * Sanitizes feedback data by replacing potential PII (emails/names) 
- * to ensure privacy before sending to AI.
- */
 const sanitizeData = (responses: FeedbackResponse[], userName: string) => {
   const nameRegex = new RegExp(userName, 'gi');
   const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
@@ -33,71 +27,51 @@ export const analyzeFeedback = async (
     userGoal?: string
 ): Promise<AnalysisResult> => {
   
-  if (responses.length === 0) {
-    throw new Error("No responses to analyze");
-  }
-
-  const ai = getClient();
-  
-  // Clean data before sending to External API
-  const formattedData = sanitizeData(responses, userName);
-
-  const goalContext = userGoal 
-    ? `The user defined their growth goal as: "${userGoal}".`
-    : `The user did NOT define a specific goal.`;
-
-  const prompt = `
-    תפקידך הוא להיות פסיכולוג ארגוני ומאמן קריירה בכיר.
-    
-    הקשר:
-    ${goalContext}
-    
-    השאלות שנשאלו בשאלון (דינמיות, שים לב לניסוח המדויק):
-    1. ${questions.q1}
-    2. ${questions.q2}
-    3. ${questions.q3}
-    4. ${questions.q4}
-
-    המשימה:
-    נתח את נתוני המשוב שהתקבלו (שאלון 360) על סמך השאלות הנ"ל.
-
-    עליך להפיק דוח תובנות מעמיק בעברית:
-    1. זהה את ה-Superpower (חוזקה בולטת שחוזרת על עצמה בשאלה 1).
-    2. זהה את "התקרה" - המעצור ההתנהגותי המרכזי (שאלה 3).
-    3. נתח את הפער בין היכולות הקיימות לבין הפוטנציאל הלא מנוצל (שאלה 2).
-    4. תן כיוון קריירה מומלץ (שאלה 4).
-    5. תן "המלצת זהב" (Actionable Advice) לביצוע מיידי.
-
-    הנתונים הגולמיים (מנוקים מפרטים מזהים):
-    ${JSON.stringify(formattedData)}
-  `;
+  if (responses.length === 0) throw new Error("אין מספיק נתונים לניתוח");
 
   try {
+    const ai = getClient();
+    const formattedData = sanitizeData(responses, userName);
+    const goalContext = userGoal ? `מטרת המשתמש: "${userGoal}"` : `לא הוגדרה מטרה ספציפית.`;
+
+    const prompt = `
+      אתה פסיכולוג ארגוני בכיר. נתח את המשובים עבור ${userName}.
+      הקשר המטרה: ${goalContext}
+      
+      חובה להתייחס בנתונים ל:
+      1. "נקודות עיוורות" (Blind Spots): איפה המשתמש חושב שהוא מעולה אבל הסביבה רומזת אחרת?
+      2. "עוצמות שקופות": דברים שהמשתמש עושה "על הדרך" אבל נתפסים כערך ענק לאחרים.
+      3. ניתוח סנטימנט: מהו הטון הכללי של המשיבים?
+      
+      נתונים: ${JSON.stringify(formattedData)}
+    `;
+
+    // Using gemini-3-pro-preview for complex reasoning tasks.
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-3-pro-preview',
       contents: prompt,
       config: {
-        systemInstruction: "You are an expert organizational psychologist speaking Hebrew. Focus on identifying the gap between strengths, untapped potential, and behavioral barriers based on the specific questions asked. Ensure the response is in valid JSON format.",
+        systemInstruction: "You are a world-class organizational psychologist. Be insightful, direct, and supportive in Hebrew. Return ONLY valid JSON.",
         responseMimeType: "application/json",
         responseSchema: {
           type: Type.OBJECT,
           properties: {
-            summary: {
-              type: Type.STRING,
-              description: "A summary of the user's reputation, untapped potential, and career direction in Hebrew.",
-            },
-            keyThemes: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
-              description: "List of 3-5 recurring themes in Hebrew.",
-            },
-            actionableAdvice: {
-              type: Type.STRING,
-              description: "A specific, encouraging piece of advice based on the behavioral pattern to change in Hebrew.",
+            summary: { type: Type.STRING },
+            keyThemes: { type: Type.ARRAY, items: { type: Type.STRING } },
+            actionableAdvice: { type: Type.STRING },
+            blindSpots: { type: Type.STRING },
+            transparentStrengths: { type: Type.STRING },
+            sentimentAnalysis: {
+                type: Type.OBJECT,
+                properties: {
+                    score: { type: Type.NUMBER },
+                    label: { type: Type.STRING },
+                    explanation: { type: Type.STRING }
+                },
+                required: ["score", "label", "explanation"]
             },
             groupAnalysis: {
                 type: Type.OBJECT,
-                description: "A dictionary where key is the group name (e.g. 'manager', 'peer') and value is a short insight about that group's perspective in Hebrew.",
                 properties: {
                     "manager": { type: Type.STRING },
                     "peer": { type: Type.STRING },
@@ -107,18 +81,20 @@ export const analyzeFeedback = async (
                 }
             }
           },
-          required: ["summary", "keyThemes", "actionableAdvice", "groupAnalysis"],
+          required: ["summary", "keyThemes", "actionableAdvice", "blindSpots", "transparentStrengths", "sentimentAnalysis", "groupAnalysis"],
         },
       },
     });
 
+    // Directly access the .text property from GenerateContentResponse.
     const text = response.text;
     if (!text) throw new Error("No response from AI");
     
-    return JSON.parse(text) as AnalysisResult;
+    const result = JSON.parse(text) as AnalysisResult;
+    return result;
 
-  } catch (error) {
-    console.error("Gemini Analysis Error:", error);
-    throw new Error("Failed to analyze feedback.");
+  } catch (error: any) {
+    console.error("Gemini Error:", error);
+    throw new Error(error.message || "נכשל ניתוח הנתונים.");
   }
 };

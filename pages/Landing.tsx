@@ -1,10 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { storageService } from '../services/storageService';
 import { Button } from '../components/Button';
 import { Layout } from '../components/Layout';
-
-const ALLOW_GUEST_MODE = false;
 
 export const Landing: React.FC = () => {
   const [view, setView] = useState<'login' | 'register' | 'reset'>('login');
@@ -45,7 +44,10 @@ export const Landing: React.FC = () => {
 
     try {
       if (view === 'register') {
-        if (!name || !email || !password || !registrationCode) throw new Error("כל השדות הינם חובה");
+        if (!name || !email || !password || !registrationCode) {
+            throw new Error("חובה למלא את כל השדות, כולל קוד הזמנה.");
+        }
+        // Strict validation happens inside storageService.registerUser
         await storageService.registerUser(name, email, password, registrationCode);
         navigate('/dashboard');
       } 
@@ -83,7 +85,7 @@ export const Landing: React.FC = () => {
         <div className="w-full max-w-[400px] bg-slate-900/50 backdrop-blur-xl border border-slate-700 rounded-2xl p-8 shadow-2xl relative z-10">
             <div className="flex items-center justify-between mb-8 border-b border-slate-800 pb-4">
                 <h2 className="text-sm font-bold text-slate-200 uppercase tracking-widest">
-                    {view === 'register' ? 'יצירת חשבון' : view === 'reset' ? 'שחזור סיסמה' : 'כניסה למערכת'}
+                    {view === 'register' ? 'יצירת חשבון חדש' : view === 'reset' ? 'שחזור סיסמה' : 'כניסה למערכת'}
                 </h2>
                 <div className="w-2 h-2 rounded-full bg-accent-500 animate-pulse"></div>
             </div>
@@ -101,14 +103,14 @@ export const Landing: React.FC = () => {
                       <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
                       <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                     </svg>
-                    כניסה עם Google
+                    כניסה מהירה עם Google
                   </button>
                 )}
 
                 {view === 'login' && (
                   <div className="flex items-center gap-3 my-2">
                     <div className="h-px bg-slate-800 flex-grow"></div>
-                    <span className="text-[10px] text-slate-600 font-bold uppercase">או</span>
+                    <span className="text-[10px] text-slate-600 font-bold uppercase">או חשבון פרטי</span>
                     <div className="h-px bg-slate-800 flex-grow"></div>
                   </div>
                 )}
@@ -117,30 +119,42 @@ export const Landing: React.FC = () => {
                     {view === 'register' && (
                         <div>
                             <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">שם מלא</label>
-                            <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input-field" placeholder="דוגמה: ישראל ישראלי" />
+                            <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input-field" placeholder="ישראל ישראלי" />
                         </div>
                     )}
                     <div>
                         <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">כתובת אימייל</label>
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input-field text-left font-mono" dir="ltr" placeholder="user@corp.com" />
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input-field text-left font-mono" dir="ltr" placeholder="email@example.com" />
                     </div>
+                    
+                    {/* INVITATION CODE SECTION */}
                     {(view === 'register' || view === 'reset') && (
-                        <div>
-                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">קוד ארגון</label>
-                            <input type="text" value={registrationCode} onChange={(e) => setRegistrationCode(e.target.value)} className="input-field font-mono text-center tracking-[0.2em] uppercase text-accent-400" placeholder="••••••" dir="ltr" />
+                        <div className="bg-accent-500/5 p-4 rounded-lg border border-accent-500/20">
+                            <label className="block text-[10px] font-bold text-accent-500 uppercase mb-1.5 tracking-wider">קוד הזמנה אישי (חובה)</label>
+                            <input 
+                                type="text" 
+                                required
+                                value={registrationCode} 
+                                onChange={(e) => setRegistrationCode(e.target.value)} 
+                                className="input-field font-mono text-center tracking-[0.2em] uppercase text-accent-400 placeholder:opacity-30" 
+                                placeholder="הזן קוד שקיבלת מהמנהל" 
+                                dir="ltr" 
+                            />
+                            <p className="text-[9px] text-slate-500 mt-2 text-center">הרישום מתאפשר רק לבעלי קוד מאושר</p>
                         </div>
                     )}
+
                     <div className={view === 'register' || view === 'reset' ? 'mt-4' : ''}>
                         <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5 tracking-wider">
                             {view === 'reset' ? 'סיסמה חדשה' : 'סיסמה'}
                         </label>
                         <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input-field text-left font-mono" dir="ltr" placeholder="••••••••" />
                     </div>
-                    {error && <p className="text-red-400 text-xs text-center font-medium bg-red-900/20 p-3 rounded">{error}</p>}
-                    {successMsg && <p className="text-accent-400 text-xs bg-accent-900/20 p-3 rounded text-center">{successMsg}</p>}
+                    {error && <p className="text-red-400 text-xs text-center font-medium bg-red-950/40 p-3 border border-red-500/30 rounded">{error}</p>}
+                    {successMsg && <p className="text-accent-400 text-xs bg-accent-900/20 p-3 rounded text-center border border-accent-500/30">{successMsg}</p>}
                     <div className="pt-2">
                         <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>
-                            {view === 'register' ? 'הרשמה' : view === 'reset' ? 'עדכן סיסמה' : 'התחבר'}
+                            {view === 'register' ? 'צור חשבון' : view === 'reset' ? 'עדכן סיסמה' : 'התחבר'}
                         </Button>
                     </div>
                 </form>
@@ -149,16 +163,16 @@ export const Landing: React.FC = () => {
             <div className="mt-8 pt-4 border-t border-slate-800 flex justify-between items-center text-xs">
                 {view === 'login' ? (
                     <>
-                        <button onClick={() => setView('register')} className="text-slate-400 hover:text-white transition-colors">אין לך חשבון? הירשם</button>
+                        <button onClick={() => setView('register')} className="text-slate-400 hover:text-white transition-colors underline underline-offset-4">יצירת חשבון</button>
                         <button onClick={() => setView('reset')} className="text-slate-500 hover:text-slate-300 transition-colors">שכחתי סיסמה</button>
                     </>
                 ) : (
-                    <button onClick={() => setView('login')} className="w-full text-center text-slate-400 hover:text-white transition-colors">חזרה להתחברות</button>
+                    <button onClick={() => setView('login')} className="w-full text-center text-slate-400 hover:text-white transition-colors">כבר יש לך חשבון? התחבר כאן</button>
                 )}
             </div>
         </div>
         <div className="mt-12 opacity-30 hover:opacity-100 transition-opacity">
-            <Link to="/admin"><span className="text-[10px] font-mono text-slate-500">ADMIN_ACCESS_GATEWAY</span></Link>
+            <Link to="/admin"><span className="text-[10px] font-mono text-slate-500">CONTROL_PANEL_AUTH</span></Link>
         </div>
       </div>
     </Layout>

@@ -40,6 +40,13 @@ export interface AnalysisResult {
   summary: string;
   keyThemes: string[];
   actionableAdvice: string;
+  blindSpots: string;            // NEW: Where user thinks they are great but others disagree
+  transparentStrengths: string;   // NEW: Things user does naturally that others value highly
+  sentimentAnalysis: {           // NEW: Tone of the feedback
+    score: number;               // 0 to 100
+    label: string;               // e.g., "Constructive & Warm"
+    explanation: string;
+  };
   groupAnalysis: Record<string, string>;
 }
 
