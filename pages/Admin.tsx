@@ -4,11 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { storageService } from '../services/storageService';
 import { Button } from '../components/Button';
 import { Layout } from '../components/Layout';
-import { QuestionsConfig } from '../types';
+import { QuestionsConfig, User } from '../types';
 
 export const Admin: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   
   const [code, setCode] = useState('');
   const [questions, setQuestions] = useState<QuestionsConfig>({q1:'', q2:'', q3:'', q4:''});
@@ -18,6 +19,10 @@ export const Admin: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+      // Check if user is already logged in with Google
+      const user = storageService.getCurrentUser();
+      setCurrentUser(user);
+
       if (isAuthenticated) {
           loadSettings();
       }
@@ -38,7 +43,6 @@ export const Admin: React.FC = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // THE ADMIN PASSWORD IS: admin123
     if (password === 'admin123') {
       setIsAuthenticated(true);
       setMsg('');
@@ -47,15 +51,38 @@ export const Admin: React.FC = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+      setLoading(true);
+      try {
+          const user = await storageService.loginWithGoogle();
+          setCurrentUser(user);
+          if (user.email === 'gkilon@gmail.com') {
+              setMsg('מחובר למערכת כ-gkilon@gmail.com');
+          } else {
+              setMsg(`שים לב: התחברת עם ${user.email}. רק gkilon@gmail.com יכול לשמור שינויים.`);
+          }
+      } catch (e: any) {
+          setMsg('התחברות גוגל נכשלה.');
+      } finally {
+          setLoading(false);
+      }
+  };
+
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentUser || currentUser.email !== 'gkilon@gmail.com') {
+        setMsg('שגיאה: עליך להתחבר קודם עם חשבון גוגל של gkilon@gmail.com כדי לשמור.');
+        return;
+    }
+
     setLoading(true);
     setMsg('');
     try {
         await storageService.updateAppSettings(code, questions);
-        setMsg('ההגדרות עודכנו בהצלחה. הקוד החדש פעיל.');
-    } catch (e) {
-        setMsg('שגיאה בעדכון ההגדרות.');
+        setMsg('ההגדרות עודכנו בהצלחה בענן.');
+    } catch (e: any) {
+        console.error("Update Error:", e);
+        setMsg('שגיאה בעדכון ההגדרות. וודא שאתה מחובר לחשבון הנכון.');
     } finally {
         setLoading(false);
     }
@@ -71,33 +98,52 @@ export const Admin: React.FC = () => {
 
         <div className="glass-panel w-full max-w-2xl p-8 border-t-4 border-accent-500">
             {!isAuthenticated ? (
-                <form onSubmit={handleLogin} className="space-y-6 max-w-sm mx-auto">
-                    <div>
-                        <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-tighter">ADMIN_ACCESS_KEY</label>
-                        <input 
-                            type="password" 
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            className="input-field text-center font-mono"
-                            placeholder="••••••••"
-                        />
-                    </div>
-                    <Button type="submit" variant="primary" className="w-full">כניסה ללוח בקרה</Button>
-                    {msg && <p className="text-red-500 text-center text-xs mt-4 font-bold bg-red-900/20 p-2 rounded border border-red-500/20">{msg}</p>}
-                    <button onClick={() => navigate('/')} type="button" className="w-full text-center text-xs text-slate-400 mt-6 hover:text-white transition-colors">חזרה לדף הבית</button>
-                </form>
+                <div className="space-y-6 max-w-sm mx-auto">
+                    <form onSubmit={handleLogin} className="space-y-4">
+                        <div>
+                            <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-tighter">ADMIN_ACCESS_KEY</label>
+                            <input 
+                                type="password" 
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                                className="input-field text-center font-mono"
+                                placeholder="••••••••"
+                            />
+                        </div>
+                        <Button type="submit" variant="primary" className="w-full">כניסה ללוח בקרה</Button>
+                    </form>
+                    
+                    {msg && <p className="text-red-500 text-center text-xs font-bold bg-red-900/20 p-2 rounded border border-red-500/20">{msg}</p>}
+                    
+                    <button onClick={() => navigate('/')} type="button" className="w-full text-center text-xs text-slate-400 mt-4 hover:text-white transition-colors">חזרה לדף הבית</button>
+                </div>
             ) : (
                 <form onSubmit={handleUpdate} className="space-y-8">
-                    <div className="bg-accent-900/20 p-3 rounded text-center text-xs text-accent-400 font-bold border border-accent-500/30 flex items-center justify-center gap-2">
-                        <span className="w-2 h-2 bg-accent-500 rounded-full animate-pulse"></span>
-                        SESSION_ACTIVE: מחובר כמנהל
+                    <div className="bg-accent-900/20 p-3 rounded text-center text-xs text-accent-400 font-bold border border-accent-500/30 flex flex-col items-center justify-center gap-2">
+                        <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 bg-accent-500 rounded-full animate-pulse"></span>
+                            SESSION_ACTIVE: מחובר כמנהל
+                        </div>
+                        {currentUser ? (
+                            <div className="text-[10px] text-slate-400">
+                                מחובר כאימות: <span className="text-white">{currentUser.email}</span>
+                            </div>
+                        ) : (
+                            <button 
+                                type="button" 
+                                onClick={handleGoogleLogin}
+                                className="mt-2 bg-white text-black px-4 py-1 rounded text-[10px] font-bold hover:bg-slate-200 transition-colors"
+                            >
+                                התחבר עם Google לאימות אבטחה
+                            </button>
+                        )}
                     </div>
                     
                     <div className="grid grid-cols-1 gap-10">
                         <div className="bg-slate-950/40 p-6 rounded-xl border border-slate-800">
                             <h3 className="text-sm font-bold text-accent-500 mb-4 border-b border-slate-800 pb-2 uppercase tracking-widest">בקרת כניסה (קוד הזמנה)</h3>
                             <p className="text-xs text-slate-500 mb-4 italic leading-relaxed">
-                                קוד זה נדרש מכל משתמש חדש שמנסה להירשם. שנה אותו כדי לחסום הרשמות חדשות או כדי לתת קוד ייחודי לקבוצה מסוימת.
+                                קוד זה נדרש מכל משתמש חדש שמנסה להירשם.
                             </p>
                             <label className="block text-[10px] font-bold text-slate-400 mb-2 uppercase">קוד נוכחי</label>
                             <input 
@@ -128,12 +174,24 @@ export const Admin: React.FC = () => {
                     </div>
 
                     <div className="pt-6 border-t border-slate-800">
-                        <Button variant="primary" type="submit" isLoading={loading} className="w-full py-4 text-lg">שמור ועדכן הגדרות ענן</Button>
-                        {msg && <p className={`text-center font-bold text-xs mt-4 ${msg.includes('שגיאה') ? 'text-red-400' : 'text-accent-400'}`}>{msg}</p>}
+                        <Button 
+                            variant="primary" 
+                            type="submit" 
+                            isLoading={loading} 
+                            disabled={!currentUser || currentUser.email !== 'gkilon@gmail.com'}
+                            className="w-full py-4 text-lg disabled:opacity-50"
+                        >
+                            שמור ועדכן הגדרות ענן
+                        </Button>
+                        {msg && <p className={`text-center font-bold text-xs mt-4 ${msg.includes('שגיאה') || msg.includes('נכשלה') ? 'text-red-400' : 'text-accent-400'}`}>{msg}</p>}
                     </div>
 
                     <div className="flex justify-center">
-                        <button onClick={() => setIsAuthenticated(false)} type="button" className="text-center text-slate-600 font-bold text-[10px] uppercase hover:text-slate-400 transition-colors">התנתק ממצב ניהול</button>
+                        <button onClick={() => {
+                            setIsAuthenticated(false);
+                            storageService.logout();
+                            setCurrentUser(null);
+                        }} type="button" className="text-center text-slate-600 font-bold text-[10px] uppercase hover:text-slate-400 transition-colors">התנתק לחלוטין</button>
                     </div>
                 </form>
             )}
