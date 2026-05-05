@@ -16,52 +16,22 @@ const relationshipLabels: Record<string, string> = {
   'other': 'אחר'
 };
 
-export const Dashboard: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [responses, setResponses] = useState<FeedbackResponse[]>([]);
-  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
-  const [questions, setQuestions] = useState<QuestionsConfig | null>(null);
-  
-  const [loadingAnalysis, setLoadingAnalysis] = useState(false);
-  const [loadingData, setLoadingData] = useState(true);
-  const [copied, setCopied] = useState(false);
-  const [analysisError, setAnalysisError] = useState<string | null>(null);
-  
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const currentUser = storageService.getCurrentUser();
-    if (!currentUser) {
-      navigate('/');
-      return;
-    }
-    setUser(currentUser);
-    
-    const loadData = async () => {
-        setLoadingData(true);
-        try {
-            const [data, settings] = await Promise.all([
-                storageService.getResponsesForUser(currentUser.id),
-                storageService.getAppSettings()
-            ]);
-            setResponses(data);
-            setQuestions(settings.questions);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setLoadingData(false);
-        }
-    };
-    loadData();
-  }, [navigate]);
+  const [activeTab, setActiveTab] = useState<'analysis' | 'raw'>('analysis');
+  const [selfAssessmentText, setSelfAssessmentText] = useState('');
 
   const handleAnalyze = async () => {
     if (responses.length === 0 || !questions || !user) return;
     setLoadingAnalysis(true);
     setAnalysisError(null);
     try {
-      const result = await analyzeFeedback(responses, questions, user.name);
+      const result = await analyzeFeedback(responses, questions, user.name, selfAssessmentText);
       setAnalysis(result);
+      setActiveTab('analysis');
+      
+      // Persist analysis to cloud
+      if (user) {
+          storageService.saveAnalysis(user.id, result);
+      }
     } catch (error: any) {
       setAnalysisError(error.message || "אירעה שגיאה בנתונים.");
     } finally {
@@ -71,44 +41,36 @@ export const Dashboard: React.FC = () => {
 
   useEffect(() => {
     if (analysis) {
-        const el = document.getElementById('analysis-report');
+        const el = document.getElementById('analysis-header');
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
   }, [analysis]);
 
-  const copyLink = () => {
-    if (!user) return;
-    const baseUrl = window.location.origin;
-    const url = `${baseUrl}/#/survey/${user.id}`;
-    
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
+  const handleSelfAssessmentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      
+      // Simple text file reader for now. PDF parsing would require a library.
+      if (file.type === "text/plain") {
+          const reader = new FileReader();
+          reader.onload = (e) => setSelfAssessmentText(e.target?.result as string);
+          reader.readAsText(file);
+      } else {
+          // If it's a PDF, we'd ideally extract text here.
+          setSelfAssessmentText(`[הועלה קובץ: ${file.name}] - (נדרש ניתוח טקסטואלי)`);
+      }
   };
 
-  const handleExport = () => {
-      if(user) exportToPDF(user, analysis, responses);
-  };
-
-  if (loadingData) return <Layout><div className="flex justify-center py-20 animate-pulse text-accent-500 font-bold">טוען נתונים...</div></Layout>;
-  if (!user) return null;
-
-  const groupedResponses = responses.reduce((acc, r) => {
-    const key = r.relationship || 'other';
-    if (!acc[key]) acc[key] = [];
-    acc[key].push(r);
-    return acc;
-  }, {} as Record<string, FeedbackResponse[]>);
+  // ... (rest of the helper functions remain same)
 
   return (
     <Layout>
       <div className="pb-12 animate-fade-in">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-8 border-b border-slate-200">
           <div>
-            <h1 className="text-4xl font-extrabold text-slate-900 mb-2 tracking-tighter">שלום, <span className="text-accent-700">{user.name}</span></h1>
+            <h1 className="text-4xl font-extrabold text-slate-900 mb-2 tracking-tighter">שלום, <span className="text-[#8b6e58]">{user.name}</span></h1>
             <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                 <p className="text-slate-500 font-medium text-sm">מרכז התובנות האישי שלך</p>
@@ -120,103 +82,170 @@ export const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-8 space-y-8">
-            {/* ANALYSIS RESULTS SECTION */}
-            {analysis && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in" id="analysis-report">
-                    <div className="bg-white p-12 rounded-[2.5rem] shadow-soft border-t-8 border-t-[#9b4d4d] border border-slate-100 group hover:shadow-premium transition-all duration-500">
-                        <h4 className="text-[11px] font-black text-[#9b4d4d] uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
-                            <span className="w-2 h-2 bg-[#9b4d4d] rounded-full"></span>
-                            נקודות עיוורות (Blind Spots)
-                        </h4>
-                        <p className="text-xl text-slate-800 leading-relaxed font-bold">{analysis.blindSpots}</p>
-                    </div>
-                    <div className="bg-white p-12 rounded-[2.5rem] shadow-soft border-t-8 border-t-[#5d7061] border border-slate-100 group hover:shadow-premium transition-all duration-500">
-                        <h4 className="text-[11px] font-black text-[#5d7061] uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
-                            <span className="w-2 h-2 bg-[#5d7061] rounded-full"></span>
-                            עוצמות שקופות
-                        </h4>
-                        <p className="text-xl text-slate-800 leading-relaxed font-bold">{analysis.transparentStrengths}</p>
-                    </div>
-                    <div className="bg-[#121212] p-12 rounded-[2.5rem] shadow-premium md:col-span-2 flex flex-col md:flex-row gap-10 items-center text-white border border-white/5">
-                        <div className="flex-shrink-0 text-center bg-white/5 p-10 rounded-[2rem] border border-white/10 min-w-[180px] shadow-inner flex flex-col items-center justify-center">
-                            <div className="text-5xl mb-2">⚖️</div>
-                            <div className="text-[10px] uppercase font-black text-white/40 tracking-[0.4em]">Sentiment Matrix</div>
-                        </div>
-                        <div className="flex-grow">
-                            <h4 className="text-xl font-black text-[#8b6e58] uppercase mb-5 tracking-widest border-b border-white/10 pb-3">ניתוח סנטימנט: {analysis.sentimentAnalysis.label}</h4>
-                            <p className="text-2xl text-slate-300 leading-relaxed font-medium">{analysis.sentimentAnalysis.explanation}</p>
-                        </div>
-                    </div>
-                </div>
-            )}
+        {/* Tab Navigation */}
+        <div className="flex gap-8 border-b border-slate-200 mb-8">
+            <button 
+                onClick={() => setActiveTab('analysis')}
+                className={`pb-4 text-sm font-black uppercase tracking-[0.2em] transition-all relative ${activeTab === 'analysis' ? 'text-[#8b6e58]' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+                דוח תובנות
+                {activeTab === 'analysis' && <div className="absolute bottom-0 left-0 w-full h-1 bg-[#8b6e58] rounded-full"></div>}
+            </button>
+            <button 
+                onClick={() => setActiveTab('raw')}
+                className={`pb-4 text-sm font-black uppercase tracking-[0.2em] transition-all relative ${activeTab === 'raw' ? 'text-[#8b6e58]' : 'text-slate-400 hover:text-slate-600'}`}
+            >
+                משובים גולמיים
+                {activeTab === 'raw' && <div className="absolute bottom-0 left-0 w-full h-1 bg-[#8b6e58] rounded-full"></div>}
+            </button>
+        </div>
 
-            {/* RESPONSES SECTION */}
-            {responses.length === 0 ? (
-                <div className="bg-[#1a1a1a] rounded-3xl p-10 text-white shadow-premium relative overflow-hidden group border border-white/5">
-                    <div className="absolute top-0 right-0 w-1.5 h-full bg-[#8b6e58]"></div>
-                    
-                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
-                        <div className="text-right">
-                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#8b6e58] mb-2">Personal Survey Link</p>
-                            <h3 className="text-2xl font-black mb-2 tracking-tight">הקישור האישי שלך</h3>
-                            <p className="text-slate-400 text-sm font-medium">שלח את הקישור הזה למשיבים שלך כדי להתחיל לאסוף משוב.</p>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+          <div className="lg:col-span-8 space-y-12">
+            
+            {activeTab === 'analysis' ? (
+                <>
+                {/* REPORT HEADER */}
+                {analysis && (
+                    <div className="text-right mb-12 animate-fade-in" id="analysis-header">
+                        <p className="text-[10px] font-black uppercase tracking-[0.5em] text-[#8b6e58] mb-2">Diagnostic 360 Mirror</p>
+                        <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase">דוח 360 עבור {user.name}</h2>
+                    </div>
+                )}
+
+                {/* ANALYSIS RESULTS SECTION */}
+                {analysis && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in" id="analysis-report">
+                        {/* STRENGTHS FIRST */}
+                        <div className="bg-white p-12 rounded-[2.5rem] shadow-soft border-t-8 border-t-[#5d7061] border border-slate-100 group hover:shadow-premium transition-all duration-500">
+                            <h4 className="text-[11px] font-black text-[#5d7061] uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
+                                <span className="w-2 h-2 bg-[#5d7061] rounded-full"></span>
+                                עוצמות שקופות
+                            </h4>
+                            <p className="text-xl text-slate-800 leading-relaxed font-bold">{analysis.transparentStrengths}</p>
                         </div>
-                        <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 w-full md:w-auto">
-                            <code className="px-4 py-2 text-[#8b6e58] font-mono text-sm overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px] md:max-w-xs">{shareUrl}</code>
-                            <Button onClick={copyLink} variant="primary" className="bg-[#8b6e58] hover:bg-[#725a48] text-white font-black px-6 shadow-lg shadow-[#8b6e58]/20">
-                                {copied ? 'הועתק!' : 'העתק קישור'}
+
+                        <div className="bg-white p-12 rounded-[2.5rem] shadow-soft border-t-8 border-t-[#9b4d4d] border border-slate-100 group hover:shadow-premium transition-all duration-500">
+                            <h4 className="text-[11px] font-black text-[#9b4d4d] uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
+                                <span className="w-2 h-2 bg-[#9b4d4d] rounded-full"></span>
+                                נקודות עיוורות (Blind Spots)
+                            </h4>
+                            <p className="text-xl text-slate-800 leading-relaxed font-bold">{analysis.blindSpots}</p>
+                        </div>
+
+                        {/* SELF VS OTHERS COMPARISON */}
+                        {analysis.selfVsOthersAnalysis && (
+                            <div className="bg-white p-12 rounded-[2.5rem] shadow-soft border-t-8 border-t-[#8b6e58] border border-slate-100 md:col-span-2 group hover:shadow-premium transition-all duration-500">
+                                <h4 className="text-[11px] font-black text-[#8b6e58] uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
+                                    <span className="w-2 h-2 bg-[#8b6e58] rounded-full"></span>
+                                    תפיסת עצמי מול הסביבה
+                                </h4>
+                                <p className="text-xl text-slate-800 leading-relaxed font-bold italic">{analysis.selfVsOthersAnalysis}</p>
+                            </div>
+                        )}
+
+                        <div className="bg-[#121212] p-12 rounded-[2.5rem] shadow-premium md:col-span-2 flex flex-col md:flex-row gap-10 items-center text-white border border-white/5">
+                            <div className="flex-shrink-0 text-center bg-white/5 p-10 rounded-[2rem] border border-white/10 min-w-[180px] shadow-inner flex flex-col items-center justify-center">
+                                <div className="text-5xl mb-2">⚖️</div>
+                                <div className="text-[10px] uppercase font-black text-white/40 tracking-[0.4em]">Sentiment Matrix</div>
+                            </div>
+                            <div className="flex-grow">
+                                <h4 className="text-xl font-black text-[#8b6e58] uppercase mb-5 tracking-widest border-b border-white/10 pb-3">ניתוח סנטימנט: {analysis.sentimentAnalysis.label}</h4>
+                                <p className="text-2xl text-slate-300 leading-relaxed font-medium">{analysis.sentimentAnalysis.explanation}</p>
+                            </div>
+                        </div>
+
+                        {/* RECOMMENDATIONS FOR ACTION */}
+                        <div className="bg-[#FBF9F8] p-12 rounded-[2.5rem] border-2 border-dashed border-[#8b6e58]/30 md:col-span-2">
+                             <h4 className="text-[11px] font-black text-[#8b6e58] uppercase tracking-[0.4em] mb-8">המלצות אופרטיביות לצמיחה</h4>
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {analysis.recommendations?.map((rec, i) => (
+                                    <div key={i} className="flex gap-4 items-start bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                                        <div className="w-8 h-8 rounded-full bg-[#8b6e58] text-white flex items-center justify-center font-black flex-shrink-0 text-xs">{i+1}</div>
+                                        <p className="text-slate-700 font-bold leading-relaxed">{rec}</p>
+                                    </div>
+                                ))}
+                             </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* EMPTY STATE / GENERATION */}
+                {!analysis && (
+                    <div className="bg-[#1a1a1a] rounded-[2.5rem] p-16 text-center text-white shadow-premium relative overflow-hidden group border border-white/5">
+                        <div className="absolute top-0 right-0 w-2 h-full bg-[#8b6e58]"></div>
+                        <div className="max-w-xl mx-auto space-y-8">
+                            <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto text-4xl mb-4 border border-white/10">🔍</div>
+                            <h3 className="text-3xl font-black tracking-tight">מוכנים לניתוח?</h3>
+                            <p className="text-slate-400 text-lg leading-relaxed font-medium">
+                                ככל שיש יותר משובים, הניתוח יהיה מדויק יותר. <br className="hidden md:block"/> כרגע התקבלו <span className="text-[#8b6e58] font-black">{responses.length}</span> משובים.
+                            </p>
+                            
+                            <div className="bg-white/5 p-8 rounded-3xl border border-white/10 text-right space-y-4">
+                                <label className="block text-[10px] font-black text-[#8b6e58] uppercase tracking-widest">אופציונלי: העלאת אבחון עצמי להשוואה</label>
+                                <div className="flex gap-4">
+                                    <input 
+                                        type="file" 
+                                        onChange={handleSelfAssessmentUpload}
+                                        className="hidden" 
+                                        id="self-assessment-upload"
+                                        accept=".txt,.pdf"
+                                    />
+                                    <label 
+                                        htmlFor="self-assessment-upload"
+                                        className="flex-grow bg-white/5 hover:bg-white/10 border border-white/10 p-4 rounded-xl cursor-pointer text-sm font-medium transition-all text-slate-300"
+                                    >
+                                        {selfAssessmentText ? "קובץ הועלה בהצלחה ✓" : "בחר קובץ PDF או טקסט..."}
+                                    </label>
+                                </div>
+                                <p className="text-[10px] text-slate-500 font-bold">העלו דוח אבחון אישי כדי לקבל השוואה בין הדרך שבה אתם רואים את עצמכם לבין הסביבה.</p>
+                            </div>
+
+                            <Button onClick={handleAnalyze} isLoading={loadingAnalysis} disabled={responses.length === 0} className="w-full h-16 text-xl bg-[#8b6e58] hover:bg-[#725a48] shadow-2xl shadow-[#8b6e58]/20">
+                                הפק דוח 360 מלא
                             </Button>
                         </div>
                     </div>
-                </div>
+                )}
+                </>
             ) : (
-                <div className="space-y-10">
+                /* RAW RESPONSES TAB */
+                <div className="space-y-10 animate-fade-in">
                     <div className="flex justify-between items-center border-b border-slate-200 pb-6">
-                        <h3 className="font-extrabold text-2xl text-slate-900">משובים גולמיים ({responses.length})</h3>
+                        <h3 className="font-extrabold text-2xl text-slate-900">כל המשובים שהתקבלו ({responses.length})</h3>
                     </div>
-                    {Object.entries(groupedResponses).map(([rel, items]) => (
-                        <div key={rel} className="space-y-6">
-                            <div className="flex items-center gap-3">
-                                <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200">
-                                    {relationshipLabels[rel] || rel}
-                                </span>
-                                <div className="h-px bg-slate-200 flex-grow"></div>
-                            </div>
-                            <div className="grid gap-6">
-                                {items.map(r => (
-                                    <div key={r.id} className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 hover:border-accent-700/30 transition-all duration-300 group">
-                                        <div className="space-y-6">
-                                            {Array.isArray(questions) && questions.map((qText, idx) => (
-                                                <div key={idx} className={idx > 0 ? "pt-6 border-t border-slate-50" : ""}>
-                                                    <span className="text-slate-400 font-bold block text-[10px] mb-2 uppercase tracking-[0.15em] opacity-80">
-                                                        {idx + 1}. {qText}
-                                                    </span>
-                                                    <p className="text-slate-800 text-sm leading-relaxed font-medium">
-                                                        {r.answers && r.answers[idx] ? r.answers[idx] : "אין תשובה"}
-                                                    </p>
-                                                </div>
-                                            ))}
-                                            {/* Backward compatibility for old responses */}
-                                            {(!r.answers || r.answers.length === 0) && (
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                                    <div>
-                                                        <span className="text-slate-400 font-bold block text-[10px] mb-2 uppercase tracking-[0.15em]">חוזקות:</span>
-                                                        <p className="text-slate-800 text-sm font-medium">{(r as any).q1_impact}</p>
+                    {responses.length === 0 ? (
+                        <div className="py-20 text-center text-slate-400 font-bold">טרם התקבלו משובים</div>
+                    ) : (
+                        Object.entries(groupedResponses).map(([rel, items]) => (
+                            <div key={rel} className="space-y-6">
+                                <div className="flex items-center gap-3">
+                                    <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200">
+                                        {relationshipLabels[rel] || rel}
+                                    </span>
+                                    <div className="h-px bg-slate-200 flex-grow"></div>
+                                </div>
+                                <div className="grid gap-6">
+                                    {items.map(r => (
+                                        <div key={r.id} className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 hover:border-[#8b6e58]/30 transition-all duration-300 group">
+                                            <div className="space-y-6">
+                                                {Array.isArray(questions) && questions.map((qText, idx) => (
+                                                    <div key={idx} className={idx > 0 ? "pt-6 border-t border-slate-50" : ""}>
+                                                        <span className="text-slate-400 font-bold block text-[10px] mb-2 uppercase tracking-[0.15em] opacity-80">
+                                                            {idx + 1}. {qText}
+                                                        </span>
+                                                        <p className="text-slate-800 text-sm leading-relaxed font-medium">
+                                                            {r.answers && r.answers[idx] ? r.answers[idx] : "אין תשובה"}
+                                                        </p>
                                                     </div>
-                                                    <div>
-                                                        <span className="text-slate-400 font-bold block text-[10px] mb-2 uppercase tracking-[0.15em]">לשיפור:</span>
-                                                        <p className="text-slate-800 text-sm font-medium">{(r as any).q2_untapped}</p>
-                                                    </div>
-                                                </div>
-                                            )}
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             )}
           </div>

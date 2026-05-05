@@ -190,5 +190,40 @@ export const firebaseService = {
     } catch (e) {
       return [];
     }
+  },
+
+  // --- Admin & Analysis Operations ---
+
+  getAllUsers: async (): Promise<User[]> => {
+    if (!db) return [];
+    try {
+      const usersRef = collection(db, "users");
+      const querySnapshot = await getDocs(usersRef);
+      const users: User[] = [];
+      querySnapshot.forEach((doc: any) => {
+        users.push(doc.data() as User);
+      });
+      return users.sort((a, b) => b.createdAt - a.createdAt);
+    } catch (e) { return []; }
+  },
+
+  saveAnalysis: async (userId: string, analysis: any): Promise<void> => {
+    if (!db) return;
+    try {
+        const analysisRef = doc(db, "analysis", userId);
+        await setDoc(analysisRef, { 
+            ...analysis, 
+            updatedAt: Date.now() 
+        }, { merge: true });
+    } catch (e) { console.error("Save analysis failed", e); }
+  },
+
+  getAnalysis: async (userId: string): Promise<any | null> => {
+    if (!db) return null;
+    try {
+        const analysisRef = doc(db, "analysis", userId);
+        const docSnap = await getDoc(analysisRef);
+        return docSnap.exists() ? docSnap.data() : null;
+    } catch (e) { return null; }
   }
 };

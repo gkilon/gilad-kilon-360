@@ -148,6 +148,18 @@ export const storageService = {
     const user = await firebaseService.getUser(userId);
     if (user) return { name: user.name };
     return { name: "משתמש" }; 
+  },
+
+  getAllUsers: async (): Promise<User[]> => {
+      return await firebaseService.getAllUsers();
+  },
+
+  saveAnalysis: async (userId: string, analysis: any): Promise<void> => {
+      await firebaseService.saveAnalysis(userId, analysis);
+  },
+
+  getAnalysis: async (userId: string): Promise<any | null> => {
+      return await firebaseService.getAnalysis(userId);
   }
 };
 

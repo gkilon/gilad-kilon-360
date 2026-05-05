@@ -49,68 +49,75 @@ export const handler = async (event: any, context: any) => {
     return { statusCode: 405, headers, body: "Method Not Allowed" };
   }
 
-  try {
-    const { responses, questions, userName = "User" } = JSON.parse(event.body || "{}");
-
-    if (!responses || responses.length === 0) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: "אין מספיק נתונים לניתוח" }) };
-    }
-
-    const ai = getClient();
-    const formattedData = sanitizeData(responses, questions || [], userName);
-
-    const prompt = `
-      אתה פסיכולוג ארגוני בכיר. נתח את המשובים האנונימיים עבור ${userName} (תהליך משוב 360 מעלות).
-      
-      חובה להתייחס בנתונים ל:
-      1. "נקודות עיוורות" (Blind Spots): איפה המשתמש חושב שהוא מעולה אבל הסביבה רומזת אחרת?
-      2. "עוצמות שקופות": דברים שהמשתמש עושה "על הדרך" אבל נתפסים כערך ענק לאחרים.
-      3. ניתוח סנטימנט: מהו הטון הכללי של המשיבים?
-      4. **ניתוח קבוצות (חשוב)**: האם קיימים הבדלים מהותיים באופן שבו קבוצות שונות (מנהלים, קולגות, כפיפים) תופסות את המשתמש? ציין פערים משמעותיים אם קיימים.
-      
-      השאלות שנשאלו והתשובות שנתנו:
-      ${JSON.stringify(formattedData, null, 2)}
-    `;
-
-    // Using gemini-2.5-pro for high-quality organizational psychology analysis (updated for 2026)
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-pro',
-      contents: prompt,
-      config: {
-        systemInstruction: "You are a world-class organizational psychologist. Be insightful, direct, and supportive in Hebrew. Return ONLY valid JSON.",
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            summary: { type: Type.STRING },
-            keyThemes: { type: Type.ARRAY, items: { type: Type.STRING } },
-            actionableAdvice: { type: Type.STRING },
-            blindSpots: { type: Type.STRING },
-            transparentStrengths: { type: Type.STRING },
-            sentimentAnalysis: {
-                type: Type.OBJECT,
-                properties: {
-                    score: { type: Type.NUMBER },
-                    label: { type: Type.STRING },
-                    explanation: { type: Type.STRING }
-                },
-                required: ["score", "label", "explanation"]
+    try {
+      const { responses, questions, userName = "User", selfAssessmentText = "" } = JSON.parse(event.body || "{}");
+  
+      if (!responses || responses.length === 0) {
+        return { statusCode: 400, headers, body: JSON.stringify({ error: "אין מספיק נתונים לניתוח" }) };
+      }
+  
+      const ai = getClient();
+      const formattedData = sanitizeData(responses, questions || [], userName);
+  
+      const prompt = `
+        אתה פסיכולוג ארגוני בכיר. נתח את המשובים האנונימיים עבור ${userName} (תהליך משוב 360 מעלות).
+        
+        חובה להתייחס בנתונים ל:
+        1. "נקודות עיוורות" (Blind Spots): איפה המשתמש חושב שהוא מעולה אבל הסביבה רומזת אחרת?
+        2. "עוצמות שקופות": דברים שהמשתמש עושה "על הדרך" אבל נתפסים כערך ענק לאחרים.
+        3. ניתוח סנטימנט: מהו הטון הכללי של המשיבים?
+        4. **ניתוח קבוצות (חשוב)**: האם קיימים הבדלים מהותיים באופן שבו קבוצות שונות (מנהלים, קולגות, כפיפים) תופסות את המשתמש? ציין פערים משמעותיים אם קיימים.
+        5. **המלצות לפעולה**: ספק 3-4 המלצות קונקרטיות לשיפור וצמיחה המבוססות על המשוב.
+        6. **השוואה לשאלון עצמי (אם קיים)**: אם צורף טקסט אבחון עצמי, השווה בינו לבין תפיסת האחרים וציין פערים של "תפיסת עצמי מול סביבה".
+  
+        טקסט אבחון עצמי (אם ריק, התעלם מסעיף 6):
+        ${selfAssessmentText}
+        
+        השאלות שנשאלו והתשובות שנתנו:
+        ${JSON.stringify(formattedData, null, 2)}
+      `;
+  
+      // Using gemini-2.5-pro for high-quality organizational psychology analysis (updated for 2026)
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-pro',
+        contents: prompt,
+        config: {
+          systemInstruction: "You are a world-class organizational psychologist. Be insightful, direct, and supportive in Hebrew. Return ONLY valid JSON.",
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              summary: { type: Type.STRING },
+              keyThemes: { type: Type.ARRAY, items: { type: Type.STRING } },
+              actionableAdvice: { type: Type.STRING },
+              recommendations: { type: Type.ARRAY, items: { type: Type.STRING } }, // New: Concrete recommendations
+              blindSpots: { type: Type.STRING },
+              transparentStrengths: { type: Type.STRING },
+              selfVsOthersAnalysis: { type: Type.STRING }, // New: Self vs Others comparison
+              sentimentAnalysis: {
+                  type: Type.OBJECT,
+                  properties: {
+                      score: { type: Type.NUMBER },
+                      label: { type: Type.STRING },
+                      explanation: { type: Type.STRING }
+                  },
+                  required: ["score", "label", "explanation"]
+              },
+              groupAnalysis: {
+                  type: Type.OBJECT,
+                  properties: {
+                      "manager": { type: Type.STRING },
+                      "peer": { type: Type.STRING },
+                      "subordinate": { type: Type.STRING },
+                      "friend": { type: Type.STRING },
+                      "other": { type: Type.STRING }
+                  }
+              }
             },
-            groupAnalysis: {
-                type: Type.OBJECT,
-                properties: {
-                    "manager": { type: Type.STRING },
-                    "peer": { type: Type.STRING },
-                    "subordinate": { type: Type.STRING },
-                    "friend": { type: Type.STRING },
-                    "other": { type: Type.STRING }
-                }
-            }
+            required: ["summary", "keyThemes", "actionableAdvice", "recommendations", "blindSpots", "transparentStrengths", "sentimentAnalysis", "groupAnalysis"],
           },
-          required: ["summary", "keyThemes", "actionableAdvice", "blindSpots", "transparentStrengths", "sentimentAnalysis", "groupAnalysis"],
         },
-      },
-    });
+      });
 
     const text = response.text;
     if (!text) {
