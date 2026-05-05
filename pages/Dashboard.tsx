@@ -14,6 +14,8 @@ export const Dashboard: React.FC = () => {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [selfAssessmentText, setSelfAssessmentText] = useState<string>('');
+  const [fileData, setFileData] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'responses' | 'analysis'>('overview');
 
@@ -46,8 +48,13 @@ export const Dashboard: React.FC = () => {
     setLoadingAnalysis(true);
     setAnalysisError(null);
     try {
-      const textToUse = isIntegrated ? selfAssessmentText : "";
-      const result = await analyzeFeedback(responses, questions, user.name, textToUse);
+      const result = await analyzeFeedback(
+          responses, 
+          questions, 
+          user.name, 
+          isIntegrated ? fileData : null,
+          isIntegrated ? fileName : null
+      );
       setAnalysis(result);
       setActiveTab('analysis');
       storageService.saveAnalysis(user.id, result);
@@ -56,6 +63,20 @@ export const Dashboard: React.FC = () => {
     } finally {
       setLoadingAnalysis(false);
     }
+  };
+
+  const handleSelfAssessmentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      
+      setFileName(file.name);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+          const result = e.target?.result as string;
+          const base64 = result.split(',')[1];
+          setFileData(base64);
+      };
+      reader.readAsDataURL(file);
   };
 
   if (loading) return <Layout><div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#8b6e58]"></div></div></Layout>;
@@ -124,25 +145,29 @@ export const Dashboard: React.FC = () => {
                     <p className="text-slate-500 mb-6 text-sm leading-relaxed">שילוב של דוחות אבחון חיצוניים (Lumina Spark וכו') עם נתוני ה-360 ליצירת מפה אישיותית ומקצועית שלמה.</p>
                     
                     {!showAdvanced ? (
-                        <button onClick={() => setShowAdvanced(true)} className="text-[10px] font-black text-[#8b6e58] underline uppercase tracking-widest">הוסף דוח אבחון לאינטגרציה +</button>
+                        <button onClick={() => setShowAdvanced(true)} className="text-[10px] font-black text-[#8b6e58] underline uppercase tracking-widest">צרף דוח אבחון (PDF) לאינטגרציה +</button>
                     ) : (
                         <div className="space-y-4 animate-fade-in">
-                            <textarea 
-                                value={selfAssessmentText}
-                                onChange={e => setSelfAssessmentText(e.target.value)}
-                                placeholder="הדבק כאן את הטקסט מדוח ה-Lumina Spark שלך..."
-                                className="w-full h-32 p-4 text-xs border border-[#8b6e58]/20 rounded-xl focus:ring-2 focus:ring-[#8b6e58]/20 outline-none resize-none bg-white"
-                            />
+                            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm text-center">
+                                <label className="block text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">בחר קובץ PDF (Lumina Spark / אבחון אחר)</label>
+                                <input 
+                                    type="file" 
+                                    accept=".pdf"
+                                    onChange={handleSelfAssessmentUpload}
+                                    className="text-xs file:bg-[#8b6e58]/10 file:border-0 file:rounded-lg file:px-4 file:py-2 file:text-[#8b6e58] file:font-bold hover:file:bg-[#8b6e58]/20"
+                                />
+                                {fileName && <p className="mt-4 text-xs font-bold text-[#8b6e58]">✓ קובץ נבחר: {fileName}</p>}
+                            </div>
                             <div className="flex gap-2">
                                 <Button 
                                     onClick={() => handleAnalyze(true)} 
                                     isLoading={loadingAnalysis && showAdvanced}
-                                    disabled={!selfAssessmentText || responses.length === 0}
+                                    disabled={!fileData || responses.length === 0}
                                     className="h-14 flex-grow rounded-xl bg-[#8b6e58]"
                                 >
-                                    הפק דוח אינטגרטיבי מקיף
+                                    הפק דוח אינטגרטיבי מהקובץ
                                 </Button>
-                                <Button onClick={() => {setShowAdvanced(false); setSelfAssessmentText('');}} variant="outline" className="h-14 px-6 rounded-xl border-slate-200 text-slate-400">ביטול</Button>
+                                <Button onClick={() => {setShowAdvanced(false); setFileData(null); setFileName(null);}} variant="outline" className="h-14 px-6 rounded-xl border-slate-200 text-slate-400">ביטול</Button>
                             </div>
                         </div>
                     )}

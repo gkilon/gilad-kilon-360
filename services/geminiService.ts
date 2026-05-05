@@ -4,7 +4,8 @@ export const analyzeFeedback = async (
     responses: FeedbackResponse[], 
     questions: QuestionsConfig,
     userName: string = "User",
-    selfAssessmentText: string = ""
+    fileData: string | null = null,
+    fileName: string | null = null
 ): Promise<AnalysisResult> => {
   
   if (responses.length === 0) throw new Error("אין מספיק נתונים לניתוח");
@@ -15,7 +16,7 @@ export const analyzeFeedback = async (
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ responses, questions, userName, selfAssessmentText })
+      body: JSON.stringify({ responses, questions, userName, fileData, fileName })
     });
 
     if (!response.ok) {

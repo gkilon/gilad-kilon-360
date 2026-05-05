@@ -50,7 +50,7 @@ export const handler = async (event: any, context: any) => {
   }
 
     try {
-      const { responses, questions, userName = "User", selfAssessmentText = "" } = JSON.parse(event.body || "{}");
+      const { responses, questions, userName = "User", fileData, fileName } = JSON.parse(event.body || "{}");
   
       if (!responses || responses.length === 0) {
         return { statusCode: 400, headers, body: JSON.stringify({ error: "אין מספיק נתונים לניתוח" }) };
@@ -59,31 +59,42 @@ export const handler = async (event: any, context: any) => {
       const ai = getClient();
       const formattedData = sanitizeData(responses, questions || [], userName);
   
-      const prompt = `
-        אתה פסיכולוג ארגוני בכיר. נתח את המשובים האנונימיים עבור ${userName} (תהליך משוב 360 מעלות).
+      const promptText = `
+        אתה פסיכולוג ארגוני בכיר וסוכן AI מומחה. נתח את המשובים האנונימיים עבור ${userName} (תהליך משוב 360 מעלות).
         
-        חובה להתייחס בנתונים ל:
-        1. "נקודות עיוורות" (Blind Spots): איפה המשתמש חושב שהוא מעולה אבל הסביבה רומזת אחרת?
-        2. "עוצמות שקופות": דברים שהמשתמש עושה "על הדרך" אבל נתפסים כערך ענק לאחרים.
-        3. ניתוח סנטימנט: מהו הטון הכללי של המשיבים?
-        4. **ניתוח קבוצות (חשוב)**: האם קיימים הבדלים מהותיים באופן שבו קבוצות שונות (מנהלים, קולגות, כפיפים) תופסות את המשתמש? ציין פערים משמעותיים אם קיימים.
-        5. **המלצות לפעולה**: ספק 3-4 המלצות קונקרטיות לשיפור וצמיחה המבוססות על המשוב.
-        6. **אינטגרציה עם Lumina Spark (קריטי)**: אם הטקסט המצורף מכיל נתוני Lumina Spark (צבעים, היבטים, סגנונות תקשורת), בצע אינטגרציה מלאה. השווה בין הדינמיקה הצבעונית של לומינה (למשל: אדום דומיננטי, כחול מופנם) לבין האופן שבו הסביבה תופסת את המשתמש ב-360. האם יש הלימה או פער?
+        בנוסף, מצורף קובץ אבחון אישי (כגון Lumina Spark). עליך לבצע אינטגרציה מלאה:
+        1. "נקודות עיוורות" (Blind Spots): השווה בין ה-PDF לבין מה שהסביבה אומרת.
+        2. "עוצמות שקופות": זהה מה ה-PDF מגדיר כחוזקה ואיך זה בא לידי ביטוי בשטח.
+        3. **אינטגרציה של Lumina**: אם הקובץ הוא לומינה, התייחס לצבעים והיבטים ספציפיים.
+        4. **המלצות**: ספק 4 המלצות לצמיחה המשלבות את האבחון המקצועי עם המשובים.
   
-        טקסט אבחון עצמי / Lumina Spark:
-        ${selfAssessmentText}
-        
-        השאלות שנשאלו והתשובות שנתנו ב-360:
+        נתוני ה-360:
         ${JSON.stringify(formattedData, null, 2)}
       `;
+
+      const contents = [{
+        role: 'user',
+        parts: [
+          { text: promptText }
+        ]
+      }];
+
+      // Add PDF if provided
+      if (fileData) {
+          contents[0].parts.push({
+            inlineData: {
+              mimeType: "application/pdf",
+              data: fileData
+            }
+          });
+      }
   
-      // Using gemini-2.0-flash for high-speed analysis to prevent Netlify 504 timeouts.
-      // 2.0 Flash provides Pro-level intelligence with sub-5-second response times.
+      // Using gemini-2.0-flash for high-speed multimodal analysis
       const response = await ai.models.generateContent({
         model: 'gemini-2.0-flash',
-        contents: prompt,
+        contents,
         config: {
-          systemInstruction: "You are a professional organizational psychologist. Be concise, insightful, and supportive in Hebrew. Return ONLY valid JSON.",
+          systemInstruction: "You are a world-class organizational psychologist. Be insightful, direct, and supportive in Hebrew. Return ONLY valid JSON.",
           responseMimeType: "application/json",
           responseSchema: {
             type: Type.OBJECT,
