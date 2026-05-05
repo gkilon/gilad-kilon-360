@@ -69,6 +69,15 @@ export const Dashboard: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (analysis) {
+        const el = document.getElementById('analysis-report');
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+  }, [analysis]);
+
   const copyLink = () => {
     if (!user) return;
     const baseUrl = window.location.origin;
@@ -115,29 +124,29 @@ export const Dashboard: React.FC = () => {
           <div className="lg:col-span-8 space-y-8">
             {/* ANALYSIS RESULTS SECTION */}
             {analysis && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-                    <div className="bg-white p-10 rounded-3xl shadow-soft border-t-8 border-t-red-500 border border-slate-100 group hover:shadow-xl transition-all duration-500">
-                        <h4 className="text-xs font-black text-red-600 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                            <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-fade-in" id="analysis-report">
+                    <div className="bg-white p-12 rounded-[2.5rem] shadow-soft border-t-8 border-t-[#9b4d4d] border border-slate-100 group hover:shadow-premium transition-all duration-500">
+                        <h4 className="text-[11px] font-black text-[#9b4d4d] uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
+                            <span className="w-2 h-2 bg-[#9b4d4d] rounded-full"></span>
                             נקודות עיוורות (Blind Spots)
                         </h4>
-                        <p className="text-lg text-slate-800 leading-relaxed font-bold">{analysis.blindSpots}</p>
+                        <p className="text-xl text-slate-800 leading-relaxed font-bold">{analysis.blindSpots}</p>
                     </div>
-                    <div className="bg-white p-10 rounded-3xl shadow-soft border-t-8 border-t-emerald-500 border border-slate-100 group hover:shadow-xl transition-all duration-500">
-                        <h4 className="text-xs font-black text-emerald-600 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                            <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                    <div className="bg-white p-12 rounded-[2.5rem] shadow-soft border-t-8 border-t-[#5d7061] border border-slate-100 group hover:shadow-premium transition-all duration-500">
+                        <h4 className="text-[11px] font-black text-[#5d7061] uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
+                            <span className="w-2 h-2 bg-[#5d7061] rounded-full"></span>
                             עוצמות שקופות
                         </h4>
-                        <p className="text-lg text-slate-800 leading-relaxed font-bold">{analysis.transparentStrengths}</p>
+                        <p className="text-xl text-slate-800 leading-relaxed font-bold">{analysis.transparentStrengths}</p>
                     </div>
-                    <div className="bg-slate-900 p-8 rounded-2xl shadow-premium md:col-span-2 flex flex-col md:flex-row gap-8 items-center text-white">
-                        <div className="flex-shrink-0 text-center bg-white/10 p-8 rounded-3xl border border-white/10 min-w-[160px] shadow-inner">
-                            <div className="text-6xl font-black text-accent-500 mb-2">{analysis.sentimentAnalysis.score}%</div>
-                            <div className="text-[10px] uppercase font-black text-white/40 tracking-[0.3em]">Positive Resonance</div>
+                    <div className="bg-[#121212] p-12 rounded-[2.5rem] shadow-premium md:col-span-2 flex flex-col md:flex-row gap-10 items-center text-white border border-white/5">
+                        <div className="flex-shrink-0 text-center bg-white/5 p-10 rounded-[2rem] border border-white/10 min-w-[180px] shadow-inner flex flex-col items-center justify-center">
+                            <div className="text-5xl mb-2">⚖️</div>
+                            <div className="text-[10px] uppercase font-black text-white/40 tracking-[0.4em]">Sentiment Matrix</div>
                         </div>
                         <div className="flex-grow">
-                            <h4 className="text-lg font-black text-accent-400 uppercase mb-4 tracking-widest border-b border-white/10 pb-2">ניתוח סנטימנט: {analysis.sentimentAnalysis.label}</h4>
-                            <p className="text-xl text-slate-200 leading-relaxed font-medium">{analysis.sentimentAnalysis.explanation}</p>
+                            <h4 className="text-xl font-black text-[#8b6e58] uppercase mb-5 tracking-widest border-b border-white/10 pb-3">ניתוח סנטימנט: {analysis.sentimentAnalysis.label}</h4>
+                            <p className="text-2xl text-slate-300 leading-relaxed font-medium">{analysis.sentimentAnalysis.explanation}</p>
                         </div>
                     </div>
                 </div>
@@ -145,18 +154,18 @@ export const Dashboard: React.FC = () => {
 
             {/* RESPONSES SECTION */}
             {responses.length === 0 ? (
-                <div className="bg-slate-900 rounded-3xl p-10 text-white shadow-premium relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 w-1.5 h-full bg-amber-500"></div>
+                <div className="bg-[#1a1a1a] rounded-3xl p-10 text-white shadow-premium relative overflow-hidden group border border-white/5">
+                    <div className="absolute top-0 right-0 w-1.5 h-full bg-[#8b6e58]"></div>
                     
                     <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
                         <div className="text-right">
-                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-500 mb-2">Personal Survey Link</p>
+                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#8b6e58] mb-2">Personal Survey Link</p>
                             <h3 className="text-2xl font-black mb-2 tracking-tight">הקישור האישי שלך</h3>
                             <p className="text-slate-400 text-sm font-medium">שלח את הקישור הזה למשיבים שלך כדי להתחיל לאסוף משוב.</p>
                         </div>
                         <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 w-full md:w-auto">
-                            <code className="px-4 py-2 text-amber-400 font-mono text-sm overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px] md:max-w-xs">{shareUrl}</code>
-                            <Button onClick={copyLink} variant="primary" className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-black px-6 shadow-lg shadow-amber-500/20">
+                            <code className="px-4 py-2 text-[#8b6e58] font-mono text-sm overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px] md:max-w-xs">{shareUrl}</code>
+                            <Button onClick={copyLink} variant="primary" className="bg-[#8b6e58] hover:bg-[#725a48] text-white font-black px-6 shadow-lg shadow-[#8b6e58]/20">
                                 {copied ? 'הועתק!' : 'העתק קישור'}
                             </Button>
                         </div>

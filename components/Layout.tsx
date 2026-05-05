@@ -5,26 +5,26 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const location = useLocation();
 
   return (
-    <div className="min-h-screen flex flex-col text-slate-900 bg-[#F8FAFC]" dir="rtl">
+    <div className="min-h-screen flex flex-col text-slate-900 bg-[#FBF9F8]" dir="rtl">
       
-      {/* Brand Line - The Energetic Kick */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-amber-400 via-amber-600 to-amber-400"></div>
+      {/* Subtle Top Accent */}
+      <div className="h-1 w-full bg-[#8b6e58]"></div>
 
-      {/* Header - Light, Sophisticated */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-soft">
-        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+      {/* Header - Executive, Refined */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div className="max-w-6xl mx-auto px-6 h-24 flex items-center justify-between">
           
-          <Link to="/" className="flex items-center gap-4 group">
+          <Link to="/" className="flex items-center gap-5 group">
              <div className="flex flex-col items-center">
-                 <div className="w-1 h-8 bg-slate-900 rounded-full group-hover:bg-amber-500 transition-colors"></div>
-                 <div className="w-4 h-1 bg-amber-500 rounded-full mt-1"></div>
+                 <div className="w-1.5 h-10 bg-slate-900 rounded-full group-hover:bg-[#8b6e58] transition-colors"></div>
+                 <div className="w-5 h-1.5 bg-[#8b6e58] rounded-full mt-1.5 shadow-sm"></div>
              </div>
              
              <div className="flex flex-col">
-                <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none uppercase">
-                    Kilon<span className="text-amber-500">360</span>
+                <h1 className="text-3xl font-black text-slate-900 tracking-tighter leading-none uppercase">
+                    Kilon<span className="text-[#8b6e58]">360</span>
                 </h1>
-                <span className="text-[10px] uppercase tracking-[0.4em] text-slate-400 font-black -mt-1">Digital Mirror</span>
+                <span className="text-[11px] uppercase tracking-[0.5em] text-slate-400 font-bold -mt-1">Executive Mirror</span>
              </div>
           </Link>
 

@@ -105,17 +105,17 @@ export const Landing: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10 px-4">
               <div className="bg-white/80 backdrop-blur-sm p-12 rounded-[2.5rem] shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-premium transition-all duration-500 hover:-translate-y-2">
-                <div className="w-16 h-16 bg-amber-500 text-white rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-xl shadow-amber-500/20">1</div>
+                <div className="w-16 h-16 bg-[#8b6e58] text-white rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-xl shadow-[#8b6e58]/20">1</div>
                 <h3 className="font-black text-xl text-slate-900 mb-4">הזנת קוד גישה</h3>
                 <p className="text-slate-500 text-base leading-relaxed font-medium">מתחילים בהזנת הקוד שקיבלתם מגלעד. זהו המפתח שלכם לכניסה למערכת.</p>
               </div>
               <div className="bg-white/80 backdrop-blur-sm p-12 rounded-[2.5rem] shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-premium transition-all duration-500 hover:-translate-y-2">
-                <div className="w-16 h-16 bg-amber-500 text-white rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-xl shadow-amber-500/20">2</div>
+                <div className="w-16 h-16 bg-[#8b6e58] text-white rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-xl shadow-[#8b6e58]/20">2</div>
                 <h3 className="font-black text-xl text-slate-900 mb-4">קבלת קישור אישי</h3>
                 <p className="text-slate-500 text-base leading-relaxed font-medium">לאחר הרישום, תקבלו קישור ייחודי. העתיקו אותו ושלחו אותו למשיבים (קולגות, מנהלים וכו').</p>
               </div>
               <div className="bg-white/80 backdrop-blur-sm p-12 rounded-[2.5rem] shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-premium transition-all duration-500 hover:-translate-y-2">
-                <div className="w-16 h-16 bg-amber-500 text-white rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-xl shadow-amber-500/20">3</div>
+                <div className="w-16 h-16 bg-[#8b6e58] text-white rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-xl shadow-[#8b6e58]/20">3</div>
                 <h3 className="font-black text-xl text-slate-900 mb-4">ניתוח ותובנות</h3>
                 <p className="text-slate-500 text-base leading-relaxed font-medium">כשהמשובים יצטברו, ה-AI ינתח עבורכם את הנתונים ויציג דוח מפורט על נקודות החוזק והצמיחה.</p>
               </div>
@@ -123,9 +123,9 @@ export const Landing: React.FC = () => {
           </div>
         )}
 
-        <div className="w-full max-w-[420px] glass-panel border-t-4 border-amber-500 shadow-premium">
+        <div className="w-full max-w-[420px] glass-panel border-t-8 border-[#8b6e58] shadow-premium">
             <div className="text-center mb-8">
-                <p className="text-[10px] text-amber-600 font-bold uppercase tracking-[0.3em] mb-2">Access Portal</p>
+                <p className="text-[10px] text-[#8b6e58] font-bold uppercase tracking-[0.4em] mb-2">Executive Portal</p>
                 <h2 className="text-2xl font-bold text-slate-900">בואו נתחיל</h2>
             </div>
             {step === 'invite' ? (
