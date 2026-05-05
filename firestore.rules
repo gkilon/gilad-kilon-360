@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Users Collection ---
+    match /users/{userId} {
+      // Anyone authenticated can read (allows finding users by email for the registration check)
+      // or we can restrict it to their own record if `findUserByEmail` doesn't strictly need auth.
+      // But for security, let's allow read if authenticated. If `findUserByEmail` is called during login/register,
+      // Firebase auth is already active.
+      allow read: if request.auth != null; 
+      
+      // A user can create or update their own document
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false;
+    }
+
+    // --- Settings Collection ---
+    match /settings/config {
+      // Anyone can read the settings (to see registration codes and questions)
+      allow read: if true;
+      // Only admins can change settings (done via Firebase Console directly)
+      allow write: if false; 
+    }
+
+    // --- Responses Collection ---
+    match /responses/{responseId} {
+      // Anyone can create a response (users submitting feedback without logging in)
+      allow create: if true;
+      
+      // Only the owner of the survey (userId == surveyId) can read the responses
+      allow read: if request.auth != null && request.auth.uid == resource.data.surveyId;
+      
+      allow update, delete: if false;
+    }
+  }
+}
