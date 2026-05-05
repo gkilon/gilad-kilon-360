@@ -145,11 +145,22 @@ export const Dashboard: React.FC = () => {
 
             {/* RESPONSES SECTION */}
             {responses.length === 0 ? (
-                <div className="bg-white rounded-3xl p-20 text-center border-2 border-dashed border-slate-200">
-                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8 text-3xl">⏳</div>
-                    <h3 className="text-2xl font-bold text-slate-900 mb-3">ממתינים למשובים ראשונים</h3>
-                    <p className="text-slate-500 mb-8 max-w-md mx-auto">ברגע שתשלח את הקישור ותתקבל התשובה הראשונה, נוכל להתחיל להפיק עבורך תובנות.</p>
-                    <Button onClick={copyLink} variant="primary" className="h-14 px-10 text-lg shadow-xl">{copied ? 'הקישור הועתק!' : 'העתק קישור להפצה'}</Button>
+                <div className="bg-slate-900 rounded-3xl p-10 text-white shadow-premium relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-1.5 h-full bg-amber-500"></div>
+                    
+                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-8">
+                        <div className="text-right">
+                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-500 mb-2">Personal Survey Link</p>
+                            <h3 className="text-2xl font-black mb-2 tracking-tight">הקישור האישי שלך</h3>
+                            <p className="text-slate-400 text-sm font-medium">שלח את הקישור הזה למשיבים שלך כדי להתחיל לאסוף משוב.</p>
+                        </div>
+                        <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 w-full md:w-auto">
+                            <code className="px-4 py-2 text-amber-400 font-mono text-sm overflow-hidden text-ellipsis whitespace-nowrap max-w-[200px] md:max-w-xs">{shareUrl}</code>
+                            <Button onClick={copyLink} variant="primary" className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-black px-6 shadow-lg shadow-amber-500/20">
+                                {copied ? 'הועתק!' : 'העתק קישור'}
+                            </Button>
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <div className="space-y-10">

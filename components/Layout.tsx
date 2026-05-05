@@ -5,21 +5,24 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const location = useLocation();
 
   return (
-    <div className="min-h-screen flex flex-col text-slate-900 bg-[#F9FAFB]" dir="rtl">
+    <div className="min-h-screen flex flex-col text-slate-900 bg-[#F8FAFC]" dir="rtl">
       
+      {/* Brand Line - The Energetic Kick */}
+      <div className="h-1.5 w-full bg-gradient-to-r from-amber-400 via-amber-600 to-amber-400"></div>
+
       {/* Header - Light, Sophisticated */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-soft">
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
           
           <Link to="/" className="flex items-center gap-4 group">
              <div className="flex flex-col items-center">
-                 <div className="w-1 h-8 bg-accent-700 rounded-full"></div>
-                 <div className="w-4 h-1 bg-slate-200 rounded-full mt-1 group-hover:bg-accent-500 transition-colors"></div>
+                 <div className="w-1 h-8 bg-slate-900 rounded-full group-hover:bg-amber-500 transition-colors"></div>
+                 <div className="w-4 h-1 bg-amber-500 rounded-full mt-1"></div>
              </div>
              
              <div className="flex flex-col">
                 <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none uppercase">
-                    Kilon<span className="text-accent-500">360</span>
+                    Kilon<span className="text-amber-500">360</span>
                 </h1>
                 <span className="text-[10px] uppercase tracking-[0.4em] text-slate-400 font-black -mt-1">Digital Mirror</span>
              </div>
