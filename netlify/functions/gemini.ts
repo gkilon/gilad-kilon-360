@@ -77,12 +77,13 @@ export const handler = async (event: any, context: any) => {
         ${JSON.stringify(formattedData, null, 2)}
       `;
   
-      // Using gemini-2.5-pro as requested (the 2026 flagship model)
+      // Using gemini-2.0-flash for high-speed analysis to prevent Netlify 504 timeouts.
+      // 2.0 Flash provides Pro-level intelligence with sub-5-second response times.
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-pro',
+        model: 'gemini-2.0-flash',
         contents: prompt,
         config: {
-          systemInstruction: "You are a world-class organizational psychologist. Be insightful, direct, and supportive in Hebrew. Return ONLY valid JSON.",
+          systemInstruction: "You are a professional organizational psychologist. Be concise, insightful, and supportive in Hebrew. Return ONLY valid JSON.",
           responseMimeType: "application/json",
           responseSchema: {
             type: Type.OBJECT,
@@ -119,11 +120,11 @@ export const handler = async (event: any, context: any) => {
         },
       });
 
-    // Handle extraction safely for @google/genai SDK
-    const text = response.text;
+    // Handle extraction safely for @google/genai SDK (it might be in .text or .response.text())
+    const text = response.text || (response as any).response?.text?.();
     
     if (!text) {
-        console.error("Full AI Response:", JSON.stringify(response));
+        console.error("Full AI Response Error:", JSON.stringify(response));
         return { 
           statusCode: 500, 
           headers, 
