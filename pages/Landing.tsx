@@ -88,31 +88,36 @@ export const Landing: React.FC = () => {
         
         {/* Onboarding / Intro Section */}
         {step === 'invite' && (
-          <div className="w-full max-w-4xl mb-16 animate-fade-in">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-4 tracking-tighter">
-                צמיחה מבוססת <span className="text-accent-700">פרספקטיבה</span>
+          <div className="w-full max-w-5xl mb-20 animate-fade-in">
+            <div className="text-center mb-16 space-y-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-slate-100 shadow-soft">
+                 <span className="w-1.5 h-1.5 bg-accent-500 rounded-full animate-pulse"></span>
+                 <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Professional Feedback Platform</span>
+              </div>
+              <h1 className="text-5xl md:text-7xl font-black text-slate-900 leading-[1.1] tracking-tighter">
+                צמיחה מבוססת <br/> 
+                <span className="text-accent-500">פרספקטיבה</span>
               </h1>
-              <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto">
-                הדרך המהירה ביותר להשתפר היא להבין איך הסביבה רואה אותך. המערכת עוזרת לך לאסוף משוב כנה ולנתח אותו בעזרת AI.
+              <p className="text-xl md:text-2xl text-slate-500 max-w-2xl mx-auto leading-relaxed font-medium">
+                גלה איך העולם רואה אותך. תהליך משוב 360 מעלות <br className="hidden md:block"/> המעניק תובנות עמוקות לצמיחה מקצועית.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10 px-4">
-              <div className="bg-white p-10 rounded-3xl shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500">
-                <div className="w-16 h-16 bg-accent-50 text-accent-700 rounded-2xl flex items-center justify-center font-black text-2xl mb-6 border border-accent-100 transform group-hover:rotate-6 transition-transform">1</div>
+              <div className="bg-white/80 backdrop-blur-sm p-12 rounded-[2.5rem] shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-premium transition-all duration-500 hover:-translate-y-2">
+                <div className="w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-xl shadow-slate-900/20">1</div>
                 <h3 className="font-black text-xl text-slate-900 mb-4">הזנת קוד גישה</h3>
-                <p className="text-slate-600 text-base leading-relaxed font-medium">מתחילים בהזנת הקוד שקיבלתם מגלעד. זהו המפתח שלכם לכניסה למערכת המאובטחת.</p>
+                <p className="text-slate-500 text-base leading-relaxed font-medium">מתחילים בהזנת הקוד שקיבלתם מגלעד. זהו המפתח שלכם לכניסה למערכת.</p>
               </div>
-              <div className="bg-white p-10 rounded-3xl shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500">
-                <div className="w-16 h-16 bg-accent-50 text-accent-700 rounded-2xl flex items-center justify-center font-black text-2xl mb-6 border border-accent-100 transform group-hover:-rotate-6 transition-transform">2</div>
+              <div className="bg-white/80 backdrop-blur-sm p-12 rounded-[2.5rem] shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-premium transition-all duration-500 hover:-translate-y-2">
+                <div className="w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-xl shadow-slate-900/20">2</div>
                 <h3 className="font-black text-xl text-slate-900 mb-4">קבלת קישור אישי</h3>
-                <p className="text-slate-600 text-base leading-relaxed font-medium">לאחר הרישום, תקבלו קישור אישי ייחודי. העתיקו אותו ושלחו אותו למשיבים (קולגות, מנהלים וכו').</p>
+                <p className="text-slate-500 text-base leading-relaxed font-medium">לאחר הרישום, תקבלו קישור ייחודי. העתיקו אותו ושלחו אותו למשיבים (קולגות, מנהלים וכו').</p>
               </div>
-              <div className="bg-white p-10 rounded-3xl shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500">
-                <div className="w-16 h-16 bg-accent-50 text-accent-700 rounded-2xl flex items-center justify-center font-black text-2xl mb-6 border border-accent-100 transform group-hover:scale-110 transition-transform">3</div>
+              <div className="bg-white/80 backdrop-blur-sm p-12 rounded-[2.5rem] shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-premium transition-all duration-500 hover:-translate-y-2">
+                <div className="w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center font-black text-2xl mb-8 shadow-xl shadow-slate-900/20">3</div>
                 <h3 className="font-black text-xl text-slate-900 mb-4">ניתוח ותובנות</h3>
-                <p className="text-slate-600 text-base leading-relaxed font-medium">כשהמשובים יצטברו, ה-AI שלנו ינתח עבורכם את הנתונים ויציג דוח מפורט על נקודות החוזק והצמיחה שלכם.</p>
+                <p className="text-slate-500 text-base leading-relaxed font-medium">כשהמשובים יצטברו, ה-AI ינתח עבורכם את הנתונים ויציג דוח מפורט על נקודות החוזק והצמיחה.</p>
               </div>
             </div>
           </div>

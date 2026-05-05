@@ -25,11 +25,11 @@
                 900: '#0f172a',
               },
               accent: {
-                50: '#eff6ff',
-                100: '#dbeafe',
-                500: '#3b82f6', // Vibrant Blue
-                600: '#2563eb',
-                700: '#1d4ed8', // Deep Royal Blue
+                50: '#f8fafc',
+                100: '#f1f5f9',
+                500: '#1e293b', // Deep Midnight
+                600: '#0f172a',
+                700: '#020617', // Rich Ink Blue
               }
             },
             boxShadow: {
@@ -42,32 +42,43 @@
     </script>
     <style>
       body {
-        background-color: #F9FAFB;
-        color: #111827;
+        background-color: #F8FAFC;
+        background-image: 
+          linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+        color: #0F172A;
         font-family: 'Assistant', sans-serif;
         margin: 0;
         overflow-x: hidden;
       }
       .glass-panel {
-        background: #FFFFFF;
-        border: 1px solid #E5E7EB;
-        border-radius: 1.25rem;
-        padding: 2.5rem;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 2rem;
+        padding: 3rem;
+        box-shadow: 
+          0 10px 15px -3px rgba(0, 0, 0, 0.02),
+          0 4px 6px -4px rgba(0, 0, 0, 0.02),
+          inset 0 2px 4px 0 rgba(255, 255, 255, 0.5);
       }
       .input-field {
         width: 100%;
         background-color: #FFFFFF;
-        border: 1px solid #D1D5DB;
-        border-radius: 0.75rem;
-        padding: 0.85rem 1.25rem;
-        color: #111827;
-        transition: all 0.2s ease;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 1rem;
+        padding: 1rem 1.5rem;
+        color: #0F172A;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         outline: none;
       }
       .input-field:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+        border-color: #1e293b;
+        background-color: #FFFFFF;
+        box-shadow: 0 0 0 4px rgba(30, 41, 59, 0.05);
+        transform: translateY(-1px);
       }
       /* Fix for animations */
       @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
