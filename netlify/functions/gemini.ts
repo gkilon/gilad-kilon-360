@@ -119,7 +119,7 @@ export const handler = async (event: any, context: any) => {
         },
       });
 
-    const text = response.text;
+    const text = response.response.text();
     if (!text) {
         return { statusCode: 500, headers, body: JSON.stringify({ error: "No response from AI" }) };
     }
