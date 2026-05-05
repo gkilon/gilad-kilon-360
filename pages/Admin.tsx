@@ -9,10 +9,16 @@ import { QuestionsConfig, User } from '../types';
 export const Admin: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [code, setCode] = useState('');
+  const [questions, setQuestions] = useState<string[]>([]);
+  const [msg, setMsg] = useState('');
+  const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userAnalysis, setUserAnalysis] = useState<any | null>(null);
   const [isEditingReport, setIsEditingReport] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
       const user = storageService.getCurrentUser();
@@ -65,7 +71,68 @@ export const Admin: React.FC = () => {
       setLoading(false);
   };
 
-  // ... (existing handlers for questions remain same)
+  const handleAddQuestion = () => {
+      setQuestions([...questions, '']);
+  };
+
+  const handleRemoveQuestion = (index: number) => {
+      const newQuestions = [...questions];
+      newQuestions.splice(index, 1);
+      setQuestions(newQuestions);
+  };
+
+  const handleQuestionChange = (index: number, value: string) => {
+      const newQuestions = [...questions];
+      newQuestions[index] = value;
+      setQuestions(newQuestions);
+  };
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === 'admin123') {
+      setIsAuthenticated(true);
+      setMsg('');
+    } else {
+      setMsg('סיסמה שגויה. נסה admin123');
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+      setLoading(true);
+      try {
+          const user = await storageService.loginWithGoogle();
+          setCurrentUser(user);
+          if (user.email === 'gkilon@gmail.com') {
+              setMsg('מחובר למערכת כ-gkilon@gmail.com');
+          } else {
+              setMsg(`שים לב: התחברת עם ${user.email}. רק gkilon@gmail.com יכול לשמור שינויים.`);
+          }
+      } catch (e: any) {
+          setMsg('התחברות גוגל נכשלה.');
+      } finally {
+          setLoading(false);
+      }
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser || currentUser.email !== 'gkilon@gmail.com') {
+        setMsg('שגיאה: עליך להתחבר קודם עם חשבון גוגל של gkilon@gmail.com כדי לשמור.');
+        return;
+    }
+
+    setLoading(true);
+    setMsg('');
+    try {
+        await storageService.updateAppSettings(code, questions);
+        setMsg('ההגדרות עודכנו בהצלחה בענן.');
+    } catch (e: any) {
+        console.error("Update Error:", e);
+        setMsg('שגיאה בעדכון ההגדרות. וודא שאתה מחובר לחשבון הנכון.');
+    } finally {
+        setLoading(false);
+    }
+  };
 
   return (
     <Layout>
