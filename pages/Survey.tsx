@@ -185,14 +185,3 @@ export const Survey: React.FC = () => {
     </Layout>
   );
 };
- gap-2">
-                        <span className="w-1.5 h-1.5 bg-accent-500 rounded-full"></span>
-                        Encrypted & Anonymous
-                    </div>
-                </div>
-            </form>
-        </div>
-      </div>
-    </Layout>
-  );
-};
