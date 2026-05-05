@@ -112,14 +112,6 @@ export const storageService = {
     return newUser;
   },
 
-  updateUserGoal: async (userId: string, goal: string): Promise<void> => {
-      const currentUser = storageService.getCurrentUser();
-      if (currentUser && currentUser.id === userId) {
-          localStorage.setItem(USER_KEY, JSON.stringify({ ...currentUser, userGoal: goal }));
-      }
-      await firebaseService.updateUserGoal(userId, goal);
-  },
-
   resetPassword: async (email: string, registrationCode: string, newPassword: string): Promise<void> => {
     const appSettings = await storageService.getAppSettings();
     if (registrationCode.toUpperCase() !== appSettings.registrationCode.toUpperCase()) {
@@ -152,9 +144,9 @@ export const storageService = {
      return await firebaseService.getResponsesForUser(userId);
   },
 
-  getUserDataById: async (userId: string): Promise<{name: string, userGoal?: string}> => {
+  getUserDataById: async (userId: string): Promise<{name: string}> => {
     const user = await firebaseService.getUser(userId);
-    if (user) return { name: user.name, userGoal: user.userGoal };
+    if (user) return { name: user.name };
     return { name: "משתמש" }; 
   }
 };

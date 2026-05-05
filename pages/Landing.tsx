@@ -101,13 +101,13 @@ export const Landing: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
               <div className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 flex flex-col items-center text-center">
                 <div className="w-12 h-12 bg-accent-50 text-accent-700 rounded-full flex items-center justify-center font-bold text-xl mb-4 border border-accent-100">1</div>
-                <h3 className="font-bold text-lg mb-2">מגדירים יעד</h3>
-                <p className="text-slate-500 text-sm">בוחרים מטרה מקצועית אחת שסביבה תרצו לקבל משוב (למשל: "שיפור יכולת הובלה").</p>
+                <h3 className="font-bold text-lg mb-2">שולחים קישור</h3>
+                <p className="text-slate-500 text-sm">מפיצים את הקישור האישי לקולגות, מנהלים וחברים. התהליך אנונימי ומהיר.</p>
               </div>
               <div className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 flex flex-col items-center text-center">
                 <div className="w-12 h-12 bg-accent-50 text-accent-700 rounded-full flex items-center justify-center font-bold text-xl mb-4 border border-accent-100">2</div>
                 <h3 className="font-bold text-lg mb-2">אוספים משוב</h3>
-                <p className="text-slate-500 text-sm">שולחים קישור אנונימי לקולגות, מנהלים וחברים. הם עונים על שאלות ממוקדות ב-3 דקות.</p>
+                <p className="text-slate-500 text-sm">המשיבים עונים על שאלות ממוקדות ב-3 דקות. הנתונים נאספים בצורה מאובטחת.</p>
               </div>
               <div className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 flex flex-col items-center text-center">
                 <div className="w-12 h-12 bg-accent-50 text-accent-700 rounded-full flex items-center justify-center font-bold text-xl mb-4 border border-accent-100">3</div>

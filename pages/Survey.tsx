@@ -8,7 +8,6 @@ import { RelationshipType, QuestionsConfig } from '../types';
 export const Survey: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const [userName, setUserName] = useState<string>('');
-  const [userGoal, setUserGoal] = useState<string>('');
   const [questions, setQuestions] = useState<QuestionsConfig | null>(null);
   
   const [relationship, setRelationship] = useState<RelationshipType>('peer');
@@ -36,7 +35,6 @@ export const Survey: React.FC = () => {
                 const userData = await storageService.getUserDataById(userId);
                 if (userData && userData.name) {
                     setUserName(userData.name);
-                    setUserGoal(userData.userGoal || '');
                 } else {
                     setError('קישור לא תקין');
                 }
@@ -74,7 +72,7 @@ export const Survey: React.FC = () => {
       return (
           <Layout>
               <div className="flex justify-center items-center h-[50vh]">
-                 <div className="w-8 h-8 border-4 border-slate-800 border-t-accent-500 rounded-full animate-spin"></div>
+                 <div className="w-8 h-8 border-4 border-slate-200 border-t-accent-700 rounded-full animate-spin"></div>
               </div>
           </Layout>
       );
@@ -83,16 +81,16 @@ export const Survey: React.FC = () => {
   if (submitted) {
     return (
       <Layout>
-        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
-          <div className="w-20 h-20 bg-accent-900/20 text-accent-500 rounded-full flex items-center justify-center mb-6 text-4xl shadow-glow border border-accent-500/20">
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center animate-fade-in">
+          <div className="w-20 h-20 bg-accent-50 text-accent-700 rounded-full flex items-center justify-center mb-8 text-4xl shadow-premium border border-accent-100">
              ✓
           </div>
-          <h2 className="text-3xl font-bold text-white mb-4">תודה רבה!</h2>
-          <p className="text-slate-400 text-lg max-w-md mb-8">
+          <h2 className="text-4xl font-black text-slate-900 mb-4">תודה רבה!</h2>
+          <p className="text-slate-500 text-lg max-w-md mb-10 font-medium leading-relaxed">
                 המשוב שלך נשמר בהצלחה באופן מאובטח ואנונימי, ויעזור ל-{userName} לצמוח.
           </p>
           <Link to="/">
-             <Button variant="outline">חזרה לדף הבית</Button>
+             <Button variant="primary" className="h-14 px-10 shadow-xl">חזרה לדף הבית</Button>
           </Link>
         </div>
       </Layout>
@@ -102,11 +100,11 @@ export const Survey: React.FC = () => {
   if (error) {
       return (
         <Layout>
-            <div className="max-w-md mx-auto mt-12 text-center p-8 glass-panel">
-                <h2 className="text-xl font-bold text-red-400 mb-2">שגיאה</h2>
-                <p className="text-slate-400 mb-6">{error}</p>
+            <div className="max-w-md mx-auto mt-12 text-center p-12 glass-panel shadow-premium">
+                <h2 className="text-xl font-bold text-red-600 mb-4">שגיאה במערכת</h2>
+                <p className="text-slate-500 mb-8 font-medium">{error}</p>
                 <Link to="/">
-                    <Button variant="secondary">חזרה</Button>
+                    <Button variant="secondary" className="w-full">חזרה לדף הבית</Button>
                 </Link>
             </div>
         </Layout>
@@ -115,46 +113,34 @@ export const Survey: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-3xl mx-auto w-full">
+      <div className="max-w-3xl mx-auto w-full animate-fade-in">
         
         <div className="text-center mb-12">
-            <span className="text-[10px] font-bold text-accent-500 uppercase tracking-widest border border-accent-500/30 px-3 py-1 rounded-full">
+            <span className="text-[10px] font-black text-accent-700 uppercase tracking-[0.3em] bg-accent-50 px-4 py-2 rounded-full border border-accent-100 shadow-sm">
                 Anonymous 360° Feedback
             </span>
-            <h1 className="text-4xl font-bold text-white mt-6 mb-2">
-               <span className="text-accent-500">{userName}</span> מבקש/ת ממך משוב
+            <h1 className="text-4xl font-black text-slate-900 mt-8 mb-4 tracking-tight">
+               <span className="text-accent-700">{userName}</span> מבקש/ת ממך משוב
             </h1>
-            <p className="text-slate-400 font-light text-lg">
-                הפרספקטיבה הכנה שלך קריטית להתפתחות המקצועית שלהם.
+            <p className="text-slate-500 font-medium text-lg leading-relaxed max-w-2xl mx-auto">
+                הפרספקטיבה הכנה שלך קריטית להתפתחות המקצועית שלהם. התהליך אנונימי לחלוטין.
             </p>
         </div>
 
-        <div className="glass-panel p-8 md:p-12 border-t-4 border-t-accent-500 shadow-2xl">
+        <div className="glass-panel p-8 md:p-14 border-t-4 border-t-accent-700 shadow-premium">
             
             <form onSubmit={handleSubmit} className="space-y-12">
                 
-                {/* Introduction - Goal Display (Optional) */}
-                {userGoal && (
-                    <div className="bg-slate-900/50 p-6 rounded text-center border border-slate-700 relative mb-8">
-                         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-slate-800 px-4 py-1 rounded text-[10px] font-bold text-accent-400 uppercase tracking-widest border border-slate-700 shadow-sm">
-                             מטרת מיקוד נוכחית
-                         </div>
-                         <p className="text-xl font-medium text-slate-200 leading-relaxed mt-2 italic">
-                             "{userGoal}"
-                         </p>
-                    </div>
-                )}
-
                 {/* Relationship */}
-                <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase mb-3 tracking-wider">
+                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">
                         טיב ההיכרות / יחסים
                     </label>
                     <div className="relative">
                         <select 
                             value={relationship}
                             onChange={(e) => setRelationship(e.target.value as RelationshipType)}
-                            className="input-field"
+                            className="input-field bg-white"
                         >
                             <option value="peer">קולגה לעבודה</option>
                             <option value="manager">מנהל/ת ישיר/ה</option>
@@ -166,27 +152,40 @@ export const Survey: React.FC = () => {
                 </div>
 
                 {/* Dynamic Questions */}
-                {questions.map((qText, index) => (
-                    <div key={index} className="space-y-4">
-                        <label className="block text-lg font-medium text-slate-200 leading-relaxed">
-                            {index + 1}. {qText}
-                        </label>
-                        <textarea
-                            required
-                            value={answers[index] || ''}
-                            onChange={(e) => handleAnswerChange(index, e.target.value)}
-                            rows={3}
-                            className="input-field min-h-[120px]"
-                            placeholder="פרט/י כאן..."
-                        />
-                    </div>
-                ))}
+                <div className="space-y-10">
+                    {questions.map((qText, index) => (
+                        <div key={index} className="space-y-4">
+                            <label className="block text-xl font-bold text-slate-800 leading-snug">
+                                {index + 1}. {qText}
+                            </label>
+                            <textarea
+                                required
+                                value={answers[index] || ''}
+                                onChange={(e) => handleAnswerChange(index, e.target.value)}
+                                rows={4}
+                                className="input-field min-h-[140px] text-lg font-medium"
+                                placeholder="פרט/י כאן את תשובתך..."
+                            />
+                        </div>
+                    ))}
+                </div>
 
-                <div className="pt-8 border-t border-slate-800">
-                    <Button type="submit" variant="primary" isLoading={isSending} className="w-full text-lg py-4 shadow-xl">
-                        שלח משוב
+                <div className="pt-10 border-t border-slate-100">
+                    <Button type="submit" variant="primary" isLoading={isSending} className="w-full text-xl py-6 shadow-xl shadow-accent-900/10">
+                        שלח משוב אנונימי
                     </Button>
-                    <div className="mt-6 text-center text-[10px] text-slate-600 font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+                    <div className="mt-8 text-center text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z"/></svg>
+                        Secure & Fully Anonymous
+                    </div>
+                </div>
+            </form>
+        </div>
+      </div>
+    </Layout>
+  );
+};
+ gap-2">
                         <span className="w-1.5 h-1.5 bg-accent-500 rounded-full"></span>
                         Encrypted & Anonymous
                     </div>

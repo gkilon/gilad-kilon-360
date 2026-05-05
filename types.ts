@@ -4,7 +4,6 @@ export interface User {
   name: string;
   email: string;
   password?: string;
-  userGoal?: string; // The goal defined by the user for the survey context
   createdAt: number;
 }
 

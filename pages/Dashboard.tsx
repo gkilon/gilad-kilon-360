@@ -22,10 +22,6 @@ export const Dashboard: React.FC = () => {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [questions, setQuestions] = useState<QuestionsConfig | null>(null);
   
-  const [goal, setGoal] = useState('');
-  const [isEditingGoal, setIsEditingGoal] = useState(false);
-  const [isSavingGoal, setIsSavingGoal] = useState(false);
-
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
   const [loadingData, setLoadingData] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -40,7 +36,6 @@ export const Dashboard: React.FC = () => {
       return;
     }
     setUser(currentUser);
-    setGoal(currentUser.userGoal || '');
     
     const loadData = async () => {
         setLoadingData(true);
@@ -60,26 +55,12 @@ export const Dashboard: React.FC = () => {
     loadData();
   }, [navigate]);
 
-  const handleSaveGoal = async () => {
-      if (!user) return;
-      setIsSavingGoal(true);
-      try {
-          await storageService.updateUserGoal(user.id, goal);
-          setUser({ ...user, userGoal: goal });
-          setIsEditingGoal(false);
-      } catch (e) {
-          alert('שגיאה בשמירת המטרה');
-      } finally {
-          setIsSavingGoal(false);
-      }
-  };
-
   const handleAnalyze = async () => {
     if (responses.length === 0 || !questions || !user) return;
     setLoadingAnalysis(true);
     setAnalysisError(null);
     try {
-      const result = await analyzeFeedback(responses, questions, user.name, user.userGoal);
+      const result = await analyzeFeedback(responses, questions, user.name);
       setAnalysis(result);
     } catch (error: any) {
       setAnalysisError(error.message || "אירעה שגיאה בנתונים.");
@@ -132,31 +113,6 @@ export const Dashboard: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 space-y-8">
-            {/* GOAL SECTION */}
-            <div className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-accent-50/50 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-accent-100/50 transition-all duration-500"></div>
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4 text-accent-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                        <h3 className="text-[10px] font-black text-accent-700 uppercase tracking-[0.2em]">מטרת המיקוד שלך</h3>
-                    </div>
-                    {!isEditingGoal && (
-                        <button onClick={() => setIsEditingGoal(true)} className="text-slate-400 text-[10px] font-bold hover:text-accent-700 uppercase tracking-widest transition-colors">ערוך מטרה</button>
-                    )}
-                </div>
-                {isEditingGoal ? (
-                    <div className="space-y-4">
-                        <textarea value={goal} onChange={(e) => setGoal(e.target.value)} className="input-field min-h-[100px] border-accent-700/20" placeholder="מה היעד המקצועי שאת/ה רוצה לבחון?" />
-                        <div className="flex gap-3">
-                            <Button onClick={handleSaveGoal} isLoading={isSavingGoal} className="h-9 py-0 px-6">שמור שינויים</Button>
-                            <button onClick={() => setIsEditingGoal(false)} className="text-xs font-bold text-slate-400 hover:text-slate-600">ביטול</button>
-                        </div>
-                    </div>
-                ) : (
-                    <p className="text-2xl text-slate-800 font-bold tracking-tight leading-snug">{goal || "לחץ לעריכה כדי להגדיר את יעד הצמיחה שלך"}</p>
-                )}
-            </div>
-
             {/* ANALYSIS RESULTS SECTION */}
             {analysis && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">

@@ -3,8 +3,7 @@ import { AnalysisResult, FeedbackResponse, QuestionsConfig } from "../types";
 export const analyzeFeedback = async (
     responses: FeedbackResponse[], 
     questions: QuestionsConfig,
-    userName: string = "User",
-    userGoal?: string
+    userName: string = "User"
 ): Promise<AnalysisResult> => {
   
   if (responses.length === 0) throw new Error("אין מספיק נתונים לניתוח");
@@ -15,7 +14,7 @@ export const analyzeFeedback = async (
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ responses, questions, userName, userGoal })
+      body: JSON.stringify({ responses, questions, userName })
     });
 
     if (!response.ok) {

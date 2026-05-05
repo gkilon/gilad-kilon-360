@@ -17,13 +17,13 @@ export const Button: React.FC<ButtonProps> = ({
   const baseStyles = "relative inline-flex items-center justify-center px-6 py-3 rounded-lg font-bold text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm tracking-wide";
   
   const variants = {
-    // Primary: Solid Kilon Teal
+    // Primary: Solid Smoky Blue
     primary: "bg-accent-700 hover:bg-accent-600 text-white shadow-md shadow-accent-900/10 border border-transparent active:scale-[0.98]",
     
     // Secondary: Light Gray
     secondary: "bg-slate-100 text-slate-800 border border-slate-200 hover:bg-slate-200 hover:border-slate-300",
     
-    // Outline: White with Teal Border
+    // Outline: White with Smoky Blue Border
     outline: "bg-white text-accent-700 border border-accent-700 hover:bg-accent-50 hover:text-accent-800",
     
     // Ghost: Subtle Text

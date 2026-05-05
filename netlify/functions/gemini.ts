@@ -50,7 +50,7 @@ export const handler = async (event: any, context: any) => {
   }
 
   try {
-    const { responses, questions, userName = "User", userGoal } = JSON.parse(event.body || "{}");
+    const { responses, questions, userName = "User" } = JSON.parse(event.body || "{}");
 
     if (!responses || responses.length === 0) {
       return { statusCode: 400, headers, body: JSON.stringify({ error: "אין מספיק נתונים לניתוח" }) };
@@ -58,11 +58,9 @@ export const handler = async (event: any, context: any) => {
 
     const ai = getClient();
     const formattedData = sanitizeData(responses, questions || [], userName);
-    const goalContext = userGoal ? `מטרת המשתמש: "${userGoal}"` : `לא הוגדרה מטרה ספציפית.`;
 
     const prompt = `
-      אתה פסיכולוג ארגוני בכיר. נתח את המשובים עבור ${userName}.
-      הקשר המטרה (חשוב מאוד להתייחס לזה בניתוח): ${goalContext}
+      אתה פסיכולוג ארגוני בכיר. נתח את המשובים האנונימיים עבור ${userName} (תהליך משוב 360 מעלות).
       
       חובה להתייחס בנתונים ל:
       1. "נקודות עיוורות" (Blind Spots): איפה המשתמש חושב שהוא מעולה אבל הסביבה רומזת אחרת?
