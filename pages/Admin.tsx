@@ -44,10 +44,23 @@ export const Admin: React.FC = () => {
   };
 
   const loadUsers = async () => {
+      if (!storageService.getCurrentUser()) {
+          setMsg('עליך להתחבר עם גוגל כדי לצפות ברשימת המשתמשים.');
+          return;
+      }
+      setLoading(true);
       try {
           const data = await storageService.getAllUsers();
+          if (data.length === 0) {
+              setMsg('לא נמצאו משתמשים רשומים במערכת.');
+          }
           setUsers(data);
-      } catch (e) { console.error(e); }
+      } catch (e: any) { 
+          console.error(e);
+          setMsg('נכשלה טעינת המשתמשים. וודא שאתה מחובר לחשבון הנכון.');
+      } finally {
+          setLoading(false);
+      }
   };
 
   const handleSelectUser = async (user: User) => {
@@ -91,7 +104,7 @@ export const Admin: React.FC = () => {
     e.preventDefault();
     if (password === 'admin123') {
       setIsAuthenticated(true);
-      setMsg('');
+      setMsg('התחברת כמנהל. כעת עליך להתחבר עם גוגל לצפייה בנתונים.');
     } else {
       setMsg('סיסמה שגויה. נסה admin123');
     }
@@ -103,9 +116,12 @@ export const Admin: React.FC = () => {
           const user = await storageService.loginWithGoogle();
           setCurrentUser(user);
           if (user.email === 'gkilon@gmail.com') {
-              setMsg('מחובר למערכת כ-gkilon@gmail.com');
+              setMsg('מחובר למערכת כ-gkilon@gmail.com. הנתונים נטענים...');
+              loadUsers();
+              loadSettings();
           } else {
-              setMsg(`שים לב: התחברת עם ${user.email}. רק gkilon@gmail.com יכול לשמור שינויים.`);
+              setMsg(`התחברת עם ${user.email}. שים לב: רק gkilon@gmail.com יכול לערוך הגדרות.`);
+              loadUsers();
           }
       } catch (e: any) {
           setMsg('התחברות גוגל נכשלה.');
@@ -166,19 +182,33 @@ export const Admin: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     {/* LEFT SIDE: USERS LIST */}
                     <div className="lg:col-span-4 space-y-6">
-                        <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest border-b pb-4">משתמשים במערכת ({users.length})</h3>
-                        <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                            {users.map(u => (
-                                <button 
-                                    key={u.id}
-                                    onClick={() => handleSelectUser(u)}
-                                    className={`w-full text-right p-4 rounded-xl border transition-all ${selectedUser?.id === u.id ? 'bg-[#8b6e58] text-white border-[#8b6e58]' : 'bg-white text-slate-600 border-slate-100 hover:border-[#8b6e58]/30'}`}
-                                >
-                                    <p className="font-bold text-sm">{u.name}</p>
-                                    <p className={`text-[10px] ${selectedUser?.id === u.id ? 'text-white/60' : 'text-slate-400'}`}>{u.email}</p>
-                                </button>
-                            ))}
+                        <div className="flex justify-between items-center border-b pb-4">
+                            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest">משתמשים במערכת ({users.length})</h3>
+                            {!currentUser && (
+                                <button onClick={handleGoogleLogin} className="text-[10px] font-black text-[#8b6e58] underline">התחבר עם גוגל</button>
+                            )}
                         </div>
+                        
+                        {!currentUser ? (
+                            <div className="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                                <p className="text-xs text-slate-400 font-bold mb-4">נדרשת הזדהות גוגל לצפייה בנתונים</p>
+                                <Button onClick={handleGoogleLogin} variant="outline" className="h-10 text-[10px]">התחבר כעת</Button>
+                            </div>
+                        ) : (
+                            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                                {users.length === 0 && !loading && <p className="text-center py-8 text-slate-400 text-xs">אין משתמשים להצגה</p>}
+                                {users.map(u => (
+                                    <button 
+                                        key={u.id}
+                                        onClick={() => handleSelectUser(u)}
+                                        className={`w-full text-right p-4 rounded-xl border transition-all ${selectedUser?.id === u.id ? 'bg-[#8b6e58] text-white border-[#8b6e58]' : 'bg-white text-slate-600 border-slate-100 hover:border-[#8b6e58]/30'}`}
+                                    >
+                                        <p className="font-bold text-sm">{u.name}</p>
+                                        <p className={`text-[10px] ${selectedUser?.id === u.id ? 'text-white/60' : 'text-slate-400'}`}>{u.email}</p>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* RIGHT SIDE: USER REPORT OR SETTINGS */}
