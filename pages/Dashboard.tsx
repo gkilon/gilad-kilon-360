@@ -212,30 +212,25 @@ export const Dashboard: React.FC = () => {
         {activeTab === 'analysis' && analysis && (
           <div className="animate-fade-in space-y-8" id="analysis-header">
             <div className="bg-slate-900 text-white rounded-3xl p-10 shadow-2xl relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-10 opacity-10">
-                 <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                 </svg>
-              </div>
               <p className="text-[10px] text-[#8b6e58] font-black uppercase tracking-[0.4em] mb-4">AI Insight Report</p>
               <h2 className="text-3xl font-black mb-8 leading-tight max-w-2xl">
-                  {analysis.selfVsOthersAnalysis.length > 50 ? "דוח אינטגרטיבי: 360 + אבחון עצמי" : "ניתוח משוב 360 מעלות"}
+                  {fileName ? "דוח אינטגרטיבי: 360 + אבחון" : "ניתוח משוב 360 מעלות"}
               </h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 relative z-10">
                 <div className="space-y-6">
                    <h3 className="text-[10px] font-black text-[#8b6e58] uppercase tracking-widest">סיכום מנהלים</h3>
-                   <p className="text-xl text-slate-100 leading-relaxed font-light">{analysis.summary}</p>
+                   <p className="text-xl text-slate-100 leading-relaxed font-light">{analysis.summary || "לא הופק סיכום"}</p>
                 </div>
                 <div className="bg-white/5 backdrop-blur-md rounded-2xl p-8 border border-white/10">
                    <h3 className="text-[10px] font-black text-[#8b6e58] uppercase tracking-widest mb-6">תמות מרכזיות</h3>
                    <div className="space-y-4">
-                      {analysis.keyThemes.map((theme, i) => (
+                      {Array.isArray(analysis.keyThemes) ? analysis.keyThemes.map((theme, i) => (
                         <div key={i} className="flex items-center gap-4">
                            <span className="w-8 h-8 rounded-full bg-[#8b6e58] flex items-center justify-center text-[10px] font-black">{i+1}</span>
                            <p className="text-sm font-medium">{theme}</p>
                         </div>
-                      ))}
+                      )) : <p className="text-xs opacity-50">לא זוהו תמות ספציפיות</p>}
                    </div>
                 </div>
               </div>
@@ -244,19 +239,19 @@ export const Dashboard: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-soft">
                   <h3 className="text-[10px] font-black text-[#5d7061] uppercase tracking-widest mb-4">עוצמות שקופות</h3>
-                  <p className="text-slate-700 font-medium leading-relaxed">{analysis.transparentStrengths}</p>
+                  <p className="text-slate-700 font-medium leading-relaxed">{analysis.transparentStrengths || "לא נמצאו"}</p>
                </div>
                <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-soft">
                   <h3 className="text-[10px] font-black text-[#9b4d4d] uppercase tracking-widest mb-4">נקודות עיוורות</h3>
-                  <p className="text-slate-700 font-medium leading-relaxed">{analysis.blindSpots}</p>
+                  <p className="text-slate-700 font-medium leading-relaxed">{analysis.blindSpots || "לא נמצאו"}</p>
                </div>
             </div>
 
-            {analysis.selfVsOthersAnalysis && analysis.selfVsOthersAnalysis.length > 10 && (
+            {analysis.selfVsOthersAnalysis && (
                 <div className="bg-white p-10 rounded-3xl border border-slate-100 shadow-soft">
                     <h4 className="text-[10px] font-black text-[#8b6e58] uppercase mb-6 tracking-widest flex items-center gap-2">
                         <span className="w-2 h-2 bg-[#8b6e58] rounded-full"></span>
-                        אינטגרציית עומק (360 + אבחון)
+                        אינטגרציית עומק (השוואת אבחון לסביבה)
                     </h4>
                     <p className="text-xl text-slate-800 leading-relaxed font-bold italic">{analysis.selfVsOthersAnalysis}</p>
                 </div>
@@ -265,12 +260,12 @@ export const Dashboard: React.FC = () => {
             <div className="bg-white p-10 rounded-3xl border border-slate-100 shadow-soft">
                <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-8">המלצות קונקרטיות לפעולה</h3>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {analysis.recommendations.map((rec, i) => (
+                  {Array.isArray(analysis.recommendations) ? analysis.recommendations.map((rec, i) => (
                     <div key={i} className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex gap-4">
                        <span className="text-2xl">🎯</span>
                        <p className="text-sm text-slate-700 font-medium">{rec}</p>
                     </div>
-                  ))}
+                  )) : <p className="text-sm text-slate-400">אין המלצות זמינות</p>}
                </div>
             </div>
           </div>
