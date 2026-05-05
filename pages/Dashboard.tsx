@@ -16,8 +16,67 @@ const relationshipLabels: Record<string, string> = {
   'other': 'אחר'
 };
 
+export const Dashboard: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [responses, setResponses] = useState<FeedbackResponse[]>([]);
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [questions, setQuestions] = useState<QuestionsConfig | null>(null);
+  
+  const [loadingAnalysis, setLoadingAnalysis] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  
+  const navigate = useNavigate();
+
   const [activeTab, setActiveTab] = useState<'analysis' | 'raw'>('analysis');
   const [selfAssessmentText, setSelfAssessmentText] = useState('');
+
+  useEffect(() => {
+    const currentUser = storageService.getCurrentUser();
+    if (!currentUser) {
+      navigate('/');
+      return;
+    }
+    setUser(currentUser);
+    
+    const loadData = async () => {
+        setLoadingData(true);
+        try {
+            const [data, settings] = await Promise.all([
+                storageService.getResponsesForUser(currentUser.id),
+                storageService.getAppSettings()
+            ]);
+            setResponses(data);
+            setQuestions(settings.questions);
+            
+            // Try to load existing analysis if it exists
+            const existingAnalysis = await storageService.getAnalysis(currentUser.id);
+            if (existingAnalysis) setAnalysis(existingAnalysis);
+            
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoadingData(false);
+        }
+    };
+    loadData();
+  }, [navigate]);
+
+  const copyLink = () => {
+    if (!user) return;
+    const baseUrl = window.location.origin;
+    const shareUrl = `${baseUrl}/#/survey/${user.id}`;
+    
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const handleExport = () => {
+      if(user) exportToPDF(user, analysis, responses);
+  };
 
   const handleAnalyze = async () => {
     if (responses.length === 0 || !questions || !user) return;
@@ -63,7 +122,15 @@ const relationshipLabels: Record<string, string> = {
       }
   };
 
-  // ... (rest of the helper functions remain same)
+  const groupedResponses = responses.reduce((acc, r) => {
+    if (!acc[r.relationship]) acc[r.relationship] = [];
+    acc[r.relationship].push(r);
+    return acc;
+  }, {} as Record<string, FeedbackResponse[]>);
+
+  if (loadingData || !user) {
+    return <Layout><div className="flex items-center justify-center min-h-[60vh]"><div className="w-12 h-12 border-4 border-accent-700 border-t-transparent rounded-full animate-spin"></div></div></Layout>;
+  }
 
   return (
     <Layout>
