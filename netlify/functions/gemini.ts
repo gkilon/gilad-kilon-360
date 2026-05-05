@@ -1,7 +1,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
 const getClient = () => {
-  return new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || process.env.API_KEY });
+  const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+  if (!apiKey || apiKey === "PLACEHOLDER_API_KEY") {
+    throw new Error("Missing Gemini API Key. Please set GEMINI_API_KEY in Netlify environment variables.");
+  }
+  return new GoogleGenAI({ apiKey });
 };
 
 const sanitizeData = (responses: any[], userName: string) => {
@@ -10,10 +14,10 @@ const sanitizeData = (responses: any[], userName: string) => {
 
   return responses.map(r => ({
     relationship: r.relationship,
-    q1_response: r.q1_impact.replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
-    q2_response: r.q2_untapped.replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
-    q3_response: r.q3_pattern.replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
-    q4_response: r.q4_future.replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]")
+    q1_response: (r.q1_impact || "").replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
+    q2_response: (r.q2_untapped || "").replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
+    q3_response: (r.q3_pattern || "").replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
+    q4_response: (r.q4_future || "").replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]")
   }));
 };
 
@@ -56,8 +60,9 @@ export const handler = async (event: any, context: any) => {
       נתונים: ${JSON.stringify(formattedData)}
     `;
 
+    // Using gemini-1.5-pro which is the current stable and powerful model
     const response = await ai.models.generateContent({
-      model: 'gemini-3-pro-preview',
+      model: 'gemini-1.5-pro',
       contents: prompt,
       config: {
         systemInstruction: "You are a world-class organizational psychologist. Be insightful, direct, and supportive in Hebrew. Return ONLY valid JSON.",

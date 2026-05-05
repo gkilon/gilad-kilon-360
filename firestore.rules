@@ -21,17 +21,20 @@ service cloud.firestore {
     match /settings/config {
       // Anyone can read the settings (to see registration codes and questions)
       allow read: if true;
-      // Only admins can change settings (done via Firebase Console directly)
-      allow write: if false; 
+      // Only the specified admin email can change settings
+      allow write: if request.auth != null && request.auth.token.email == 'gkilon@gmail.com';
     }
 
     // --- Responses Collection ---
     match /responses/{responseId} {
-      // Anyone can create a response (users submitting feedback without logging in)
+      // Anyone can create a response (unauthenticated feedback)
       allow create: if true;
       
-      // Only the owner of the survey (userId == surveyId) can read the responses
-      allow read: if request.auth != null && request.auth.uid == resource.data.surveyId;
+      // Only the owner of the survey OR the admin can read the responses
+      allow read: if request.auth != null && (
+        request.auth.uid == resource.data.surveyId || 
+        request.auth.token.email == 'gkilon@gmail.com'
+      );
       
       allow update, delete: if false;
     }
