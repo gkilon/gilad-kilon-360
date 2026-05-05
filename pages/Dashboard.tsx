@@ -115,56 +115,67 @@ export const Dashboard: React.FC = () => {
 
   return (
     <Layout>
-      <div className="pb-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-6 border-b border-slate-800">
+      <div className="pb-12 animate-fade-in">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 pb-8 border-b border-slate-200">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-1">שלום, <span className="text-accent-500">{user.name}</span></h1>
-            <p className="text-slate-400">לוח בקרה אישי 360°</p>
+            <h1 className="text-4xl font-extrabold text-slate-900 mb-2 tracking-tighter">שלום, <span className="text-accent-700">{user.name}</span></h1>
+            <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <p className="text-slate-500 font-medium text-sm">מרכז התובנות האישי שלך</p>
+            </div>
           </div>
-          <Button onClick={() => { storageService.logout(); navigate('/'); }} variant="ghost" className="text-xs">יציאה</Button>
+          <div className="flex gap-3">
+              <Button onClick={copyLink} variant="outline" className="h-10 text-xs">{copied ? 'הקישור הועתק!' : 'הפץ שאלון'}</Button>
+              <Button onClick={() => { storageService.logout(); navigate('/'); }} variant="ghost" className="h-10 text-xs">התנתק</Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8 space-y-8">
             {/* GOAL SECTION */}
-            <div className="glass-panel relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-accent-500/5 blur-3xl rounded-full"></div>
-                <div className="flex justify-between mb-4">
-                    <h3 className="text-[10px] font-bold text-accent-500 uppercase tracking-widest">מטרת צמיחה</h3>
-                    <button onClick={() => setIsEditingGoal(true)} className="text-slate-500 text-xs hover:text-white">ערוך</button>
+            <div className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 relative overflow-hidden group">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-accent-50/50 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-accent-100/50 transition-all duration-500"></div>
+                <div className="flex justify-between items-center mb-6">
+                    <div className="flex items-center gap-2">
+                        <svg className="w-4 h-4 text-accent-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        <h3 className="text-[10px] font-black text-accent-700 uppercase tracking-[0.2em]">מטרת המיקוד שלך</h3>
+                    </div>
+                    {!isEditingGoal && (
+                        <button onClick={() => setIsEditingGoal(true)} className="text-slate-400 text-[10px] font-bold hover:text-accent-700 uppercase tracking-widest transition-colors">ערוך מטרה</button>
+                    )}
                 </div>
                 {isEditingGoal ? (
                     <div className="space-y-4">
-                        <textarea value={goal} onChange={(e) => setGoal(e.target.value)} className="input-field min-h-[100px]" placeholder="מה היעד שלך?" />
-                        <div className="flex gap-2">
-                            <Button onClick={handleSaveGoal} isLoading={isSavingGoal} className="h-8 py-0 px-4">שמור</Button>
-                            <button onClick={() => setIsEditingGoal(false)} className="text-xs text-slate-500">ביטול</button>
+                        <textarea value={goal} onChange={(e) => setGoal(e.target.value)} className="input-field min-h-[100px] border-accent-700/20" placeholder="מה היעד המקצועי שאת/ה רוצה לבחון?" />
+                        <div className="flex gap-3">
+                            <Button onClick={handleSaveGoal} isLoading={isSavingGoal} className="h-9 py-0 px-6">שמור שינויים</Button>
+                            <button onClick={() => setIsEditingGoal(false)} className="text-xs font-bold text-slate-400 hover:text-slate-600">ביטול</button>
                         </div>
                     </div>
                 ) : (
-                    <p className="text-xl text-slate-100 font-light italic leading-relaxed">{goal || "טרם הוגדרה מטרה"}</p>
+                    <p className="text-2xl text-slate-800 font-bold tracking-tight leading-snug">{goal || "לחץ לעריכה כדי להגדיר את יעד הצמיחה שלך"}</p>
                 )}
             </div>
 
             {/* ANALYSIS RESULTS SECTION */}
             {analysis && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-                    <div className="glass-panel border-l-4 border-l-rose-500">
-                        <h4 className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-3">נקודות עיוורות (Blind Spots)</h4>
-                        <p className="text-sm text-slate-300 leading-relaxed">{analysis.blindSpots}</p>
+                    <div className="bg-white p-8 rounded-2xl shadow-soft border-t-4 border-t-red-500 border border-slate-100">
+                        <h4 className="text-[10px] font-black text-red-600 uppercase tracking-[0.2em] mb-4">נקודות עיוורות (Blind Spots)</h4>
+                        <p className="text-sm text-slate-700 leading-relaxed font-medium">{analysis.blindSpots}</p>
                     </div>
-                    <div className="glass-panel border-l-4 border-l-emerald-500">
-                        <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-3">עוצמות שקופות</h4>
-                        <p className="text-sm text-slate-300 leading-relaxed">{analysis.transparentStrengths}</p>
+                    <div className="bg-white p-8 rounded-2xl shadow-soft border-t-4 border-t-emerald-500 border border-slate-100">
+                        <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-4">עוצמות שקופות</h4>
+                        <p className="text-sm text-slate-700 leading-relaxed font-medium">{analysis.transparentStrengths}</p>
                     </div>
-                    <div className="glass-panel md:col-span-2 flex flex-col md:flex-row gap-6 items-center">
-                        <div className="flex-shrink-0 text-center">
-                            <div className="text-4xl font-black text-accent-500 mb-1">{analysis.sentimentAnalysis.score}%</div>
-                            <div className="text-[10px] uppercase font-bold text-slate-500 tracking-tighter">סנטימנט חיובי</div>
+                    <div className="bg-slate-900 p-8 rounded-2xl shadow-premium md:col-span-2 flex flex-col md:flex-row gap-8 items-center text-white">
+                        <div className="flex-shrink-0 text-center bg-white/10 p-6 rounded-2xl border border-white/10 min-w-[140px]">
+                            <div className="text-5xl font-black text-accent-500 mb-1">{analysis.sentimentAnalysis.score}%</div>
+                            <div className="text-[10px] uppercase font-black text-white/40 tracking-widest">Positive Tone</div>
                         </div>
                         <div className="flex-grow">
-                            <h4 className="text-xs font-bold text-accent-400 uppercase mb-2">ניתוח סנטימנט: {analysis.sentimentAnalysis.label}</h4>
-                            <p className="text-xs text-slate-400 italic">{analysis.sentimentAnalysis.explanation}</p>
+                            <h4 className="text-sm font-bold text-accent-400 uppercase mb-3 tracking-widest">ניתוח סנטימנט: {analysis.sentimentAnalysis.label}</h4>
+                            <p className="text-sm text-slate-300 leading-relaxed font-light">{analysis.sentimentAnalysis.explanation}</p>
                         </div>
                     </div>
                 </div>
@@ -172,33 +183,52 @@ export const Dashboard: React.FC = () => {
 
             {/* RESPONSES SECTION */}
             {responses.length === 0 ? (
-                <div className="glass-panel text-center py-24 border-dashed border-slate-700">
-                    <div className="text-4xl mb-4">⏳</div>
-                    <h3 className="text-xl font-bold mb-4">ממתינים למשובים ראשונים</h3>
-                    <Button onClick={copyLink} variant="outline">{copied ? 'הועתק!' : 'העתק קישור להפצה'}</Button>
+                <div className="bg-white rounded-3xl p-20 text-center border-2 border-dashed border-slate-200">
+                    <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8 text-3xl">⏳</div>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-3">ממתינים למשובים ראשונים</h3>
+                    <p className="text-slate-500 mb-8 max-w-md mx-auto">ברגע שתשלח את הקישור ותתקבל התשובה הראשונה, נוכל להתחיל להפיק עבורך תובנות.</p>
+                    <Button onClick={copyLink} variant="primary" className="h-14 px-10 text-lg shadow-xl">{copied ? 'הקישור הועתק!' : 'העתק קישור להפצה'}</Button>
                 </div>
             ) : (
-                <div className="space-y-8">
-                    <div className="flex justify-between items-center border-b border-slate-800 pb-4">
-                        <h3 className="font-bold text-lg">משובים גולמיים ({responses.length})</h3>
-                        <Button onClick={copyLink} variant="outline" className="text-xs h-9">{copied ? 'הועתק' : 'העתק קישור'}</Button>
+                <div className="space-y-10">
+                    <div className="flex justify-between items-center border-b border-slate-200 pb-6">
+                        <h3 className="font-extrabold text-2xl text-slate-900">משובים גולמיים ({responses.length})</h3>
                     </div>
                     {Object.entries(groupedResponses).map(([rel, items]) => (
-                        <div key={rel} className="space-y-4">
-                            <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 bg-accent-500 rounded-full shadow-[0_0_8px_rgba(20,184,166,0.6)]"></span>
-                                {relationshipLabels[rel] || rel}
-                            </h4>
-                            <div className="grid gap-4">
+                        <div key={rel} className="space-y-6">
+                            <div className="flex items-center gap-3">
+                                <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-slate-200">
+                                    {relationshipLabels[rel] || rel}
+                                </span>
+                                <div className="h-px bg-slate-200 flex-grow"></div>
+                            </div>
+                            <div className="grid gap-6">
                                 {items.map(r => (
-                                    <div key={r.id} className="glass-panel p-6 text-sm space-y-4 hover:border-slate-600 transition-colors group">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                            <div><span className="text-accent-500 font-bold block text-[10px] mb-2 uppercase tracking-wide opacity-70">חוזקות וערך:</span> {r.q1_impact}</div>
-                                            <div><span className="text-blue-400 font-bold block text-[10px] mb-2 uppercase tracking-wide opacity-70">פוטנציאל לשיפור:</span> {r.q2_untapped}</div>
-                                        </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-800/50">
-                                            <div><span className="text-rose-400 font-bold block text-[10px] mb-2 uppercase tracking-wide opacity-70">יוזמה והובלה:</span> {r.q3_pattern}</div>
-                                            <div><span className="text-purple-400 font-bold block text-[10px] mb-2 uppercase tracking-wide opacity-70">עצה לעתיד:</span> {r.q4_future}</div>
+                                    <div key={r.id} className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 hover:border-accent-700/30 transition-all duration-300 group">
+                                        <div className="space-y-6">
+                                            {Array.isArray(questions) && questions.map((qText, idx) => (
+                                                <div key={idx} className={idx > 0 ? "pt-6 border-t border-slate-50" : ""}>
+                                                    <span className="text-slate-400 font-bold block text-[10px] mb-2 uppercase tracking-[0.15em] opacity-80">
+                                                        {idx + 1}. {qText}
+                                                    </span>
+                                                    <p className="text-slate-800 text-sm leading-relaxed font-medium">
+                                                        {r.answers && r.answers[idx] ? r.answers[idx] : "אין תשובה"}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                            {/* Backward compatibility for old responses */}
+                                            {(!r.answers || r.answers.length === 0) && (
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                    <div>
+                                                        <span className="text-slate-400 font-bold block text-[10px] mb-2 uppercase tracking-[0.15em]">חוזקות:</span>
+                                                        <p className="text-slate-800 text-sm font-medium">{(r as any).q1_impact}</p>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-slate-400 font-bold block text-[10px] mb-2 uppercase tracking-[0.15em]">לשיפור:</span>
+                                                        <p className="text-slate-800 text-sm font-medium">{(r as any).q2_untapped}</p>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
@@ -212,65 +242,67 @@ export const Dashboard: React.FC = () => {
           {/* SIDEBAR ANALYSIS */}
           <div className="lg:col-span-4">
             <div className="sticky top-24 space-y-6">
-                <div className="glass-panel bg-gradient-to-br from-slate-850 to-slate-900 border-accent-500/20 shadow-2xl">
-                    <div className="flex items-center gap-3 mb-6 border-b border-slate-800 pb-4">
-                        <div className="w-8 h-8 rounded-lg bg-accent-500/20 flex items-center justify-center">
-                            <div className="w-2 h-2 bg-accent-500 rounded-full animate-pulse"></div>
+                <div className="bg-white p-8 rounded-3xl shadow-premium border border-slate-100 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-full h-2 bg-accent-700"></div>
+                    
+                    <div className="flex items-center gap-3 mb-8">
+                        <div className="w-10 h-10 rounded-xl bg-accent-50 flex items-center justify-center text-accent-700">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.364-5.636l-.707-.707m1.414 14.142l-.707-.707M4.422 4.422l.707.707" /></svg>
                         </div>
-                        <h2 className="text-lg font-bold">תובנות פסיכולוגיות</h2>
+                        <h2 className="text-xl font-black text-slate-900 tracking-tight">תובנות ה-AI</h2>
                     </div>
 
                     {analysisError && (
-                        <div className="bg-red-950/30 border border-red-500/40 p-4 rounded mb-6 text-xs text-red-300">
-                            {analysisError}
-                            <Button onClick={handleAnalyze} variant="outline" className="w-full mt-4 h-8 border-red-500/30 text-red-400">נסה שוב</Button>
+                        <div className="bg-red-50 border border-red-100 p-6 rounded-2xl mb-8 text-sm text-red-600">
+                            <p className="font-bold mb-3">{analysisError}</p>
+                            <Button onClick={handleAnalyze} variant="outline" className="w-full h-10 border-red-200 text-red-600 hover:bg-red-100">נסה שוב</Button>
                         </div>
                     )}
                     
                     {!analysis ? (
-                        <div className="text-center py-6">
-                            <p className="text-slate-400 text-sm mb-8 leading-relaxed">
-                                המערכת תבצע ניתוח מעמיק של הטון, הדפוסים והמיקוד המקצועי שלך.
+                        <div className="text-center py-4">
+                            <p className="text-slate-500 text-sm mb-8 leading-relaxed font-medium">
+                                המערכת תנתח את כל המשובים שהתקבלו, תזהה דפוסים חוזרים ותפיק עבורך תמונת מצב מדויקת.
                             </p>
-                            <Button onClick={handleAnalyze} isLoading={loadingAnalysis} disabled={responses.length === 0} className="w-full">
-                                בצע ניתוח עומק (AI)
+                            <Button onClick={handleAnalyze} isLoading={loadingAnalysis} disabled={responses.length === 0} className="w-full h-14 shadow-lg text-lg">
+                                בצע ניתוח מעמיק
                             </Button>
+                            {responses.length === 0 && <p className="text-[10px] text-slate-400 font-bold mt-4 uppercase tracking-widest">ממתין למשובים</p>}
                         </div>
                     ) : (
-                        <div className="space-y-6 animate-fade-in">
+                        <div className="space-y-8 animate-fade-in">
                             <div>
-                                <h4 className="text-[10px] font-bold text-accent-500 uppercase mb-2 tracking-widest">סיכום הניתוח</h4>
-                                <p className="text-sm text-slate-300 leading-relaxed font-light">{analysis.summary}</p>
+                                <h4 className="text-[10px] font-black text-accent-700 uppercase mb-3 tracking-[0.2em]">סיכום אבחוני</h4>
+                                <p className="text-sm text-slate-600 leading-relaxed font-medium">{analysis.summary}</p>
                             </div>
                             
-                            <div className="bg-slate-950/50 p-4 rounded-xl border border-slate-800">
-                                <h4 className="text-[10px] font-bold text-accent-400 uppercase mb-3 tracking-widest">נושאים מרכזיים</h4>
-                                <ul className="space-y-2">
-                                    {/* FIX: Properly checking that keyThemes is an array before mapping */}
+                            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                                <h4 className="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">נושאים מרכזיים</h4>
+                                <ul className="space-y-3">
                                     {analysis && Array.isArray(analysis.keyThemes) && (analysis.keyThemes as string[]).map((theme: string, i: number) => (
-                                        <li key={i} className="text-xs text-slate-400 flex items-start gap-2 italic">
-                                            <span className="text-accent-500 mt-1">•</span>
+                                        <li key={i} className="text-xs text-slate-700 flex items-start gap-3 font-bold">
+                                            <span className="text-accent-700 mt-1 text-base leading-none">•</span>
                                             {theme}
                                         </li>
                                     ))}
                                 </ul>
                             </div>
 
-                            <div className="bg-accent-500/10 p-5 rounded-xl border border-accent-500/30">
-                                <h4 className="text-[10px] font-bold text-accent-400 uppercase mb-2">עצת זהב למימוש</h4>
-                                <p className="text-sm font-medium text-slate-100 italic leading-relaxed">"{analysis.actionableAdvice}"</p>
+                            <div className="bg-accent-700 p-6 rounded-2xl shadow-lg shadow-accent-900/20 text-white">
+                                <h4 className="text-[10px] font-black text-white/50 uppercase mb-3 tracking-[0.2em]">עצת זהב לביצוע</h4>
+                                <p className="text-sm font-bold leading-relaxed">"{analysis.actionableAdvice}"</p>
                             </div>
 
-                            <div className="pt-4 space-y-3">
-                                <Button onClick={handleExport} variant="outline" className="w-full text-xs h-11">הפק דוח PDF מלא</Button>
-                                <button onClick={handleAnalyze} className="w-full text-[10px] text-slate-600 uppercase font-bold hover:text-accent-500 transition-colors">רענן ניתוח</button>
+                            <div className="pt-6 space-y-3">
+                                <Button onClick={handleExport} variant="outline" className="w-full h-12 text-sm font-bold shadow-sm">הורד דוח PDF מלא</Button>
+                                <button onClick={handleAnalyze} className="w-full text-[10px] text-slate-400 uppercase font-black hover:text-accent-700 transition-colors tracking-widest">רענן ניתוח נתונים</button>
                             </div>
                         </div>
                     )}
                 </div>
 
-                <div className="glass-panel py-6 px-8 text-center bg-slate-900/30">
-                    <p className="text-xs text-slate-500 font-medium">המערכת מאובטחת ומבוססת Gemini 3.0</p>
+                <div className="bg-slate-100/50 py-4 px-8 rounded-2xl text-center border border-slate-200/50">
+                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">Gemini 2.5 Pro Powered</p>
                 </div>
             </div>
           </div>

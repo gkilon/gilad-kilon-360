@@ -20,12 +20,12 @@ const FIREBASE_CONFIG: FirebaseConfig = {
 const USER_KEY = '360_user_session';
 
 // Setting the specific questions requested by the user
-const DEFAULT_QUESTIONS: QuestionsConfig = {
-    q1: "מהו הדבר שהעובד/ת עושה הכי טוב ומהווה את החוזקה המרכזית שלו/ה?",
-    q2: "מהו הדבר האחד שאם העובד/ת ישנה או ישפר, זה יקפיץ את הביצועים שלו/ה קדימה?",
-    q3: "באילו מצבים היית רוצה לראות אותו/ה לוקח/ת יותר יוזמה או הובלה?",
-    q4: "איזו עצה היית נותן/ת לו/ה כדי לממש את הפוטנציאל המקסימלי בשנה הקרובה?"
-};
+const DEFAULT_QUESTIONS: QuestionsConfig = [
+    "מהו הדבר שהעובד/ת עושה הכי טוב ומהווה את החוזקה המרכזית שלו/ה?",
+    "מהו הדבר האחד שאם העובד/ת ישנה או ישפר, זה יקפיץ את הביצועים שלו/ה קדימה?",
+    "באילו מצבים היית רוצה לראות אותו/ה לוקח/ת יותר יוזמה או הובלה?",
+    "איזו עצה היית נותן/ת לו/ה כדי לממש את הפוטנציאל המקסימלי בשנה הקרובה?"
+];
 
 const generateId = () => Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
 
@@ -59,8 +59,8 @@ export const storageService = {
   getAppSettings: async (): Promise<AppSettings> => {
       const settings = await firebaseService.getSettings();
       return {
-          registrationCode: settings?.registrationCode || 'OBT-VIP',
-          questions: settings?.questions || DEFAULT_QUESTIONS
+          registrationCode: settings?.registrationCode || 'KILON2026',
+          questions: Array.isArray(settings?.questions) ? settings.questions : DEFAULT_QUESTIONS
       };
   },
 
@@ -137,15 +137,12 @@ export const storageService = {
     localStorage.removeItem(USER_KEY);
   },
 
-  addResponse: async (surveyId: string, relationship: RelationshipType, impact: string, untapped: string, pattern: string, future: string) => {
+  addResponse: async (surveyId: string, relationship: RelationshipType, answers: string[]) => {
     const newResponse: FeedbackResponse = {
       id: generateId(),
       surveyId,
       relationship,
-      q1_impact: impact,
-      q2_untapped: untapped,
-      q3_pattern: pattern,
-      q4_future: future,
+      answers,
       timestamp: Date.now(),
     };
     await firebaseService.addResponse(newResponse);

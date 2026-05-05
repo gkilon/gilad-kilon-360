@@ -8,37 +8,33 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         darkMode: 'class',
         theme: {
           extend: {
             fontFamily: {
-              sans: ['"Heebo"', 'sans-serif'],
+              sans: ['"Assistant"', 'sans-serif'],
             },
             colors: {
               slate: {
-                850: '#151e2e',
+                50: '#f8fafc',
+                100: '#f1f5f9',
+                850: '#1e293b',
                 900: '#0f172a',
-                950: '#020617',
               },
               accent: {
                 50: '#f0fdfa',
                 100: '#ccfbf1',
-                200: '#99f6e4',
-                300: '#5eead4',
-                400: '#2dd4bf',
-                500: '#14b8a6',
+                500: '#0f766e', // Kilon Teal
                 600: '#0d9488',
                 700: '#0f766e',
-                800: '#115e59', 
-                900: '#134e4a', 
               }
             },
             boxShadow: {
-              'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
-              'neon': '0 0 10px rgba(20, 184, 166, 0.3), 0 0 20px rgba(20, 184, 166, 0.1)',
+              'premium': '0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
+              'soft': '0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01)',
             }
           }
         }
@@ -46,33 +42,32 @@
     </script>
     <style>
       body {
-        background-color: #020617;
-        color: #e2e8f0;
-        font-family: 'Heebo', sans-serif;
+        background-color: #F9FAFB;
+        color: #111827;
+        font-family: 'Assistant', sans-serif;
         margin: 0;
         overflow-x: hidden;
       }
       .glass-panel {
-        background: rgba(30, 41, 59, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 1rem;
-        padding: 2rem;
+        background: #FFFFFF;
+        border: 1px solid #E5E7EB;
+        border-radius: 1.25rem;
+        padding: 2.5rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
       }
       .input-field {
         width: 100%;
-        background-color: rgba(15, 23, 42, 0.8);
-        border: 1px solid rgba(51, 65, 85, 0.5);
-        border-radius: 0.5rem;
-        padding: 0.85rem 1rem;
-        color: #f1f5f9;
+        background-color: #FFFFFF;
+        border: 1px solid #D1D5DB;
+        border-radius: 0.75rem;
+        padding: 0.85rem 1.25rem;
+        color: #111827;
         transition: all 0.2s ease;
         outline: none;
       }
       .input-field:focus {
-        border-color: #14b8a6;
-        box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.2);
+        border-color: #0f766e;
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.1);
       }
       /* Fix for animations */
       @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }

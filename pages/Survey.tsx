@@ -13,11 +13,8 @@ export const Survey: React.FC = () => {
   
   const [relationship, setRelationship] = useState<RelationshipType>('peer');
   
-  // New 4 Questions State
-  const [impact, setImpact] = useState('');
-  const [untapped, setUntapped] = useState('');
-  const [pattern, setPattern] = useState('');
-  const [future, setFuture] = useState('');
+  // Dynamic answers based on number of questions
+  const [answers, setAnswers] = useState<string[]>([]);
   
   const [submitted, setSubmitted] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -30,7 +27,9 @@ export const Survey: React.FC = () => {
         try {
             // Load Settings for Questions
             const settings = await storageService.getAppSettings();
-            setQuestions(settings.questions);
+            const qList = Array.isArray(settings.questions) ? settings.questions : [];
+            setQuestions(qList);
+            setAnswers(new Array(qList.length).fill(''));
 
             // Load User
             if (userId) {
@@ -51,12 +50,18 @@ export const Survey: React.FC = () => {
     init();
   }, [userId]);
 
+  const handleAnswerChange = (index: number, value: string) => {
+    const newAnswers = [...answers];
+    newAnswers[index] = value;
+    setAnswers(newAnswers);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userId) return;
     setIsSending(true);
     try {
-        await storageService.addResponse(userId, relationship, impact, untapped, pattern, future);
+        await storageService.addResponse(userId, relationship, answers);
         setSubmitted(true);
     } catch (err) {
         setError('השמירה נכשלה');
@@ -160,66 +165,22 @@ export const Survey: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Q1 - Impact */}
-                <div className="space-y-4">
-                    <label className="block text-lg font-medium text-slate-200 leading-relaxed">
-                        1. {questions.q1}
-                    </label>
-                    <textarea
-                        required
-                        value={impact}
-                        onChange={(e) => setImpact(e.target.value)}
-                        rows={3}
-                        className="input-field min-h-[120px]"
-                        placeholder="פרט/י כאן..."
-                    />
-                </div>
-
-                {/* Q2 - Untapped Potential */}
-                <div className="space-y-4">
-                    <label className="block text-lg font-medium text-slate-200 leading-relaxed">
-                        2. {questions.q2}
-                    </label>
-                    <textarea
-                        required
-                        value={untapped}
-                        onChange={(e) => setUntapped(e.target.value)}
-                        rows={3}
-                        className="input-field min-h-[120px]"
-                        placeholder="פרט/י כאן..."
-                    />
-                </div>
-
-                {/* Q3 - Pattern/Blindspot */}
-                <div className="space-y-4">
-                    <label className="block text-lg font-medium text-slate-200 leading-relaxed">
-                        3. {questions.q3}
-                    </label>
-                    <p className="text-sm text-slate-500 -mt-2 mb-2 italic">מומלץ לתת דוגמה ספציפית אם אפשר.</p>
-                    <textarea
-                        required
-                        value={pattern}
-                        onChange={(e) => setPattern(e.target.value)}
-                        rows={3}
-                        className="input-field min-h-[120px]"
-                        placeholder="לפעמים כש..."
-                    />
-                </div>
-
-                {/* Q4 - Future/Career */}
-                <div className="space-y-4">
-                    <label className="block text-lg font-medium text-slate-200 leading-relaxed">
-                        4. {questions.q4}
-                    </label>
-                    <textarea
-                        required
-                        value={future}
-                        onChange={(e) => setFuture(e.target.value)}
-                        rows={3}
-                        className="input-field min-h-[120px]"
-                        placeholder="פרט/י כאן..."
-                    />
-                </div>
+                {/* Dynamic Questions */}
+                {questions.map((qText, index) => (
+                    <div key={index} className="space-y-4">
+                        <label className="block text-lg font-medium text-slate-200 leading-relaxed">
+                            {index + 1}. {qText}
+                        </label>
+                        <textarea
+                            required
+                            value={answers[index] || ''}
+                            onChange={(e) => handleAnswerChange(index, e.target.value)}
+                            rows={3}
+                            className="input-field min-h-[120px]"
+                            placeholder="פרט/י כאן..."
+                        />
+                    </div>
+                ))}
 
                 <div className="pt-8 border-t border-slate-800">
                     <Button type="submit" variant="primary" isLoading={isSending} className="w-full text-lg py-4 shadow-xl">

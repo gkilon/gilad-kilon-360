@@ -17,17 +17,17 @@ export const Button: React.FC<ButtonProps> = ({
   const baseStyles = "relative inline-flex items-center justify-center px-6 py-3 rounded-lg font-bold text-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm tracking-wide";
   
   const variants = {
-    // Primary: Solid Teal/Turquoise
-    primary: "bg-accent-600 hover:bg-accent-500 text-white shadow-lg shadow-accent-900/20 border border-transparent",
+    // Primary: Solid Kilon Teal
+    primary: "bg-accent-700 hover:bg-accent-600 text-white shadow-md shadow-accent-900/10 border border-transparent active:scale-[0.98]",
     
-    // Secondary: Dark Slate with Light Border
-    secondary: "bg-slate-800 text-slate-200 border border-slate-600 hover:border-slate-500 hover:bg-slate-700",
+    // Secondary: Light Gray
+    secondary: "bg-slate-100 text-slate-800 border border-slate-200 hover:bg-slate-200 hover:border-slate-300",
     
-    // Outline: Transparent with Teal Border
-    outline: "bg-transparent text-accent-400 border border-accent-500/50 hover:border-accent-400 hover:text-accent-300 hover:bg-accent-500/5",
+    // Outline: White with Teal Border
+    outline: "bg-white text-accent-700 border border-accent-700 hover:bg-accent-50 hover:text-accent-800",
     
     // Ghost: Subtle Text
-    ghost: "bg-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+    ghost: "bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-100"
   };
 
   const finalClassName = `${baseStyles} ${variants[variant]} ${className}`;

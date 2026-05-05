@@ -84,85 +84,111 @@ export const Landing: React.FC = () => {
 
   return (
     <Layout>
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="text-center mb-10 space-y-4">
-            <h1 className="text-4xl md:text-5xl font-black text-white">
-                FEEDBACK <span className="text-accent-500">360°</span>
-            </h1>
-            <p className="text-slate-400 max-w-sm mx-auto">מערכת לצמיחה ומצוינות אישית</p>
-        </div>
+      <div className="flex flex-col items-center py-10">
+        
+        {/* Onboarding / Intro Section */}
+        {step === 'invite' && (
+          <div className="w-full max-w-4xl mb-16 animate-fade-in">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-4 tracking-tighter">
+                צמיחה מבוססת <span className="text-accent-700">פרספקטיבה</span>
+              </h1>
+              <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto">
+                הדרך המהירה ביותר להשתפר היא להבין איך הסביבה רואה אותך. המערכת עוזרת לך לאסוף משוב כנה ולנתח אותו בעזרת AI.
+              </p>
+            </div>
 
-        <div className="w-full max-w-[400px] glass-panel border-t-4 border-accent-500 shadow-neon">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
+              <div className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 flex flex-col items-center text-center">
+                <div className="w-12 h-12 bg-accent-50 text-accent-700 rounded-full flex items-center justify-center font-bold text-xl mb-4 border border-accent-100">1</div>
+                <h3 className="font-bold text-lg mb-2">מגדירים יעד</h3>
+                <p className="text-slate-500 text-sm">בוחרים מטרה מקצועית אחת שסביבה תרצו לקבל משוב (למשל: "שיפור יכולת הובלה").</p>
+              </div>
+              <div className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 flex flex-col items-center text-center">
+                <div className="w-12 h-12 bg-accent-50 text-accent-700 rounded-full flex items-center justify-center font-bold text-xl mb-4 border border-accent-100">2</div>
+                <h3 className="font-bold text-lg mb-2">אוספים משוב</h3>
+                <p className="text-slate-500 text-sm">שולחים קישור אנונימי לקולגות, מנהלים וחברים. הם עונים על שאלות ממוקדות ב-3 דקות.</p>
+              </div>
+              <div className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 flex flex-col items-center text-center">
+                <div className="w-12 h-12 bg-accent-50 text-accent-700 rounded-full flex items-center justify-center font-bold text-xl mb-4 border border-accent-100">3</div>
+                <h3 className="font-bold text-lg mb-2">מקבלים תובנות</h3>
+                <p className="text-slate-500 text-sm">ה-AI שלנו מנתח את כל התשובות ומגיש לך דוח אישי עם נקודות עיוורון והמלצות לפעולה.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="w-full max-w-[420px] glass-panel border-t-4 border-accent-700 shadow-premium">
+            <div className="text-center mb-8">
+                <p className="text-[10px] text-accent-700 font-bold uppercase tracking-[0.3em] mb-2">Access Portal</p>
+                <h2 className="text-2xl font-bold text-slate-900">בואו נתחיל</h2>
+            </div>
             {step === 'invite' ? (
                 <form onSubmit={handleVerifyInvite} className="space-y-6">
-                    <div className="text-center space-y-2 mb-4">
-                        <h2 className="text-lg font-bold text-white">שלב 1: אימות הזמנה</h2>
-                        <p className="text-xs text-slate-500">הזן את הקוד שקיבלת כדי להתחיל</p>
-                    </div>
                     <div>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-3 tracking-widest text-center">הזן קוד הזמנה</label>
                         <input 
                             type="text" 
                             required
                             autoFocus
                             value={inviteCode} 
                             onChange={(e) => setInviteCode(e.target.value)} 
-                            className="input-field text-center font-mono text-2xl tracking-[0.4em] uppercase border-accent-500/30" 
+                            className="input-field text-center font-mono text-2xl tracking-[0.4em] uppercase border-accent-700/20 bg-accent-50/30" 
                             placeholder="CODE" 
                             dir="ltr" 
                         />
                     </div>
-                    {error && <p className="text-red-400 text-xs text-center font-bold bg-red-950/30 p-3 rounded border border-red-500/20">{error}</p>}
+                    {error && <p className="text-red-600 text-xs text-center font-bold bg-red-50 p-3 rounded border border-red-100">{error}</p>}
                     <Button type="submit" variant="primary" className="w-full h-14" isLoading={isLoading}>
-                        אמת קוד והמשך
+                        אימות והמשך
                     </Button>
                 </form>
             ) : (
                 <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
                     <div className="text-center mb-2">
-                        <h2 className="text-lg font-bold text-white">שלב 2: כניסה למערכת</h2>
-                        <p className="text-[10px] text-accent-500 font-bold uppercase tracking-widest mt-1">קוד הזמנה אושר ✓</p>
+                        <p className="text-[10px] text-accent-700 font-bold uppercase tracking-widest mt-1">✓ קוד הזמנה אושר</p>
                     </div>
 
                     <button 
                         onClick={handleGoogleLogin}
                         disabled={isLoading}
-                        className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-900 font-bold py-3.5 px-4 rounded-lg transition-all shadow-md active:scale-95"
+                        className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 text-slate-900 font-bold py-3.5 px-4 rounded-xl transition-all border border-slate-200 shadow-sm active:scale-95"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
                         כניסה מהירה עם Google
                     </button>
 
                     <div className="flex items-center gap-3">
-                        <div className="h-px bg-slate-700 flex-grow"></div>
-                        <span className="text-[10px] text-slate-500 font-bold uppercase">או דרך המערכת</span>
-                        <div className="h-px bg-slate-700 flex-grow"></div>
+                        <div className="h-px bg-slate-100 flex-grow"></div>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">או דרך המערכת</span>
+                        <div className="h-px bg-slate-100 flex-grow"></div>
                     </div>
 
                     <form onSubmit={handleAuth} className="space-y-4">
                         {isNewUser && (
                             <div>
-                                <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">שם מלא (להרשמה)</label>
-                                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input-field border-accent-500/20" placeholder="ישראל ישראלי" required />
+                                <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1.5 tracking-tighter text-right">שם מלא</label>
+                                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="input-field" placeholder="ישראל ישראלי" required />
                             </div>
                         )}
                         <div>
-                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">כתובת אימייל</label>
+                            <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1.5 tracking-tighter text-right">כתובת אימייל</label>
                             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input-field text-left font-mono" dir="ltr" placeholder="email@example.com" required />
                         </div>
                         <div>
-                            <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1.5">סיסמה</label>
+                            <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1.5 tracking-tighter text-right">סיסמה</label>
                             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input-field text-left font-mono" dir="ltr" placeholder="••••••••" required />
                         </div>
-                        {error && <p className="text-red-400 text-xs text-center font-medium bg-red-950/20 p-3 rounded border border-red-500/20">{error}</p>}
+                        {error && <p className="text-red-600 text-xs text-center font-medium bg-red-50 p-3 rounded border border-red-100">{error}</p>}
                         <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>
                             {isNewUser ? 'הרשמה וכניסה' : 'כניסה'}
                         </Button>
-                        <button type="button" onClick={() => setStep('invite')} className="w-full text-center text-[10px] text-slate-600 uppercase mt-4 hover:text-slate-400 transition-colors">חזרה לשלב הקודם</button>
+                        <button type="button" onClick={() => setStep('invite')} className="w-full text-center text-[10px] text-slate-400 uppercase mt-4 hover:text-slate-600 transition-colors font-bold tracking-widest">חזרה לשלב הקודם</button>
                     </form>
                 </div>
             )}
         </div>
-        <button onClick={() => navigate('/admin')} className="mt-12 text-[10px] text-slate-800 uppercase tracking-widest hover:text-slate-600 transition-colors">Control Panel</button>
+        <button onClick={() => navigate('/admin')} className="mt-16 text-[10px] text-slate-300 uppercase tracking-[0.4em] hover:text-slate-500 transition-colors font-bold">Control Panel</button>
       </div>
     </Layout>
   );

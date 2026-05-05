@@ -8,17 +8,29 @@ const getClient = () => {
   return new GoogleGenAI({ apiKey });
 };
 
-const sanitizeData = (responses: any[], userName: string) => {
+const sanitizeData = (responses: any[], questions: string[], userName: string) => {
   const nameRegex = new RegExp(userName, 'gi');
   const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
 
-  return responses.map(r => ({
-    relationship: r.relationship,
-    q1_response: (r.q1_impact || "").replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
-    q2_response: (r.q2_untapped || "").replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
-    q3_response: (r.q3_pattern || "").replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]"),
-    q4_response: (r.q4_future || "").replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]")
-  }));
+  return responses.map(r => {
+    const sanitizedAnswers = (r.answers || []).map((ans: string, idx: number) => ({
+      question: questions[idx] || `Question ${idx + 1}`,
+      answer: (ans || "").replace(nameRegex, "[NAME]").replace(emailRegex, "[EMAIL]")
+    }));
+
+    // Support legacy responses
+    if (sanitizedAnswers.length === 0) {
+      if (r.q1_impact) sanitizedAnswers.push({ question: "Impact", answer: r.q1_impact.replace(nameRegex, "[NAME]") });
+      if (r.q2_untapped) sanitizedAnswers.push({ question: "Untapped", answer: r.q2_untapped.replace(nameRegex, "[NAME]") });
+      if (r.q3_pattern) sanitizedAnswers.push({ question: "Pattern", answer: r.q3_pattern.replace(nameRegex, "[NAME]") });
+      if (r.q4_future) sanitizedAnswers.push({ question: "Future", answer: r.q4_future.replace(nameRegex, "[NAME]") });
+    }
+
+    return {
+      relationship: r.relationship,
+      answers: sanitizedAnswers
+    };
+  });
 };
 
 export const handler = async (event: any, context: any) => {
@@ -45,19 +57,20 @@ export const handler = async (event: any, context: any) => {
     }
 
     const ai = getClient();
-    const formattedData = sanitizeData(responses, userName);
+    const formattedData = sanitizeData(responses, questions || [], userName);
     const goalContext = userGoal ? `מטרת המשתמש: "${userGoal}"` : `לא הוגדרה מטרה ספציפית.`;
 
     const prompt = `
       אתה פסיכולוג ארגוני בכיר. נתח את המשובים עבור ${userName}.
-      הקשר המטרה: ${goalContext}
+      הקשר המטרה (חשוב מאוד להתייחס לזה בניתוח): ${goalContext}
       
       חובה להתייחס בנתונים ל:
       1. "נקודות עיוורות" (Blind Spots): איפה המשתמש חושב שהוא מעולה אבל הסביבה רומזת אחרת?
       2. "עוצמות שקופות": דברים שהמשתמש עושה "על הדרך" אבל נתפסים כערך ענק לאחרים.
       3. ניתוח סנטימנט: מהו הטון הכללי של המשיבים?
       
-      נתונים: ${JSON.stringify(formattedData)}
+      השאלות שנשאלו והתשובות שנתנו:
+      ${JSON.stringify(formattedData, null, 2)}
     `;
 
     // Using gemini-2.5-pro for high-quality organizational psychology analysis (updated for 2026)
