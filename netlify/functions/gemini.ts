@@ -77,9 +77,9 @@ export const handler = async (event: any, context: any) => {
         ${JSON.stringify(formattedData, null, 2)}
       `;
   
-      // Using gemini-2.0-flash for high-speed organizational psychology analysis
+      // Using gemini-1.5-flash for high-speed and reliability
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-1.5-flash',
         contents: prompt,
         config: {
           systemInstruction: "You are a professional organizational psychologist. Be concise, insightful, and supportive in Hebrew. Return ONLY valid JSON.",
@@ -90,10 +90,10 @@ export const handler = async (event: any, context: any) => {
               summary: { type: Type.STRING },
               keyThemes: { type: Type.ARRAY, items: { type: Type.STRING } },
               actionableAdvice: { type: Type.STRING },
-              recommendations: { type: Type.ARRAY, items: { type: Type.STRING } }, // New: Concrete recommendations
+              recommendations: { type: Type.ARRAY, items: { type: Type.STRING } },
               blindSpots: { type: Type.STRING },
               transparentStrengths: { type: Type.STRING },
-              selfVsOthersAnalysis: { type: Type.STRING }, // New: Self vs Others comparison
+              selfVsOthersAnalysis: { type: Type.STRING },
               sentimentAnalysis: {
                   type: Type.OBJECT,
                   properties: {
@@ -119,9 +119,16 @@ export const handler = async (event: any, context: any) => {
         },
       });
 
-    const text = response.response.text();
+    // Handle extraction safely for @google/genai SDK
+    const text = response.text;
+    
     if (!text) {
-        return { statusCode: 500, headers, body: JSON.stringify({ error: "No response from AI" }) };
+        console.error("Full AI Response:", JSON.stringify(response));
+        return { 
+          statusCode: 500, 
+          headers, 
+          body: JSON.stringify({ error: "ה-AI לא החזיר תשובה. נסה שוב בעוד כמה רגעים." }) 
+        };
     }
     
     return {
