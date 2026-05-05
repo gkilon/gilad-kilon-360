@@ -11,18 +11,18 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-soft">
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
           
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-4 group">
              {/* THE LOGO: Minimalist Kilon Symbol */}
-             <div className="flex items-center gap-1.5">
-                 <div className="w-1.5 h-7 bg-accent-700 rounded-full"></div>
-                 <div className="w-1.5 h-4 bg-slate-300 rounded-full group-hover:bg-accent-500 transition-all duration-300"></div>
+             <div className="flex items-center gap-2">
+                 <div className="w-2 h-8 bg-accent-700 rounded-full shadow-lg shadow-accent-500/20"></div>
+                 <div className="w-2 h-5 bg-slate-200 rounded-full group-hover:bg-accent-500 transition-all duration-300"></div>
              </div>
              
              <div className="flex flex-col">
-                <h1 className="text-xl font-extrabold text-slate-900 tracking-tight leading-none">
-                    FEEDBACK<span className="text-accent-700 font-light">360</span>
+                <h1 className="text-2xl font-black text-slate-900 tracking-tighter leading-none">
+                    KILON<span className="text-accent-700">360</span>
                 </h1>
-                <span className="text-[10px] uppercase tracking-[0.2em] text-slate-400 font-bold -mt-0.5">By Gilad Kilon</span>
+                <span className="text-[10px] uppercase tracking-[0.3em] text-accent-700 font-black -mt-1">By Gilad Kilon</span>
              </div>
           </Link>
 

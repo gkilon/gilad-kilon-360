@@ -116,22 +116,28 @@ export const Dashboard: React.FC = () => {
             {/* ANALYSIS RESULTS SECTION */}
             {analysis && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-fade-in">
-                    <div className="bg-white p-8 rounded-2xl shadow-soft border-t-4 border-t-red-500 border border-slate-100">
-                        <h4 className="text-[10px] font-black text-red-600 uppercase tracking-[0.2em] mb-4">נקודות עיוורות (Blind Spots)</h4>
-                        <p className="text-sm text-slate-700 leading-relaxed font-medium">{analysis.blindSpots}</p>
+                    <div className="bg-white p-10 rounded-3xl shadow-soft border-t-8 border-t-red-500 border border-slate-100 group hover:shadow-xl transition-all duration-500">
+                        <h4 className="text-xs font-black text-red-600 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                            <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                            נקודות עיוורות (Blind Spots)
+                        </h4>
+                        <p className="text-lg text-slate-800 leading-relaxed font-bold">{analysis.blindSpots}</p>
                     </div>
-                    <div className="bg-white p-8 rounded-2xl shadow-soft border-t-4 border-t-emerald-500 border border-slate-100">
-                        <h4 className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-4">עוצמות שקופות</h4>
-                        <p className="text-sm text-slate-700 leading-relaxed font-medium">{analysis.transparentStrengths}</p>
+                    <div className="bg-white p-10 rounded-3xl shadow-soft border-t-8 border-t-emerald-500 border border-slate-100 group hover:shadow-xl transition-all duration-500">
+                        <h4 className="text-xs font-black text-emerald-600 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                            <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                            עוצמות שקופות
+                        </h4>
+                        <p className="text-lg text-slate-800 leading-relaxed font-bold">{analysis.transparentStrengths}</p>
                     </div>
                     <div className="bg-slate-900 p-8 rounded-2xl shadow-premium md:col-span-2 flex flex-col md:flex-row gap-8 items-center text-white">
-                        <div className="flex-shrink-0 text-center bg-white/10 p-6 rounded-2xl border border-white/10 min-w-[140px]">
-                            <div className="text-5xl font-black text-accent-500 mb-1">{analysis.sentimentAnalysis.score}%</div>
-                            <div className="text-[10px] uppercase font-black text-white/40 tracking-widest">Positive Tone</div>
+                        <div className="flex-shrink-0 text-center bg-white/10 p-8 rounded-3xl border border-white/10 min-w-[160px] shadow-inner">
+                            <div className="text-6xl font-black text-accent-500 mb-2">{analysis.sentimentAnalysis.score}%</div>
+                            <div className="text-[10px] uppercase font-black text-white/40 tracking-[0.3em]">Positive Resonance</div>
                         </div>
                         <div className="flex-grow">
-                            <h4 className="text-sm font-bold text-accent-400 uppercase mb-3 tracking-widest">ניתוח סנטימנט: {analysis.sentimentAnalysis.label}</h4>
-                            <p className="text-sm text-slate-300 leading-relaxed font-light">{analysis.sentimentAnalysis.explanation}</p>
+                            <h4 className="text-lg font-black text-accent-400 uppercase mb-4 tracking-widest border-b border-white/10 pb-2">ניתוח סנטימנט: {analysis.sentimentAnalysis.label}</h4>
+                            <p className="text-xl text-slate-200 leading-relaxed font-medium">{analysis.sentimentAnalysis.explanation}</p>
                         </div>
                     </div>
                 </div>

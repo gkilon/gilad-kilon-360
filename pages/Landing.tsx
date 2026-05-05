@@ -98,21 +98,21 @@ export const Landing: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-4">
-              <div className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 flex flex-col items-center text-center">
-                <div className="w-12 h-12 bg-accent-50 text-accent-700 rounded-full flex items-center justify-center font-bold text-xl mb-4 border border-accent-100">1</div>
-                <h3 className="font-bold text-lg mb-2">שולחים קישור</h3>
-                <p className="text-slate-500 text-sm">מפיצים את הקישור האישי לקולגות, מנהלים וחברים. התהליך אנונימי ומהיר.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 px-4">
+              <div className="bg-white p-10 rounded-3xl shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500">
+                <div className="w-16 h-16 bg-accent-50 text-accent-700 rounded-2xl flex items-center justify-center font-black text-2xl mb-6 border border-accent-100 transform group-hover:rotate-6 transition-transform">1</div>
+                <h3 className="font-black text-xl text-slate-900 mb-4">הזנת קוד גישה</h3>
+                <p className="text-slate-600 text-base leading-relaxed font-medium">מתחילים בהזנת הקוד שקיבלתם מגלעד. זהו המפתח שלכם לכניסה למערכת המאובטחת.</p>
               </div>
-              <div className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 flex flex-col items-center text-center">
-                <div className="w-12 h-12 bg-accent-50 text-accent-700 rounded-full flex items-center justify-center font-bold text-xl mb-4 border border-accent-100">2</div>
-                <h3 className="font-bold text-lg mb-2">אוספים משוב</h3>
-                <p className="text-slate-500 text-sm">המשיבים עונים על שאלות ממוקדות ב-3 דקות. הנתונים נאספים בצורה מאובטחת.</p>
+              <div className="bg-white p-10 rounded-3xl shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500">
+                <div className="w-16 h-16 bg-accent-50 text-accent-700 rounded-2xl flex items-center justify-center font-black text-2xl mb-6 border border-accent-100 transform group-hover:-rotate-6 transition-transform">2</div>
+                <h3 className="font-black text-xl text-slate-900 mb-4">קבלת קישור אישי</h3>
+                <p className="text-slate-600 text-base leading-relaxed font-medium">לאחר הרישום, תקבלו קישור אישי ייחודי. העתיקו אותו ושלחו אותו למשיבים (קולגות, מנהלים וכו').</p>
               </div>
-              <div className="bg-white p-8 rounded-2xl shadow-soft border border-slate-100 flex flex-col items-center text-center">
-                <div className="w-12 h-12 bg-accent-50 text-accent-700 rounded-full flex items-center justify-center font-bold text-xl mb-4 border border-accent-100">3</div>
-                <h3 className="font-bold text-lg mb-2">מקבלים תובנות</h3>
-                <p className="text-slate-500 text-sm">ה-AI שלנו מנתח את כל התשובות ומגיש לך דוח אישי עם נקודות עיוורון והמלצות לפעולה.</p>
+              <div className="bg-white p-10 rounded-3xl shadow-soft border border-slate-100 flex flex-col items-center text-center group hover:shadow-xl transition-all duration-500">
+                <div className="w-16 h-16 bg-accent-50 text-accent-700 rounded-2xl flex items-center justify-center font-black text-2xl mb-6 border border-accent-100 transform group-hover:scale-110 transition-transform">3</div>
+                <h3 className="font-black text-xl text-slate-900 mb-4">ניתוח ותובנות</h3>
+                <p className="text-slate-600 text-base leading-relaxed font-medium">כשהמשובים יצטברו, ה-AI שלנו ינתח עבורכם את הנתונים ויציג דוח מפורט על נקודות החוזק והצמיחה שלכם.</p>
               </div>
             </div>
           </div>
