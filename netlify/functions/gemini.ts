@@ -77,12 +77,12 @@ export const handler = async (event: any, context: any) => {
         ${JSON.stringify(formattedData, null, 2)}
       `;
   
-      // Using gemini-2.5-pro for high-quality organizational psychology analysis (updated for 2026)
+      // Using gemini-2.0-flash for high-speed organizational psychology analysis
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-pro',
+        model: 'gemini-2.0-flash',
         contents: prompt,
         config: {
-          systemInstruction: "You are a world-class organizational psychologist. Be insightful, direct, and supportive in Hebrew. Return ONLY valid JSON.",
+          systemInstruction: "You are a professional organizational psychologist. Be concise, insightful, and supportive in Hebrew. Return ONLY valid JSON.",
           responseMimeType: "application/json",
           responseSchema: {
             type: Type.OBJECT,
