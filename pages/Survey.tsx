@@ -81,7 +81,7 @@ export const Survey: React.FC = () => {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center animate-fade-in">
-          <div className="w-20 h-20 bg-accent-50 text-accent-700 rounded-full flex items-center justify-center mb-8 text-4xl shadow-premium border border-accent-100">
+          <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-8 text-4xl shadow-premium border border-blue-100">
              ✓
           </div>
           <h2 className="text-4xl font-black text-slate-900 mb-4">תודה רבה!</h2>
@@ -115,11 +115,11 @@ export const Survey: React.FC = () => {
       <div className="max-w-3xl mx-auto w-full animate-fade-in">
         
         <div className="text-center mb-12">
-            <span className="text-[10px] font-black text-accent-700 uppercase tracking-[0.3em] bg-accent-50 px-4 py-2 rounded-full border border-accent-100 shadow-sm">
+            <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] bg-blue-50 px-4 py-2 rounded-full border border-blue-100 shadow-sm">
                 Anonymous 360° Feedback
             </span>
             <h1 className="text-4xl font-black text-slate-900 mt-8 mb-4 tracking-tight">
-               <span className="text-accent-700">{userName}</span> מבקש/ת ממך משוב
+               <span className="text-blue-600">{userName}</span> מבקש/ת ממך משוב
             </h1>
             <p className="text-slate-500 font-medium text-lg leading-relaxed max-w-2xl mx-auto">
                 הפרספקטיבה הכנה שלך קריטית להתפתחות המקצועית שלהם. התהליך אנונימי לחלוטין.
