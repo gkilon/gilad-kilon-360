@@ -77,7 +77,14 @@ export const Dashboard: React.FC = () => {
       reader.readAsDataURL(file);
   };
 
-  if (loading) return <Layout><div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-t-2 border-accent-courage"></div></div></Layout>;
+  const handleCopyLink = () => {
+    if (!user) return;
+    const link = `${window.location.origin}/survey/${user.id}`;
+    navigator.clipboard.writeText(link);
+    alert('הקישור הועתק ללוח! עכשיו אפשר לשלוח אותו למשיבים.');
+  };
+
+  if (loading) return <Layout><div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-8 w-8 border-t-2 border-blue-600"></div></div></Layout>;
 
   const groupedResponses = responses.reduce((acc, r) => {
     if (!acc[r.relationship]) acc[r.relationship] = [];
@@ -134,6 +141,16 @@ export const Dashboard: React.FC = () => {
                     ))}
                  </div>
               </div>
+
+              <div className="bg-blue-600 p-12 rounded-3xl text-white shadow-xl group cursor-pointer hover:bg-blue-700 transition-all" onClick={handleCopyLink}>
+                 <h3 className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-6">Action Required</h3>
+                 <h4 className="text-3xl font-black mb-4">שלח קישור למשיבים</h4>
+                 <p className="text-white/80 font-light text-sm leading-relaxed mb-8">לחץ כאן כדי להעתיק את הקישור האנונימי ולשלוח אותו לקולגות ומנהלים.</p>
+                 <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest border-t border-white/10 pt-6">
+                    <span className="bg-white/10 px-4 py-2 rounded-lg">COPY LINK</span>
+                    <span className="opacity-40 italic">Ready to sync</span>
+                 </div>
+              </div>
             </div>
 
             {/* Actions */}
@@ -156,7 +173,7 @@ export const Dashboard: React.FC = () => {
                 <div className={`bg-white border border-slate-200 p-16 rounded-3xl transition-all shadow-soft ${showAdvanced ? 'ring-2 ring-blue-600/20' : ''}`}>
                     <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-4 block italic">Global Sync</span>
                     <h2 className="text-5xl font-black text-slate-900 mb-8">דוח אינטגרטיבי (Pro)</h2>
-                    <p className="text-slate-600 mb-12 max-w-sm font-light text-lg leading-relaxed">הצלבת דוח Lumina Spark או אבחונים חיצוניים עם המציאות בשטח.</p>
+                    <p className="text-slate-600 mb-12 max-w-sm font-light text-lg leading-relaxed">הצלבת אבחונים אישיים או אבחונים חיצוניים עם המציאות בשטח.</p>
                     
                     {!showAdvanced ? (
                         <button onClick={() => setShowAdvanced(true)} className="group flex items-center gap-6 text-[10px] font-black text-slate-900 uppercase tracking-[0.4em] border-b border-slate-200 pb-2 hover:border-blue-600 transition-all">
