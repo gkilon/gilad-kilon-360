@@ -1,73 +1,84 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { storageService } from '../services/storageService';
+import { useNavigate, Link } from 'react-router-dom';
 
-export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const location = useLocation();
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const navigate = useNavigate();
+  const user = storageService.getCurrentUser();
+
+  const handleLogout = () => {
+    storageService.logout();
+    navigate('/login');
+  };
 
   return (
-    <div className="min-h-screen flex flex-col text-slate-900 bg-[#FBF9F8]" dir="rtl">
-      
-      {/* Subtle Top Accent */}
-      <div className="h-1 w-full bg-[#8b6e58]"></div>
-
-      {/* Header - Executive, Refined */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-        <div className="max-w-6xl mx-auto px-6 h-24 flex items-center justify-between">
-          
-          <Link to="/" className="flex items-center gap-5 group">
-             <div className="flex flex-col items-center">
-                 <div className="w-1.5 h-10 bg-slate-900 rounded-full group-hover:bg-[#8b6e58] transition-colors"></div>
-                 <div className="w-5 h-1.5 bg-[#8b6e58] rounded-full mt-1.5 shadow-sm"></div>
-             </div>
-             
-             <div className="flex flex-col">
-                <h1 className="text-3xl font-black text-slate-900 tracking-tighter leading-none uppercase">
-                    Kilon<span className="text-[#8b6e58]">360</span>
-                </h1>
-                <span className="text-[11px] uppercase tracking-[0.5em] text-slate-400 font-bold -mt-1">Executive Mirror</span>
-             </div>
+    <div className="min-h-screen selection:bg-blue-600 selection:text-white bg-[#050505]">
+      {/* Premium Clean Navbar */}
+      <nav className="bg-black/60 backdrop-blur-xl border-b border-white/5 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-4 group">
+            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl hover:scale-105 transition-transform shadow-lg shadow-blue-600/20">K</div>
+            <div className="flex flex-col">
+                <span className="font-black text-white text-lg tracking-tighter leading-none">KILON</span>
+                <span className="text-[8px] font-bold tracking-[0.4em] text-blue-500 uppercase opacity-80">360 Intelligence</span>
+            </div>
           </Link>
-
-          {/* Nav */}
-          {location.pathname.includes('dashboard') && (
-               <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-                   <a 
-                      href="https://hilarious-kashata-9aafa2.netlify.app/" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-slate-700 hover:text-accent-700 border border-slate-200 hover:border-accent-700/30 bg-white px-5 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-sm"
-                   >
-                     שאלון סגנון תקשורת
-                     <svg className="w-3.5 h-3.5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                   </a>
-               </div>
-          )}
-
+          
+          <div className="flex items-center gap-10">
+            {user ? (
+              <>
+                <Link to="/admin" className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors hidden sm:block">Admin Console</Link>
+                <div className="flex items-center gap-6 pl-8 border-l border-white/10">
+                  <div className="text-right hidden md:block">
+                    <p className="text-sm font-black text-white tracking-tight leading-none mb-1">{user.name}</p>
+                    <p className="text-[9px] font-bold text-blue-500 uppercase tracking-widest">Authorized User</p>
+                  </div>
+                  <button 
+                    onClick={handleLogout}
+                    className="p-2 text-slate-500 hover:text-white transition-all text-xs font-black border border-white/5 hover:border-white/20 rounded-lg"
+                  >
+                    LOGOUT
+                  </button>
+                </div>
+              </>
+            ) : (
+              <Link to="/login" className="text-[10px] font-bold uppercase tracking-widest text-blue-500 border border-blue-500/30 px-6 py-2 rounded-lg hover:bg-blue-500 hover:text-white transition-all">Secure Access</Link>
+            )}
+          </div>
         </div>
-      </header>
-      
-      {/* Main Content */}
-      <main className="flex-grow w-full max-w-6xl mx-auto px-6 py-12 relative z-10">
+      </nav>
+
+      <main className="relative">
         {children}
       </main>
-      
-      {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-12 mt-auto">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400">
-            <div className="flex flex-col gap-1.5 text-center md:text-right">
-                <p className="font-bold text-slate-800 uppercase tracking-widest text-[10px]">Feedback 360 Platform</p>
-                <p className="hover:text-slate-600 transition-colors cursor-default font-medium">
-                    גלעד קילון | ייעוץ ארגוני ופיתוח הנהלות
+
+      {/* Clean Footer */}
+      <footer className="py-20 px-8 border-t border-white/5 bg-black">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
+          <div className="space-y-4">
+            <h3 className="font-black text-2xl tracking-tighter text-white">KILON CONSULTING</h3>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-loose max-w-xs">
+              Advanced Behavioral Architecture <br/>
+              © 2026 Internal Insight Platform
+            </p>
+          </div>
+          <div className="flex flex-col md:flex-row gap-12 text-slate-500">
+             <div className="space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Operational HQ</p>
+                <p className="text-xs font-medium">Shenkin St. 42 / Tel Aviv</p>
+             </div>
+             <div className="space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Encryption Status</p>
+                <p className="text-xs font-medium flex items-center gap-3">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_10px_rgba(59,130,246,0.5)]"></span>
+                    SSL / Secure Data Flow
                 </p>
-            </div>
-            <div className="flex items-center gap-6 mt-6 md:mt-0 font-bold uppercase tracking-tighter opacity-80">
-                <span className="flex items-center gap-2 text-accent-700">
-                    <div className="w-2 h-2 rounded-full bg-accent-700 animate-pulse"></div> 
-                    Secure & Private
-                </span>
-                <span className="text-slate-200">|</span>
-                <span dir="ltr">© 2026 Kilon Consulting.</span>
-            </div>
+             </div>
+          </div>
         </div>
       </footer>
     </div>
