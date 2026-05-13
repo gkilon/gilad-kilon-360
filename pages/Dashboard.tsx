@@ -67,6 +67,11 @@ export const Dashboard: React.FC = () => {
   const handleSelfAssessmentUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
+      if (file.size > 4.5 * 1024 * 1024) {
+          alert('הקובץ גדול מדי (מעל 4.5MB). המערכת עלולה לקרוס. אנא כווץ את ה-PDF או העלה גרסה קלה יותר.');
+          e.target.value = '';
+          return;
+      }
       setFileName(file.name);
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -176,16 +181,16 @@ export const Dashboard: React.FC = () => {
                     <p className="text-slate-600 mb-12 max-w-sm font-light text-lg leading-relaxed">הצלבת אבחונים אישיים או אבחונים חיצוניים עם המציאות בשטח.</p>
                     
                     {!showAdvanced ? (
-                        <button onClick={() => setShowAdvanced(true)} className="group flex items-center gap-6 text-[10px] font-black text-slate-900 uppercase tracking-[0.4em] border-b border-slate-200 pb-2 hover:border-blue-600 transition-all">
-                           + INTEGRATE DIAGNOSTIC PDF
+                        <button onClick={() => setShowAdvanced(true)} className="group flex items-center gap-6 text-[12px] font-black text-slate-900 uppercase tracking-[0.2em] border-b border-slate-200 pb-2 hover:border-blue-600 transition-all">
+                           + הוסף אבחון אישי (PDF) לביצוע העמקה
                         </button>
                     ) : (
                         <div className="space-y-10 animate-fade-in">
                             <div className="border border-slate-200 p-20 text-center rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors group cursor-pointer border-dashed">
                                 <input type="file" id="pdf-upload" accept=".pdf" onChange={handleSelfAssessmentUpload} className="hidden" />
                                 <label htmlFor="pdf-upload" className="cursor-pointer">
-                                    <div className="text-4xl mb-6 opacity-20">📜</div>
-                                    <p className="text-[10px] font-black text-slate-400 group-hover:text-slate-900 uppercase tracking-widest">{fileName || 'Choose PDF Strategy Document'}</p>
+                                    <div className="text-4xl mb-6 opacity-20">📄</div>
+                                    <p className="text-[12px] font-black text-slate-500 group-hover:text-slate-900 uppercase tracking-widest">{fileName || 'לחץ כאן להעלאת קובץ אבחון אישי (PDF)'}</p>
                                 </label>
                             </div>
                             <div className="flex gap-4">
