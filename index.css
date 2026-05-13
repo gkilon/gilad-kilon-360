@@ -4,9 +4,10 @@
 
 @layer base {
   body {
-    @apply bg-onyx-900 text-onyx-100;
+    @apply bg-slate-50 text-slate-900 font-sans;
   }
 }
+
 
 @layer components {
   .shadow-card {

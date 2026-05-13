@@ -82,50 +82,50 @@ export const Landing: React.FC = () => {
 
   return (
     <Layout>
-      <div className="flex flex-col items-center py-20 px-6 relative overflow-hidden">
-        {/* Subtle Background Glows */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-600/10 blur-[120px] rounded-full pointer-events-none"></div>
+      <div className="flex flex-col items-center py-20 px-6 relative overflow-hidden bg-slate-50">
+        {/* Subtle Background Elements */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none"></div>
         
         {step === 'invite' && (
           <div className="w-full max-w-6xl mb-24 animate-fade-in relative z-10">
             <div className="text-center mb-20 space-y-8">
-              <div className="inline-flex items-center gap-3 px-5 py-2 bg-white/5 rounded-full border border-white/10 backdrop-blur-sm">
-                 <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-                 <span className="text-[11px] font-black uppercase tracking-[0.4em] text-white/60">Insight Intelligence Engine</span>
+              <div className="inline-flex items-center gap-3 px-5 py-2 bg-white rounded-full border border-slate-200 shadow-sm">
+                 <span className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
+                 <span className="text-[11px] font-black uppercase tracking-[0.4em] text-slate-500">Insight Intelligence Engine</span>
               </div>
-              <h1 className="text-6xl md:text-8xl font-black text-white leading-[1.05] tracking-tight">
+              <h1 className="text-6xl md:text-8xl font-black text-slate-900 leading-[1.05] tracking-tight">
                 צמיחה מבוססת <br/> 
-                <span className="text-blue-500">פרספקטיבה</span>
+                <span className="text-blue-600">פרספקטיבה</span>
               </h1>
-              <p className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto leading-relaxed font-light">
+              <p className="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-light">
                 תהליך משוב 360 מעלות חכם, המעניק תובנות עמוקות <br className="hidden md:block"/> לצמיחה מקצועית מבוססת נתונים ו-AI.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="premium-card p-12 text-center group">
-                <div className="w-14 h-14 bg-blue-600/10 border border-blue-500/20 text-blue-500 rounded-2xl flex items-center justify-center font-black text-xl mb-8 mx-auto">1</div>
-                <h3 className="font-bold text-2xl text-white mb-4">הזנת קוד גישה</h3>
-                <p className="text-slate-400 text-base leading-relaxed">מתחילים בהזנת הקוד שקיבלתם מגלעד. זהו המפתח שלכם לכניסה למערכת.</p>
+              <div className="bg-white border border-slate-200 p-12 text-center group rounded-3xl shadow-soft">
+                <div className="w-14 h-14 bg-blue-50 border border-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-black text-xl mb-8 mx-auto">1</div>
+                <h3 className="font-bold text-2xl text-slate-900 mb-4">הזנת קוד גישה</h3>
+                <p className="text-slate-600 text-base leading-relaxed">מתחילים בהזנת הקוד שקיבלתם מגלעד. זהו המפתח שלכם לכניסה למערכת.</p>
               </div>
-              <div className="premium-card p-12 text-center group">
-                <div className="w-14 h-14 bg-blue-600/10 border border-blue-500/20 text-blue-500 rounded-2xl flex items-center justify-center font-black text-xl mb-8 mx-auto">2</div>
-                <h3 className="font-bold text-2xl text-white mb-4">קבלת קישור אישי</h3>
-                <p className="text-slate-400 text-base leading-relaxed">לאחר הרישום, תקבלו קישור ייחודי. העתיקו אותו ושלחו אותו למשיבים הרלוונטיים.</p>
+              <div className="bg-white border border-slate-200 p-12 text-center group rounded-3xl shadow-soft">
+                <div className="w-14 h-14 bg-blue-50 border border-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-black text-xl mb-8 mx-auto">2</div>
+                <h3 className="font-bold text-2xl text-slate-900 mb-4">קבלת קישור אישי</h3>
+                <p className="text-slate-600 text-base leading-relaxed">לאחר הרישום, תקבלו קישור ייחודי. העתיקו אותו ושלחו אותו למשיבים הרלוונטיים.</p>
               </div>
-              <div className="premium-card p-12 text-center group">
-                <div className="w-14 h-14 bg-blue-600/10 border border-blue-500/20 text-blue-500 rounded-2xl flex items-center justify-center font-black text-xl mb-8 mx-auto">3</div>
-                <h3 className="font-bold text-2xl text-white mb-4">ניתוח ותובנות</h3>
-                <p className="text-slate-400 text-base leading-relaxed">כשהמשובים יצטברו, ה-AI ינתח את הנתונים ויציג דוח מפורט על נקודות החוזק והצמיחה.</p>
+              <div className="bg-white border border-slate-200 p-12 text-center group rounded-3xl shadow-soft">
+                <div className="w-14 h-14 bg-blue-50 border border-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-black text-xl mb-8 mx-auto">3</div>
+                <h3 className="font-bold text-2xl text-slate-900 mb-4">ניתוח ותובנות</h3>
+                <p className="text-slate-600 text-base leading-relaxed">כשהמשובים יצטברו, ה-AI ינתח את הנתונים ויציג דוח מפורט על נקודות החוזק והצמיחה.</p>
               </div>
             </div>
           </div>
         )}
 
-        <div className="w-full max-w-[440px] premium-card p-10 relative z-10 border-t-4 border-blue-600 bg-black/40 backdrop-blur-xl">
+        <div className="w-full max-w-[440px] bg-white border border-slate-200 p-10 relative z-10 border-t-4 border-blue-600 rounded-3xl shadow-premium">
             <div className="text-center mb-10">
-                <p className="text-[10px] text-blue-500 font-bold uppercase tracking-[0.5em] mb-3">Professional Portal</p>
-                <h2 className="text-3xl font-black text-white">בואו נתחיל</h2>
+                <p className="text-[10px] text-blue-600 font-bold uppercase tracking-[0.5em] mb-3">Professional Portal</p>
+                <h2 className="text-3xl font-black text-slate-900">בואו נתחיל</h2>
             </div>
             
             {step === 'invite' ? (
@@ -138,7 +138,7 @@ export const Landing: React.FC = () => {
                             autoFocus
                             value={inviteCode} 
                             onChange={(e) => setInviteCode(e.target.value)} 
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-center font-mono text-3xl tracking-[0.4em] uppercase focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none transition-all text-white" 
+                            className="w-full bg-slate-50 border border-slate-200 rounded-2xl p-5 text-center font-mono text-3xl tracking-[0.4em] uppercase focus:border-blue-600 focus:ring-1 focus:ring-blue-600 outline-none transition-all text-slate-900" 
                             placeholder="CODE" 
                             dir="ltr" 
                         />
@@ -160,25 +160,25 @@ export const Landing: React.FC = () => {
                     </button>
 
                     <div className="flex items-center gap-4">
-                        <div className="h-px bg-white/10 flex-grow"></div>
-                        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">או דרך המערכת</span>
-                        <div className="h-px bg-white/10 flex-grow"></div>
+                        <div className="h-px bg-slate-200 flex-grow"></div>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">או דרך המערכת</span>
+                        <div className="h-px bg-slate-200 flex-grow"></div>
                     </div>
 
                     <form onSubmit={handleAuth} className="space-y-5">
                         {isNewUser && (
                             <div className="space-y-2">
-                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">שם מלא</label>
-                                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-blue-600" placeholder="ישראל ישראלי" required />
+                                <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">שם מלא</label>
+                                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-900 outline-none focus:border-blue-600" placeholder="ישראל ישראלי" required />
                             </div>
                         )}
                         <div className="space-y-2">
-                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">כתובת אימייל</label>
-                            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-mono outline-none focus:border-blue-600" dir="ltr" placeholder="email@example.com" required />
+                            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">כתובת אימייל</label>
+                            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-900 font-mono outline-none focus:border-blue-600" dir="ltr" placeholder="email@example.com" required />
                         </div>
                         <div className="space-y-2">
-                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">סיסמה</label>
-                            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white font-mono outline-none focus:border-blue-600" dir="ltr" placeholder="••••••••" required />
+                            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest text-right">סיסמה</label>
+                            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-slate-900 font-mono outline-none focus:border-blue-600" dir="ltr" placeholder="••••••••" required />
                         </div>
                         {error && <p className="text-red-500 text-xs text-center font-bold bg-red-500/5 p-4 rounded-xl border border-red-500/20">{error}</p>}
                         <button type="submit" className="btn-premium w-full h-14" disabled={isLoading}>
