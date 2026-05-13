@@ -58,9 +58,13 @@ export const storageService = {
 
   getAppSettings: async (): Promise<AppSettings> => {
       const settings = await firebaseService.getSettings();
+      const questions = (Array.isArray(settings?.questions) && settings.questions.length > 0) 
+        ? settings.questions 
+        : DEFAULT_QUESTIONS;
+        
       return {
           registrationCode: settings?.registrationCode || 'KILON2026',
-          questions: Array.isArray(settings?.questions) ? settings.questions : DEFAULT_QUESTIONS
+          questions: questions
       };
   },
 

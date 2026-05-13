@@ -26,17 +26,16 @@ export const Survey: React.FC = () => {
         try {
             // Load Settings for Questions
             const settings = await storageService.getAppSettings();
-            const qList = Array.isArray(settings.questions) ? settings.questions : [];
+            const qList = settings.questions;
             setQuestions(qList);
             setAnswers(new Array(qList.length).fill(''));
 
             // Load User
             if (userId) {
                 const userData = await storageService.getUserDataById(userId);
-                if (userData && userData.name) {
-                    setUserName(userData.name);
-                } else {
-                    setError('קישור לא תקין');
+                setUserName(userData?.name || 'משתמש מערכת');
+                if (!userData || !userData.name) {
+                    console.warn("User name not found for ID:", userId);
                 }
             }
         } catch (e) {
@@ -72,7 +71,7 @@ export const Survey: React.FC = () => {
       return (
           <Layout>
               <div className="flex justify-center items-center h-[50vh]">
-                 <div className="w-8 h-8 border-4 border-slate-200 border-t-accent-700 rounded-full animate-spin"></div>
+                 <div className="w-8 h-8 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin"></div>
               </div>
           </Layout>
       );
@@ -127,7 +126,7 @@ export const Survey: React.FC = () => {
             </p>
         </div>
 
-        <div className="glass-panel p-8 md:p-14 border-t-4 border-t-accent-700 shadow-premium">
+        <div className="glass-panel p-8 md:p-14 border-t-4 border-t-blue-600 shadow-premium">
             
             <form onSubmit={handleSubmit} className="space-y-12">
                 
@@ -171,7 +170,7 @@ export const Survey: React.FC = () => {
                 </div>
 
                 <div className="pt-10 border-t border-slate-100">
-                    <Button type="submit" variant="primary" isLoading={isSending} className="w-full text-xl py-6 shadow-xl shadow-accent-900/10">
+                    <Button type="submit" variant="primary" isLoading={isSending} className="w-full text-xl py-6 shadow-xl shadow-blue-900/10">
                         שלח משוב אנונימי
                     </Button>
                     <div className="mt-8 text-center text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2">
