@@ -70,12 +70,11 @@ export const storageService = {
 
   login: async (email: string, password?: string): Promise<User> => {
     if (!storageService.isCloudEnabled()) throw new Error("שגיאת חיבור לשרת.");
-    const user = await firebaseService.findUserByEmail(email);
-    if (user && user.password === password) {
-        localStorage.setItem(USER_KEY, JSON.stringify(user));
-        return user;
-    }
-    throw new Error("משתמש לא נמצא או סיסמה שגויה.");
+    if (!password) throw new Error("נדרשת סיסמה.");
+    
+    const user = await firebaseService.loginWithEmail(email, password);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    return user;
   },
 
   loginAsGuest: async (): Promise<User> => {
@@ -93,21 +92,15 @@ export const storageService = {
 
   registerUser: async (name: string, email: string, password?: string, registrationCode?: string): Promise<User> => {
     if (!storageService.isCloudEnabled()) throw new Error("שגיאת התחברות לשרת הנתונים.");
-    if (!registrationCode) throw new Error("נדרש קוד רישום.");
+    if (!registrationCode) throw new Error("נדרשת קוד רישום.");
+    if (!password) throw new Error("נדרשת סיסמה.");
+    
     const appSettings = await storageService.getAppSettings();
     if (registrationCode.toUpperCase() !== appSettings.registrationCode.toUpperCase()) {
          throw new Error("קוד רישום שגוי.");
     }
-    const existing = await firebaseService.findUserByEmail(email);
-    if (existing) throw new Error("המייל כבר קיים במערכת.");
-    const newUser: User = {
-      id: generateId(),
-      name,
-      email,
-      password,
-      createdAt: Date.now(),
-    };
-    await firebaseService.createUser(newUser);
+
+    const newUser = await firebaseService.registerWithEmail(name, email, password);
     localStorage.setItem(USER_KEY, JSON.stringify(newUser));
     return newUser;
   },

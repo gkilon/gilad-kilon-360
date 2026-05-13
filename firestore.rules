@@ -5,21 +5,19 @@ service cloud.firestore {
 
     // --- Users Collection ---
     match /users/{userId} {
-      // Anyone authenticated can read (allows finding users by email for the registration check)
-      // or we can restrict it to their own record if `findUserByEmail` doesn't strictly need auth.
-      // But for security, let's allow read if authenticated. If `findUserByEmail` is called during login/register,
-      // Firebase auth is already active.
-      allow read: if request.auth != null; 
+      // Allow single document fetch (get) so survey pages can show the user's name
+      // Prevent listing all users (list) for privacy.
+      allow get: if true;
+      allow list: if request.auth != null && request.auth.token.email == 'gkilon@gmail.com';
       
-      // A user can create or update their own document
-      allow create: if request.auth != null && request.auth.uid == userId;
-      allow update: if request.auth != null && request.auth.uid == userId;
+      // Only the authenticated user can create or update their own record
+      allow create, update: if request.auth != null && request.auth.uid == userId;
       allow delete: if false;
     }
 
     // --- Settings Collection ---
     match /settings/config {
-      // Anyone can read the settings (to see registration codes and questions)
+      // Settings must be readable to check invite codes
       allow read: if true;
       // Only the specified admin email can change settings
       allow write: if request.auth != null && request.auth.token.email == 'gkilon@gmail.com';
@@ -30,7 +28,7 @@ service cloud.firestore {
       // Anyone can create a response (unauthenticated feedback)
       allow create: if true;
       
-      // Only the owner of the survey OR the admin can read the responses
+      // Reading responses requires being the survey owner or admin
       allow read: if request.auth != null && (
         request.auth.uid == resource.data.surveyId || 
         request.auth.token.email == 'gkilon@gmail.com'
@@ -38,5 +36,15 @@ service cloud.firestore {
       
       allow update, delete: if false;
     }
+
+    // --- Analysis Collection ---
+    match /analysis/{userId} {
+      // Only the user themselves or the admin can read/write analysis
+      allow read, write: if request.auth != null && (
+        request.auth.uid == userId || 
+        request.auth.token.email == 'gkilon@gmail.com'
+      );
+    }
   }
 }
+

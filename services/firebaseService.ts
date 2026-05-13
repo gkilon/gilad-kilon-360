@@ -1,11 +1,11 @@
-import { 
-  getFirestore, 
-  collection, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  getDocs, 
-  query, 
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  query,
   where,
   limit,
   updateDoc
@@ -32,7 +32,7 @@ export const firebaseService = {
       } else {
         app = initializeApp(config);
       }
-      
+
       db = getFirestore(app);
       auth = getAuth(app);
       return true;
@@ -48,17 +48,17 @@ export const firebaseService = {
 
   signInWithGoogle: async (): Promise<User> => {
     if (!auth || !db) throw new Error("Database not connected");
-    
+
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const fbUser = result.user;
-      
+
       if (!fbUser.email) throw new Error("No email returned from Google");
 
       // Check if user exists in our Firestore
       const userRef = doc(db, "users", fbUser.uid);
       const docSnap = await getDoc(userRef);
-      
+
       if (docSnap.exists()) {
         return docSnap.data() as User;
       } else {
@@ -79,32 +79,32 @@ export const firebaseService = {
   },
 
   // --- Settings (Config & Questions) ---
-  
+
   getSettings: async (): Promise<{ registrationCode?: string, questions?: QuestionsConfig } | null> => {
-      if (!db) return null;
-      try {
-        const configRef = doc(db, "settings", "config");
-        const docSnap = await getDoc(configRef);
-        if (docSnap.exists()) {
-            return docSnap.data() as any;
-        }
-        return null;
-      } catch (e) {
-          console.warn("Fetch settings failed", e);
-          return null;
+    if (!db) return null;
+    try {
+      const configRef = doc(db, "settings", "config");
+      const docSnap = await getDoc(configRef);
+      if (docSnap.exists()) {
+        return docSnap.data() as any;
       }
+      return null;
+    } catch (e) {
+      console.warn("Fetch settings failed", e);
+      return null;
+    }
   },
 
   updateSettings: async (code: string, questions: QuestionsConfig): Promise<void> => {
     if (!db) throw new Error("Database not connected");
     try {
-        const configRef = doc(db, "settings", "config");
-        await setDoc(configRef, { 
-            registrationCode: code,
-            questions: questions
-        }, { merge: true });
+      const configRef = doc(db, "settings", "config");
+      await setDoc(configRef, {
+        registrationCode: code,
+        questions: questions
+      }, { merge: true });
     } catch (e) {
-        throw new Error("Failed to update settings");
+      throw new Error("Failed to update settings");
     }
   },
 
@@ -124,10 +124,10 @@ export const firebaseService = {
   updatePassword: async (userId: string, newPassword: string): Promise<void> => {
     if (!db) throw new Error("Database disconnected");
     try {
-        const userRef = doc(db, "users", userId);
-        await updateDoc(userRef, { password: newPassword });
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, { password: newPassword });
     } catch (e) {
-        throw new Error("עדכון סיסמה נכשל.");
+      throw new Error("עדכון סיסמה נכשל.");
     }
   },
 
@@ -147,7 +147,7 @@ export const firebaseService = {
       const usersRef = collection(db, "users");
       const q = query(usersRef, where("email", "==", email));
       const querySnapshot = await getDocs(q);
-      
+
       if (querySnapshot.empty) return null;
       return querySnapshot.docs[0].data() as User;
     } catch (e: any) {
@@ -155,10 +155,10 @@ export const firebaseService = {
       throw e;
     }
   },
-  
+
   logout: async (): Promise<void> => {
     if (auth) {
-        await signOut(auth);
+      await signOut(auth);
     }
   },
 
@@ -180,12 +180,12 @@ export const firebaseService = {
       const responsesRef = collection(db, "responses");
       const q = query(responsesRef, where("surveyId", "==", userId));
       const querySnapshot = await getDocs(q);
-      
+
       const responses: FeedbackResponse[] = [];
       querySnapshot.forEach((doc: any) => {
         responses.push(doc.data() as FeedbackResponse);
       });
-      
+
       return responses.sort((a, b) => b.timestamp - a.timestamp);
     } catch (e) {
       return [];
@@ -210,20 +210,20 @@ export const firebaseService = {
   saveAnalysis: async (userId: string, analysis: any): Promise<void> => {
     if (!db) return;
     try {
-        const analysisRef = doc(db, "analysis", userId);
-        await setDoc(analysisRef, { 
-            ...analysis, 
-            updatedAt: Date.now() 
-        }, { merge: true });
+      const analysisRef = doc(db, "analysis", userId);
+      await setDoc(analysisRef, {
+        ...analysis,
+        updatedAt: Date.now()
+      }, { merge: true });
     } catch (e) { console.error("Save analysis failed", e); }
   },
 
   getAnalysis: async (userId: string): Promise<any | null> => {
     if (!db) return null;
     try {
-        const analysisRef = doc(db, "analysis", userId);
-        const docSnap = await getDoc(analysisRef);
-        return docSnap.exists() ? docSnap.data() : null;
+      const analysisRef = doc(db, "analysis", userId);
+      const docSnap = await getDoc(analysisRef);
+      return docSnap.exists() ? docSnap.data() : null;
     } catch (e) { return null; }
   }
 };
