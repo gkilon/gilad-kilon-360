@@ -12,7 +12,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     storageService.logout();
-    navigate('/login');
+    navigate('/');
   };
 
   return (
@@ -46,7 +46,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </div>
               </>
             ) : (
-              <Link to="/login" className="text-[10px] font-bold uppercase tracking-widest text-blue-600 border border-blue-600/30 px-6 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition-all">Secure Access</Link>
+              <Link to="/" className="text-[10px] font-bold uppercase tracking-widest text-blue-600 border border-blue-600/30 px-6 py-2 rounded-lg hover:bg-blue-600 hover:text-white transition-all">Secure Access</Link>
             )}
           </div>
         </div>
